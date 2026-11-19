@@ -1,0 +1,15 @@
+{
+  "name": "Z-Krieger Akademie",
+  "short_name": "Z-Krieger",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#0d1117",
+  "theme_color": "#ff6b00",
+  "icons": [
+    {
+      "src": "https://flaticon.com",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
