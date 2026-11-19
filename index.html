@@ -10,13 +10,12 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <!-- Comic Speed-Lines Hintergrund -->
   <div class="speed-lines"></div>
 
-  <!-- Level-Up Overlay -->
+  <!-- Level-Up / Verwandlungs-Popup -->
   <div id="levelup-overlay" class="levelup-overlay hidden">
     <div class="levelup-burst">
-      <span class="comic-badge">NEUE STUFE!</span>
+      <span class="comic-badge" id="levelup-badge">LEVEL UP!</span>
       <h2 id="levelup-title">SUPER-KRIEGER!</h2>
       <p id="levelup-desc">Deine Aura explodiert vor Energie!</p>
       <button id="close-levelup" class="comic-btn yellow">WEITER KÄMPFEN!</button>
@@ -31,25 +30,23 @@
         <div id="power-level" class="power-number">1.000</div>
       </div>
       <div class="rank-box">
-        <span class="scouter-label">STUFE</span>
+        <span class="scouter-label">AKTUELLE FORM</span>
         <div id="rank-name" class="rank-title">BASIS-KRIEGER</div>
       </div>
     </header>
 
-    <!-- Kämpfer-Arena & Avatar -->
+    <!-- Kämpfer-Arena & Stufen-Bild -->
     <main class="arena-card">
-      <div class="stage-tag" id="stage-badge">FORM 1 / 4</div>
+      <div class="stage-tag" id="stage-badge">STUFE 1 / 5</div>
       
       <div id="aura-wrapper" class="aura-wrapper aura-stage-1">
-        <!-- Hier wird das Bild des gewählten Kämpfers geladen -->
-        <img id="fighter-img" src="img/krieger-duo.png" alt="Z-Krieger" class="fighter-sprite" />
-        <div class="lightning-fx"></div>
+        <img id="fighter-img" src="img_stufe1.jpg" alt="Z-Krieger" class="fighter-sprite" />
       </div>
 
       <!-- XP / Ki-Balken -->
       <div class="ki-bar-container">
         <div class="ki-bar-header">
-          <span>KI-ENERGIE</span>
+          <span id="level-label">LEVEL 1</span>
           <span id="xp-text">0 / 100 XP</span>
         </div>
         <div class="ki-bar-track">
@@ -57,20 +54,22 @@
         </div>
       </div>
 
-      <!-- Kämpfer wechseln -->
-      <div class="fighter-selector">
-        <button class="select-chip active" data-fighter="duo">⚡ BRÜDER-DUO</button>
-        <button class="select-chip" data-fighter="leon">🔥 LEON (BLITZ)</button>
-        <button class="select-chip" data-fighter="noah">🌪️ NOAH (STURM)</button>
+      <!-- Freigeschaltete Stufen umschalten -->
+      <div class="stage-switcher" id="stage-switcher">
+        <button class="stage-btn active" data-stage="1">STUFE 1</button>
+        <button class="stage-btn locked" data-stage="2">🔒 2</button>
+        <button class="stage-btn locked" data-stage="3">🔒 3</button>
+        <button class="stage-btn locked" data-stage="4">🔒 4</button>
+        <button class="stage-btn locked" data-stage="5">🔒 5</button>
       </div>
     </main>
 
-    <!-- Trainings-Missionen (Comic Panels) -->
+    <!-- Trainings-Missionen -->
     <section class="missions-section">
       <h2 class="section-heading">TRAINING WÄHLEN</h2>
       
       <div class="mission-grid">
-        <button class="mission-panel" data-xp="25" data-power="350" data-name="Kniebeugen-Salve">
+        <button class="mission-panel" data-xp="25" data-power="450">
           <div class="panel-icon">🦵</div>
           <div class="panel-info">
             <h3>15x KNIEBEUGEN</h3>
@@ -79,7 +78,7 @@
           <span class="xp-pill">+25 XP</span>
         </button>
 
-        <button class="mission-panel" data-xp="35" data-power="500" data-name="Liegestütz-Welle">
+        <button class="mission-panel" data-xp="35" data-power="700">
           <div class="panel-icon">💪</div>
           <div class="panel-info">
             <h3>10x LIEGESTÜTZE</h3>
@@ -88,16 +87,16 @@
           <span class="xp-pill">+35 XP</span>
         </button>
 
-        <button class="mission-panel" data-xp="20" data-power="250" data-name="Hampelmann-Sprint">
+        <button class="mission-panel" data-xp="20" data-power="300">
           <div class="panel-icon">⚡</div>
           <div class="panel-info">
             <h3>30 SEK. HAMPELMÄNNER</h3>
-            <p>Telekinese-Speed</p>
+            <p>Momentane Teleportation</p>
           </div>
           <span class="xp-pill">+20 XP</span>
         </button>
 
-        <button class="mission-panel boss" data-xp="60" data-power="1200" data-name="Super-Saiyajin-Prüfung">
+        <button class="mission-panel boss" data-xp="60" data-power="1500">
           <div class="panel-icon">🔥</div>
           <div class="panel-info">
             <h3>1 MIN. PLANK + SPRINT</h3>
