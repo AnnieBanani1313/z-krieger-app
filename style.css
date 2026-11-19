@@ -1,12 +1,10 @@
 :root {
-  --bg-dark: #0d1117;
-  --card-bg: #161b22;
-  --accent-orange: #ff6b00;
-  --accent-gold: #ffd700;
-  --accent-blue: #00d4ff;
-  --radar-green: #00ff66;
-  --text-main: #ffffff;
-  --text-muted: #8b949e;
+  --bg-dark: #0b1021;
+  --panel-bg: #162040;
+  --orange: #ff6b00;
+  --yellow: #ffd600;
+  --cyan: #00f0ff;
+  --border: #000000;
 }
 
 * {
@@ -14,403 +12,365 @@
   margin: 0;
   padding: 0;
   user-select: none;
-  -webkit-tap-highlight-color: transparent;
 }
 
 body {
-  font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  font-family: 'Chakra Petch', sans-serif;
   background-color: var(--bg-dark);
-  color: var(--text-main);
-  display: flex;
-  flex-direction: column;
+  color: #ffffff;
   min-height: 100vh;
-  padding-bottom: 75px;
+  overflow-x: hidden;
+  position: relative;
 }
 
-.scouter-bar {
-  background: linear-gradient(135deg, #1f2937, #111827);
-  border-bottom: 2px solid var(--accent-orange);
-  padding: 15px;
-  text-align: center;
-  box-shadow: 0 4px 15px rgba(255, 107, 0, 0.2);
+/* Manga Speed-Lines im Hintergrund */
+.speed-lines {
+  position: fixed;
+  inset: 0;
+  background: repeating-conic-gradient(
+    from 0deg,
+    rgba(255, 255, 255, 0.03) 0deg 2deg,
+    transparent 2deg 8deg
+  );
+  pointer-events: none;
+  z-index: 0;
+}
+
+.app-container {
+  position: relative;
+  z-index: 1;
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* Scouter Top HUD */
+.scouter-hud {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.scouter-lens, .rank-box {
+  background: linear-gradient(135deg, #1b284e, #0f1730);
+  border: 4px solid var(--border);
+  box-shadow: 4px 4px 0 var(--border);
+  padding: 10px 12px;
+  transform: skewX(-4deg);
+}
+
+.scouter-lens {
+  border-color: #00ff66;
+  box-shadow: 4px 4px 0 #000, inset 0 0 12px rgba(0, 255, 102, 0.25);
 }
 
 .scouter-label {
-  font-size: 0.75rem;
-  letter-spacing: 2px;
-  color: var(--accent-orange);
-  font-weight: bold;
-}
-
-.power-value {
-  font-size: 2.5rem;
-  font-weight: 900;
-  color: var(--accent-gold);
-  text-shadow: 0 0 12px rgba(255, 215, 0, 0.5);
-  font-variant-numeric: tabular-nums;
-}
-
-.rank-badge {
-  display: inline-block;
-  background: rgba(255, 107, 0, 0.2);
-  border: 1px solid var(--accent-orange);
-  padding: 3px 12px;
-  border-radius: 20px;
-  font-size: 0.85rem;
-  margin-top: 4px;
-}
-
-.container {
-  flex: 1;
-  padding: 20px;
-  max-width: 500px;
-  width: 100%;
-  margin: 0 auto;
-}
-
-.tab-content {
-  display: none;
-  animation: fadeIn 0.25s ease;
-}
-
-.tab-content.active {
+  font-size: 0.7rem;
+  letter-spacing: 1px;
+  color: #9bb0e8;
   display: block;
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(5px); }
-  to { opacity: 1; transform: translateY(0); }
+.power-number {
+  font-family: 'Bangers', cursive;
+  font-size: 1.9rem;
+  color: #00ff66;
+  letter-spacing: 1.5px;
+  text-shadow: 2px 2px 0 #000;
 }
 
-h2 {
-  text-align: center;
-  margin-bottom: 8px;
-  font-size: 1.3rem;
-}
-
-.subtitle {
-  text-align: center;
-  color: var(--text-muted);
-  font-size: 0.9rem;
-  margin-bottom: 20px;
-}
-
-.fighter-stage {
-  position: relative;
-  height: 210px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 15px;
-}
-
-.fighter-svg {
-  width: 160px;
-  height: 175px;
-  z-index: 2;
-  transition: transform 0.2s;
-}
-
-.aura {
-  position: absolute;
-  width: 150px;
-  height: 170px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, transparent 70%);
-  z-index: 1;
-  animation: pulseAura 1.5s infinite alternate;
-}
-
-@keyframes pulseAura {
-  from { transform: scale(0.95); opacity: 0.6; }
-  to { transform: scale(1.15); opacity: 1; }
-}
-
-.form-name {
-  z-index: 2;
-  font-weight: bold;
-  font-size: 0.95rem;
-  color: var(--accent-blue);
+.rank-title {
+  font-family: 'Bangers', cursive;
+  font-size: 1.4rem;
+  color: var(--yellow);
+  letter-spacing: 1px;
+  text-shadow: 2px 2px 0 #000;
   margin-top: 4px;
 }
 
-.progress-wrapper {
-  margin-bottom: 20px;
-}
-
-.progress-text {
-  font-size: 0.8rem;
-  color: var(--text-muted);
-  margin-bottom: 5px;
-  text-align: right;
-}
-
-.progress-bar {
-  height: 10px;
-  background: #21262d;
-  border-radius: 10px;
-  overflow: hidden;
-}
-
-.progress-fill {
-  height: 100%;
-  width: 15%;
-  background: linear-gradient(90deg, var(--accent-orange), var(--accent-gold));
-  transition: width 0.3s ease;
-}
-
-.workout-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-}
-
-.action-btn {
-  background: var(--card-bg);
-  border: 1px solid #30363d;
-  border-radius: 14px;
-  padding: 15px 10px;
-  color: white;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 5px;
-  cursor: pointer;
-  transition: transform 0.1s, border-color 0.2s;
-}
-
-.action-btn:active {
-  transform: scale(0.95);
-  border-color: var(--accent-orange);
-}
-
-.action-btn .emoji {
-  font-size: 1.8rem;
-}
-
-.action-btn small {
-  color: var(--accent-gold);
-  font-weight: bold;
-}
-
-.radar-box {
-  display: flex;
-  justify-content: center;
-  margin: 15px 0;
-}
-
-.radar-screen {
-  width: 260px;
-  height: 260px;
-  border-radius: 50%;
-  background: radial-gradient(circle, #062b16 0%, #02140a 100%);
-  border: 4px solid #2ea043;
+/* Kämpfer-Arena */
+.arena-card {
+  background: radial-gradient(circle at center, #253875 0%, #111833 85%);
+  border: 4px solid var(--border);
+  box-shadow: 6px 6px 0 var(--border);
+  padding: 16px;
   position: relative;
+  text-align: center;
+}
+
+.stage-tag {
+  position: absolute;
+  top: -12px;
+  right: 12px;
+  background: var(--orange);
+  color: #fff;
+  font-family: 'Bangers', cursive;
+  font-size: 1.1rem;
+  padding: 3px 12px;
+  border: 3px solid #000;
+  box-shadow: 3px 3px 0 #000;
+  letter-spacing: 1px;
+}
+
+/* Aura-Stufen (Entwicklung sichtbar!) */
+.aura-wrapper {
+  position: relative;
+  width: 230px;
+  height: 260px;
+  margin: 4px auto 12px;
+  border-radius: 14px;
+  border: 4px solid #000;
   overflow: hidden;
-  box-shadow: 0 0 20px rgba(0, 255, 102, 0.25);
-  cursor: crosshair;
+  background: #090d1a;
+  transition: all 0.4s ease;
 }
 
-.radar-grid-h, .radar-grid-v {
-  position: absolute;
-  background: rgba(0, 255, 102, 0.2);
-}
-
-.radar-grid-h { width: 100%; height: 1px; top: 50%; }
-.radar-grid-v { height: 100%; width: 1px; left: 50%; }
-
-.radar-center {
-  position: absolute;
-  width: 10px;
-  height: 10px;
-  background: #ff3b30;
-  border-radius: 50%;
-  top: calc(50% - 5px);
-  left: calc(50% - 5px);
-}
-
-.radar-sweep {
-  position: absolute;
+.fighter-sprite {
   width: 100%;
   height: 100%;
-  background: conic-gradient(from 0deg, rgba(0, 255, 102, 0.35) 0deg, transparent 60deg);
-  border-radius: 50%;
-  animation: sweep 3s linear infinite;
+  object-fit: cover;
+  object-position: top center;
+  transition: transform 0.3s ease, filter 0.4s ease;
 }
 
-@keyframes sweep {
-  to { transform: rotate(360deg); }
+/* Stufe 1: Basis */
+.aura-stage-1 {
+  box-shadow: 0 0 15px rgba(0, 240, 255, 0.4);
 }
 
-.radar-blip {
-  position: absolute;
-  width: 16px;
-  height: 16px;
-  background: var(--accent-gold);
-  border-radius: 50%;
-  box-shadow: 0 0 12px var(--accent-gold);
-  top: 30%;
-  left: 70%;
-  animation: blink 0.8s infinite alternate;
+/* Stufe 2: Kaioken / Power-Schub (Blauer Glow) */
+.aura-stage-2 {
+  box-shadow: 0 0 28px #00f0ff, inset 0 0 20px #00f0ff;
+  border-color: #00f0ff;
 }
 
-@keyframes blink {
-  from { opacity: 0.3; transform: scale(0.8); }
-  to { opacity: 1; transform: scale(1.2); }
+/* Stufe 3: Super-Krieger (Goldene Aura!) */
+.aura-stage-3 {
+  box-shadow: 0 0 38px #ffd600, inset 0 0 25px #ffd600;
+  border-color: #ffd600;
+  animation: pulseAura 1.2s infinite alternate;
 }
 
-.radar-hint {
-  text-align: center;
-  font-size: 0.9rem;
-  color: var(--radar-green);
-  margin-bottom: 15px;
+/* Stufe 4: Ultra-Instinkt / Legende (Regenbogen/Platin-Blitze) */
+.aura-stage-4 {
+  box-shadow: 0 0 45px #ff00aa, 0 0 25px #00f0ff;
+  border-color: #ffffff;
+  animation: pulseAura 0.7s infinite alternate;
 }
 
-.beam-arena {
-  margin: 30px 0;
+@keyframes pulseAura {
+  from { transform: scale(1); }
+  to { transform: scale(1.03); }
 }
 
-.beam-bar {
-  height: 36px;
-  background: #ff2a55;
-  border-radius: 18px;
-  position: relative;
-  overflow: hidden;
-  border: 2px solid #fff;
-  box-shadow: 0 0 15px rgba(255, 42, 85, 0.5);
+/* KI Balken */
+.ki-bar-container {
+  margin-top: 8px;
 }
 
-.beam-player {
-  height: 100%;
-  background: linear-gradient(90deg, #0077ff, #00d4ff);
-  transition: width 0.08s linear;
-}
-
-.beam-clash {
-  position: absolute;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  font-size: 1.8rem;
-  transition: left 0.08s linear;
-}
-
-.beam-labels {
+.ki-bar-header {
   display: flex;
   justify-content: space-between;
-  font-size: 0.8rem;
-  font-weight: bold;
-  margin-top: 6px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  margin-bottom: 4px;
+  color: var(--yellow);
 }
 
-.battle-controls {
+.ki-bar-track {
+  height: 20px;
+  background: #070a14;
+  border: 3px solid #000;
+  padding: 2px;
+}
+
+.ki-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--orange), var(--yellow));
+  transition: width 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Kämpfer Auswahl Chips */
+.fighter-selector {
   display: flex;
+  gap: 6px;
   justify-content: center;
+  margin-top: 12px;
+  flex-wrap: wrap;
 }
 
-.primary-btn, .mash-btn {
-  width: 100%;
-  padding: 16px;
-  border: none;
-  border-radius: 14px;
-  font-size: 1.1rem;
-  font-weight: bold;
+.select-chip {
+  background: #0d142b;
+  color: #fff;
+  border: 3px solid #000;
+  padding: 5px 10px;
+  font-family: 'Chakra Petch', sans-serif;
+  font-weight: 700;
+  font-size: 0.78rem;
   cursor: pointer;
+  box-shadow: 2px 2px 0 #000;
+}
+
+.select-chip.active {
+  background: var(--cyan);
   color: #000;
-  background: linear-gradient(135deg, var(--accent-gold), var(--accent-orange));
-  box-shadow: 0 4px 15px rgba(255, 107, 0, 0.4);
 }
 
-.mash-btn {
-  background: linear-gradient(135deg, #00d4ff, #0077ff);
-  color: white;
-  font-size: 1.3rem;
-  padding: 24px;
+/* Trainings-Panels */
+.section-heading {
+  font-family: 'Bangers', cursive;
+  font-size: 1.6rem;
+  letter-spacing: 1.5px;
+  color: var(--yellow);
+  text-shadow: 3px 3px 0 #000;
+  margin-bottom: 8px;
 }
 
-.mash-btn:active {
-  transform: scale(0.96);
-}
-
-.battle-status {
-  text-align: center;
-  margin-top: 15px;
-  font-weight: bold;
-  color: var(--accent-gold);
-}
-
-.bottom-nav {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 68px;
-  background: var(--card-bg);
-  border-top: 1px solid #30363d;
-  display: flex;
-  justify-content: space-around;
-  z-index: 10;
-}
-
-.nav-btn {
-  background: none;
-  border: none;
-  color: var(--text-muted);
+.mission-grid {
   display: flex;
   flex-direction: column;
+  gap: 10px;
+}
+
+.mission-panel {
+  display: flex;
   align-items: center;
-  justify-content: center;
-  font-size: 0.8rem;
-  gap: 3px;
+  gap: 12px;
+  background: var(--panel-bg);
+  border: 4px solid #000;
+  box-shadow: 5px 5px 0 #000;
+  padding: 12px;
+  color: #fff;
+  text-align: left;
   cursor: pointer;
+  transition: transform 0.1s;
+}
+
+.mission-panel:active {
+  transform: translate(3px, 3px);
+  box-shadow: 2px 2px 0 #000;
+}
+
+.mission-panel.boss {
+  background: linear-gradient(90deg, #4a1228, #24143d);
+  border-color: var(--yellow);
+}
+
+.panel-icon {
+  font-size: 1.8rem;
+  background: #0a0f20;
+  border: 3px solid #000;
+  width: 48px;
+  height: 48px;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+
+.panel-info {
   flex: 1;
 }
 
-.nav-btn span {
-  font-size: 1.3rem;
+.panel-info h3 {
+  font-family: 'Bangers', cursive;
+  font-size: 1.25rem;
+  letter-spacing: 1px;
+  color: #fff;
 }
 
-.nav-btn.active {
-  color: var(--accent-orange);
-  font-weight: bold;
+.panel-info p {
+  font-size: 0.8rem;
+  color: #a9bce8;
 }
 
-.modal {
+.xp-pill {
+  background: var(--orange);
+  border: 3px solid #000;
+  font-family: 'Bangers', cursive;
+  font-size: 1.1rem;
+  padding: 4px 10px;
+  color: #fff;
+  box-shadow: 2px 2px 0 #000;
+}
+
+/* Screen Shake & Level Up Overlay */
+.shake {
+  animation: screenShake 0.35s ease;
+}
+
+@keyframes screenShake {
+  0%, 100% { transform: translate(0, 0); }
+  20% { transform: translate(-6px, 4px); }
+  40% { transform: translate(6px, -4px); }
+  60% { transform: translate(-4px, -2px); }
+  80% { transform: translate(4px, 2px); }
+}
+
+.levelup-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.85);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  background: rgba(5, 8, 20, 0.9);
+  z-index: 99;
+  display: grid;
+  place-items: center;
   padding: 20px;
-  z-index: 50;
 }
 
-.modal-card {
-  background: var(--card-bg);
-  border: 2px solid var(--accent-gold);
-  border-radius: 20px;
-  padding: 25px;
+.levelup-overlay.hidden {
+  display: none;
+}
+
+.levelup-burst {
+  background: radial-gradient(circle, #ff8800, #cc2200);
+  border: 5px solid #000;
+  box-shadow: 8px 8px 0 #000;
+  padding: 28px 20px;
   text-align: center;
-  max-width: 340px;
+  max-width: 360px;
   width: 100%;
 }
 
-.modal-icon {
-  font-size: 4rem;
-  margin-bottom: 10px;
+.comic-badge {
+  background: #000;
+  color: var(--yellow);
+  padding: 4px 12px;
+  font-weight: 700;
+  font-size: 0.85rem;
 }
 
-.modal-card h3 {
-  color: var(--accent-gold);
-  margin-bottom: 10px;
+.levelup-burst h2 {
+  font-family: 'Bangers', cursive;
+  font-size: 2.5rem;
+  color: #fff;
+  text-shadow: 4px 4px 0 #000;
+  margin: 12px 0 8px;
 }
 
-.modal-card p {
-  margin-bottom: 20px;
-  line-height: 1.4;
+.comic-btn.yellow {
+  margin-top: 18px;
+  background: var(--yellow);
+  color: #000;
+  border: 4px solid #000;
+  box-shadow: 4px 4px 0 #000;
+  font-family: 'Bangers', cursive;
+  font-size: 1.4rem;
+  padding: 10px 24px;
+  cursor: pointer;
 }
 
-.hidden {
-  display: none !important;
-  }
+.app-footer {
+  text-align: center;
+  margin-top: 6px;
+}
+
+.reset-link {
+  background: none;
+  border: none;
+  color: #6b7db3;
+  text-decoration: underline;
+  font-size: 0.75rem;
+  cursor: pointer;
+}
