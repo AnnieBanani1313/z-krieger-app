@@ -1,205 +1,149 @@
-let state = JSON.parse(localStorage.getItem('zkrieger_save')) || {
-  power: 150,
-  balls: 0
-};
-
-const forms = [
-  { min: 0, name: 'Basis-Form', rank: 'Anfänger-Kämpfer', hair: '#1a1a1a', eye: '#1a1a1a', aura: 'rgba(255,255,255,0.15)' },
-  { min: 1000, name: 'Super-Krieger Stufe 1', rank: 'Goldener Krieger', hair: '#ffd700', eye: '#00d4ff', aura: 'rgba(255, 215, 0, 0.55)' },
-  { min: 3000, name: 'Super-Krieger Stufe 2', rank: 'Blitz-Meister', hair: '#ffea00', eye: '#00ffaa', aura: 'rgba(255, 234, 0, 0.75)' },
-  { min: 6000, name: 'Super-Gott Blau', rank: 'Göttlicher Kämpfer', hair: '#00d4ff', eye: '#00d4ff', aura: 'rgba(0, 212, 255, 0.7)' },
-  { min: 10000, name: 'Ultra-Instinkt', rank: 'Legende des Universums', hair: '#e6edf3', eye: '#c9d1d9', aura: 'rgba(255, 255, 255, 0.85)' }
+// Entwicklungsstufen (Transformationen)
+const STAGES = [
+  { minLevel: 1, name: "BASIS-KRIEGER", auraClass: "aura-stage-1", desc: "Dein Training hat begonnen!" },
+  { minLevel: 3, name: "KI-MEISTER", auraClass: "aura-stage-2", desc: "Blaue Energie umhüllt deinen Körper!" },
+  { minLevel: 6, name: "SUPER-KRIEGER", auraClass: "aura-stage-3", desc: "Deine goldene Aura sprengt alle Grenzen!" },
+  { minLevel: 10, name: "ULTRA-LEGENDE", auraClass: "aura-stage-4", desc: "Maximale Kampfkraft erreicht!" }
 ];
 
-const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-function playBeep(freq = 600, duration = 0.12, type = 'sine') {
-  if (audioCtx.state === 'suspended') audioCtx.resume();
-  const osc = audioCtx.createOscillator();
-  const gain = audioCtx.createGain();
-  osc.type = type;
-  osc.frequency.value = freq;
-  gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
-  gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
-  osc.connect(gain);
-  gain.connect(audioCtx.destination);
-  osc.start();
-  osc.stop(audioCtx.currentTime + duration);
+// Kämpfer-Bilder (du kannst hier eigene weitere Bilder pro Stufe hinterlegen)
+const FIGHTERS = {
+  duo: {
+    base: "img/krieger-duo.png",
+    super: "img/krieger-duo-super.png" // Fallback greift automatisch, falls noch nicht vorhanden
+  },
+  leon: {
+    base: "img/leon.png",
+    super: "img/leon-super.png"
+  },
+  noah: {
+    base: "img/noah.png",
+    super: "img/noah-super.png"
+  }
+};
+
+// Gespeicherten Spielstand laden
+let state = JSON.parse(localStorage.getItem("zkrieger_save")) || {
+  level: 1,
+  xp: 0,
+  powerLevel: 1000,
+  fighter: "duo"
+};
+
+// Web Audio API: Anime-Soundeffekte ohne externe Dateien generieren
+function playPowerSound(isLevelUp = false) {
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = isLevelUp ? "sawtooth" : "triangle";
+    osc.frequency.setValueAtTime(isLevelUp ? 220 : 180, ctx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(isLevelUp ? 880 : 520, ctx.currentTime + (isLevelUp ? 0.45 : 0.2));
+    gain.gain.setValueAtTime(0.15, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + (isLevelUp ? 0.5 : 0.22));
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start();
+    osc.stop(ctx.currentTime + (isLevelUp ? 0.5 : 0.22));
+  } catch (e) {}
 }
 
-function saveGame() {
-  localStorage.setItem('zkrieger_save', JSON.stringify(state));
+function getStageForLevel(lvl) {
+  let current = STAGES[0];
+  let index = 1;
+  STAGES.forEach((s, i) => {
+    if (lvl >= s.minLevel) {
+      current = s;
+      index = i + 1;
+    }
+  });
+  return { ...current, index };
 }
 
 function updateUI() {
-  document.getElementById('powerLevel').textContent = state.power.toLocaleString('de-DE');
-  document.getElementById('ballsFound').textContent = state.balls;
+  const xpNeeded = state.level * 100;
+  const stage = getStageForLevel(state.level);
 
-  let currentForm = forms[0];
-  let nextForm = null;
-  for (let i = 0; i < forms.length; i++) {
-    if (state.power >= forms[i].min) {
-      currentForm = forms[i];
-      nextForm = forms[i + 1] || null;
+  document.getElementById("power-level").textContent = state.powerLevel.toLocaleString("de-DE");
+  document.getElementById("rank-name").textContent = `${stage.name} (LVL ${state.level})`;
+  document.getElementById("stage-badge").textContent = `FORM ${stage.index} / 4`;
+  document.getElementById("xp-text").textContent = `${state.xp} / ${xpNeeded} XP`;
+  document.getElementById("ki-bar-fill").style.width = `${Math.min(100, (state.xp / xpNeeded) * 100)}%`;
+
+  // Aura-Klasse setzen
+  const auraWrapper = document.getElementById("aura-wrapper");
+  auraWrapper.className = `aura-wrapper ${stage.auraClass}`;
+
+  // Kämpfer-Bild setzen (ab Level 6 Super-Form versuchen, sonst Basis-Bild)
+  const imgEl = document.getElementById("fighter-img");
+  const selected = FIGHTERS[state.fighter] || FIGHTERS.duo;
+  imgEl.src = state.level >= 6 ? selected.super : selected.base;
+  imgEl.onerror = () => { imgEl.src = "img/krieger-duo.png"; };
+
+  // Aktiven Chip markieren
+  document.querySelectorAll(".select-chip").forEach(btn => {
+    btn.classList.toggle("active", btn.dataset.fighter === state.fighter);
+  });
+
+  localStorage.setItem("zkrieger_save", JSON.stringify(state));
+}
+
+// Trainings-Buttons verknüpfen
+document.querySelectorAll(".mission-panel").forEach(btn => {
+  btn.addEventListener("click", () => {
+    const gainedXP = parseInt(btn.dataset.xp, 10);
+    const gainedPower = parseInt(btn.dataset.power, 10);
+    const oldStage = getStageForLevel(state.level).name;
+
+    state.xp += gainedXP;
+    state.powerLevel += gainedPower;
+
+    // Bildschirm-Wackeln auslösen
+    document.body.classList.remove("shake");
+    void document.body.offsetWidth;
+    document.body.classList.add("shake");
+
+    const xpNeeded = state.level * 100;
+    if (state.xp >= xpNeeded) {
+      state.xp -= xpNeeded;
+      state.level += 1;
+      const newStage = getStageForLevel(state.level);
+      playPowerSound(true);
+
+      // Level-Up Modal zeigen
+      document.getElementById("levelup-title").textContent = `LEVEL ${state.level}: ${newStage.name}!`;
+      document.getElementById("levelup-desc").textContent =
+        oldStage !== newStage.name
+          ? `VERWANDLUNG! ${newStage.desc}`
+          : `Deine Kampfkraft steigt auf ${state.powerLevel.toLocaleString("de-DE")}!`;
+      document.getElementById("levelup-overlay").classList.remove("hidden");
+    } else {
+      playPowerSound(false);
     }
-  }
 
-  document.getElementById('rankBadge').textContent = currentForm.rank;
-  document.getElementById('formName').textContent = currentForm.name;
-  document.getElementById('fighterHair').setAttribute('fill', currentForm.hair);
-  document.getElementById('eyeLeft').setAttribute('fill', currentForm.eye);
-  document.getElementById('eyeRight').setAttribute('fill', currentForm.eye);
-  document.getElementById('fighterAura').style.background =
-    `radial-gradient(circle, ${currentForm.aura} 0%, transparent 70%)`;
-
-  if (nextForm) {
-    document.getElementById('nextGoal').textContent = nextForm.min.toLocaleString('de-DE');
-    const percent = Math.min(100, ((state.power - currentForm.min) / (nextForm.min - currentForm.min)) * 100);
-    document.getElementById('progressFill').style.width = percent + '%';
-  } else {
-    document.getElementById('nextGoal').textContent = 'MAX';
-    document.getElementById('progressFill').style.width = '100%';
-  }
-
-  if (state.balls >= 7) {
-    document.getElementById('summonBtn').classList.remove('hidden');
-    document.getElementById('radarBlip').classList.add('hidden');
-  } else {
-    document.getElementById('summonBtn').classList.add('hidden');
-    document.getElementById('radarBlip').classList.remove('hidden');
-  }
-}
-
-function train(points, exerciseName) {
-  const oldForm = forms.filter(f => state.power >= f.min).pop();
-  state.power += points;
-  const newForm = forms.filter(f => state.power >= f.min).pop();
-
-  playBeep(520, 0.1, 'triangle');
-  setTimeout(() => playBeep(780, 0.15, 'triangle'), 90);
-
-  const svg = document.getElementById('fighterSvg');
-  svg.style.transform = 'scale(1.12)';
-  setTimeout(() => svg.style.transform = 'scale(1)', 180);
-
-  if (newForm.min > oldForm.min) {
-    playBeep(900, 0.4, 'sawtooth');
-    showModal('⚡', 'NEUE VERWANDLUNG!', `Du hast die Stufe "${newForm.name}" erreicht!`);
-  }
-
-  saveGame();
-  updateUI();
-}
-
-let blipX = 70;
-let blipY = 30;
-
-function moveBlip() {
-  blipX = Math.floor(Math.random() * 70) + 15;
-  blipY = Math.floor(Math.random() * 70) + 15;
-  const blip = document.getElementById('radarBlip');
-  blip.style.left = blipX + '%';
-  blip.style.top = blipY + '%';
-}
-
-function scanRadar(event) {
-  if (state.balls >= 7) return;
-  const rect = event.currentTarget.getBoundingClientRect();
-  const clickX = ((event.clientX - rect.left) / rect.width) * 100;
-  const clickY = ((event.clientY - rect.top) / rect.height) * 100;
-
-  const dist = Math.hypot(clickX - blipX, clickY - blipY);
-
-  if (dist < 14) {
-    state.balls += 1;
-    playBeep(1100, 0.25, 'sine');
-    document.getElementById('radarHint').textContent = `Treffer! Kugel Nr. ${state.balls} eingesammelt!`;
-    if (state.balls < 7) moveBlip();
-    saveGame();
     updateUI();
-  } else {
-    playBeep(350, 0.08, 'sine');
-    document.getElementById('radarHint').textContent = dist < 30 ? 'Ganz nah dran! Tippe direkt auf den Punkt!' : 'Signal schwach – tippe auf den gelben Punkt!';
-  }
-}
+  });
+});
 
-function summonDragon() {
-  state.balls = 0;
-  state.power += 1500;
-  playBeep(300, 0.5, 'sawtooth');
-  moveBlip();
-  saveGame();
-  updateUI();
-  showModal('🐉', 'DER WUNSCH-DRACHE ERSCHEINT!', 'Deine 7 Kugeln haben den Drachen gerufen! Du erhältst +1.500 Kampfkraft!');
-}
-
-let beamPosition = 50;
-let battleInterval = null;
-
-function startBattle() {
-  beamPosition = 50;
-  updateBeamUI();
-  document.getElementById('startBattleBtn').classList.add('hidden');
-  document.getElementById('mashBtn').classList.remove('hidden');
-  document.getElementById('battleStatus').textContent = 'JETZT TIPPEN!';
-
-  battleInterval = setInterval(() => {
-    beamPosition -= 2.2;
-    updateBeamUI();
-    if (beamPosition <= 0) {
-      endBattle(false);
-    }
-  }, 100);
-}
-
-function pushBeam() {
-  beamPosition += 6.5;
-  playBeep(650 + beamPosition * 3, 0.06, 'square');
-  updateBeamUI();
-  if (beamPosition >= 100) {
-    endBattle(true);
-  }
-}
-
-function updateBeamUI() {
-  const clamped = Math.max(0, Math.min(100, beamPosition));
-  document.getElementById('beamPlayer').style.width = clamped + '%';
-  document.getElementById('beamClash').style.left = clamped + '%';
-}
-
-function endBattle(won) {
-  clearInterval(battleInterval);
-  document.getElementById('mashBtn').classList.add('hidden');
-  document.getElementById('startBattleBtn').classList.remove('hidden');
-
-  if (won) {
-    state.power += 400;
-    saveGame();
+// Kämpfer wechseln
+document.querySelectorAll(".select-chip").forEach(chip => {
+  chip.addEventListener("click", () => {
+    state.fighter = chip.dataset.fighter;
+    playPowerSound(false);
     updateUI();
-    document.getElementById('battleStatus').textContent = 'SIEG! +400 Kampfkraft gewonnen!';
-    playBeep(950, 0.3, 'triangle');
-  } else {
-    document.getElementById('battleStatus').textContent = 'Knapp verloren – versuch es direkt nochmal!';
-    playBeep(200, 0.3, 'sawtooth');
+  });
+});
+
+document.getElementById("close-levelup").addEventListener("click", () => {
+  document.getElementById("levelup-overlay").classList.add("hidden");
+});
+
+document.getElementById("reset-btn").addEventListener("click", () => {
+  if (confirm("Wirklich wieder bei Level 1 starten?")) {
+    state = { level: 1, xp: 0, powerLevel: 1000, fighter: "duo" };
+    updateUI();
   }
-}
+});
 
-function switchTab(tabName, btn) {
-  document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-  document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
-  document.getElementById('tab-' + tabName).classList.add('active');
-  btn.classList.add('active');
-}
-
-function showModal(icon, title, text) {
-  document.getElementById('modalIcon').textContent = icon;
-  document.getElementById('modalTitle').textContent = title;
-  document.getElementById('modalText').textContent = text;
-  document.getElementById('rewardModal').classList.remove('hidden');
-}
-
-function closeModal() {
-  document.getElementById('rewardModal').classList.add('hidden');
-}
-
-moveBlip();
+// Initialisieren
 updateUI();
