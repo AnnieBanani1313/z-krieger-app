@@ -1,13 +1,13 @@
 {
-  "name": "Z-Krieger Akademie",
+  "name": "Z-Krieger Training",
   "short_name": "Z-Krieger",
   "start_url": "index.html",
   "display": "standalone",
-  "background_color": "#0d1117",
+  "background_color": "#0b1021",
   "theme_color": "#ff6b00",
   "icons": [
     {
-      "src": "https://flaticon.com",
+      "src": "img_stufe2.png",
       "sizes": "512x512",
       "type": "image/png"
     }
