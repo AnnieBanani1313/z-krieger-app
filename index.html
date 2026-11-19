@@ -1,132 +1,116 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Z-Krieger Akademie</title>
-  <link rel="stylesheet" href="style.css">
-  <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#ff6b00">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Z-Krieger Training</title>
+  <link rel="manifest" href="manifest.json" />
+  <link rel="preconnect" href="https://googleapis.com">
+  <link href="https://googleapis.com/css2?family=Bangers&family=Chakra+Petch:ital,wght@0,700;1,700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
+  <!-- Comic Speed-Lines Hintergrund -->
+  <div class="speed-lines"></div>
 
-  <header class="scouter-bar">
-    <div class="scouter-label">KAMPFKRAFT</div>
-    <div class="power-value" id="powerLevel">150</div>
-    <div class="rank-badge" id="rankBadge">Anfänger-Kämpfer</div>
-  </header>
-
-  <main class="container">
-
-    <section id="tab-training" class="tab-content active">
-      <div class="fighter-stage" id="fighterStage">
-        <div class="aura" id="fighterAura"></div>
-        <svg class="fighter-svg" viewBox="0 0 200 220" id="fighterSvg">
-          <path id="fighterHair" d="M60,80 L30,50 L65,55 L50,20 L85,45 L100,10 L115,45 L150,20 L135,55 L170,50 L140,80 Z" fill="#1a1a1a"/>
-          <circle cx="100" cy="85" r="32" fill="#ffcc99"/>
-          <path d="M78,78 L95,84 M122,78 L105,84" stroke="#1a1a1a" stroke-width="4" stroke-linecap="round"/>
-          <circle cx="88" cy="88" r="3" fill="#1a1a1a" id="eyeLeft"/>
-          <circle cx="112" cy="88" r="3" fill="#1a1a1a" id="eyeRight"/>
-          <path d="M60,125 L140,125 L155,210 L45,210 Z" fill="#ff6b00"/>
-          <path d="M80,125 L100,160 L120,125 Z" fill="#0044cc"/>
-          <rect x="52" y="165" width="96" height="12" fill="#0044cc"/>
-        </svg>
-        <div class="form-name" id="formName">Basis-Form</div>
-      </div>
-
-      <div class="progress-wrapper">
-        <div class="progress-text">Nächste Stufe: <span id="nextGoal">1.000</span></div>
-        <div class="progress-bar">
-          <div class="progress-fill" id="progressFill"></div>
-        </div>
-      </div>
-
-      <h2>Schwerkraft-Training</h2>
-      <div class="workout-grid">
-        <button class="action-btn" onclick="train(150, '10 Liegestütze')">
-          <span class="emoji">💪</span>
-          <strong>10 Liegestütze</strong>
-          <small>+150 Power</small>
-        </button>
-        <button class="action-btn" onclick="train(200, '15 Kniebeugen')">
-          <span class="emoji">⚡</span>
-          <strong>15 Kniebeugen</strong>
-          <small>+200 Power</small>
-        </button>
-        <button class="action-btn" onclick="train(120, '20 Hampelmänner')">
-          <span class="emoji">🔥</span>
-          <strong>20 Hampelmänner</strong>
-          <small>+120 Power</small>
-        </button>
-        <button class="action-btn" onclick="train(300, '30 Sek. Plank')">
-          <span class="emoji">🛡️</span>
-          <strong>30 Sek. Plank</strong>
-          <small>+300 Power</small>
-        </button>
-      </div>
-    </section>
-
-    <section id="tab-radar" class="tab-content">
-      <h2>Energie-Radar</h2>
-      <p class="subtitle">Finde alle 7 Kugeln (<span id="ballsFound">0</span>/7), um den Drachen zu rufen!</p>
-
-      <div class="radar-box">
-        <div class="radar-screen" id="radarScreen" onclick="scanRadar(event)">
-          <div class="radar-sweep"></div>
-          <div class="radar-grid-h"></div>
-          <div class="radar-grid-v"></div>
-          <div class="radar-center"></div>
-          <div class="radar-blip" id="radarBlip"></div>
-        </div>
-      </div>
-
-      <p class="radar-hint" id="radarHint">Tippe auf das Radar, um das Signal zu orten!</p>
-      <button class="primary-btn hidden" id="summonBtn" onclick="summonDragon()">🐉 Wunsch-Drachen rufen!</button>
-    </section>
-
-    <section id="tab-battle" class="tab-content">
-      <h2>Ki-Strahl Duell</h2>
-      <p class="subtitle">Tippe so schnell du kannst, um die Energie-Welle abzuwehren!</p>
-
-      <div class="beam-arena">
-        <div class="beam-bar">
-          <div class="beam-player" id="beamPlayer" style="width: 50%;"></div>
-          <div class="beam-clash" id="beamClash" style="left: 50%;">💥</div>
-        </div>
-        <div class="beam-labels">
-          <span>DEIN KI</span>
-          <span>GEGNER</span>
-        </div>
-      </div>
-
-      <div class="battle-controls">
-        <button class="primary-btn" id="startBattleBtn" onclick="startBattle()">Kampf starten!</button>
-        <button class="mash-btn hidden" id="mashBtn" onclick="pushBeam()">⚡ ENERGIE FEUERN! ⚡</button>
-      </div>
-      <p class="battle-status" id="battleStatus"></p>
-    </section>
-
-  </main>
-
-  <nav class="bottom-nav">
-    <button class="nav-btn active" onclick="switchTab('training', this)">
-      <span>🔥</span>Training
-    </button>
-    <button class="nav-btn" onclick="switchTab('radar', this)">
-      <span>📡</span>Radar
-    </button>
-    <button class="nav-btn" onclick="switchTab('battle', this)">
-      <span>💥</span>Duell
-    </button>
-  </nav>
-
-  <div class="modal hidden" id="rewardModal">
-    <div class="modal-card">
-      <div class="modal-icon" id="modalIcon">🐉</div>
-      <h3 id="modalTitle">Der Drache erscheint!</h3>
-      <p id="modalText">Dein Wunsch wurde erfüllt: +1.500 Kampfkraft!</p>
-      <button class="primary-btn" onclick="closeModal()">Genial!</button>
+  <!-- Level-Up Overlay -->
+  <div id="levelup-overlay" class="levelup-overlay hidden">
+    <div class="levelup-burst">
+      <span class="comic-badge">NEUE STUFE!</span>
+      <h2 id="levelup-title">SUPER-KRIEGER!</h2>
+      <p id="levelup-desc">Deine Aura explodiert vor Energie!</p>
+      <button id="close-levelup" class="comic-btn yellow">WEITER KÄMPFEN!</button>
     </div>
+  </div>
+
+  <div class="app-container">
+    <!-- Scouter Top-Bar -->
+    <header class="scouter-hud">
+      <div class="scouter-lens">
+        <span class="scouter-label">KAMPFKRAFT (KI)</span>
+        <div id="power-level" class="power-number">1.000</div>
+      </div>
+      <div class="rank-box">
+        <span class="scouter-label">STUFE</span>
+        <div id="rank-name" class="rank-title">BASIS-KRIEGER</div>
+      </div>
+    </header>
+
+    <!-- Kämpfer-Arena & Avatar -->
+    <main class="arena-card">
+      <div class="stage-tag" id="stage-badge">FORM 1 / 4</div>
+      
+      <div id="aura-wrapper" class="aura-wrapper aura-stage-1">
+        <!-- Hier wird das Bild des gewählten Kämpfers geladen -->
+        <img id="fighter-img" src="img/krieger-duo.png" alt="Z-Krieger" class="fighter-sprite" />
+        <div class="lightning-fx"></div>
+      </div>
+
+      <!-- XP / Ki-Balken -->
+      <div class="ki-bar-container">
+        <div class="ki-bar-header">
+          <span>KI-ENERGIE</span>
+          <span id="xp-text">0 / 100 XP</span>
+        </div>
+        <div class="ki-bar-track">
+          <div id="ki-bar-fill" class="ki-bar-fill" style="width: 0%;"></div>
+        </div>
+      </div>
+
+      <!-- Kämpfer wechseln -->
+      <div class="fighter-selector">
+        <button class="select-chip active" data-fighter="duo">⚡ BRÜDER-DUO</button>
+        <button class="select-chip" data-fighter="leon">🔥 LEON (BLITZ)</button>
+        <button class="select-chip" data-fighter="noah">🌪️ NOAH (STURM)</button>
+      </div>
+    </main>
+
+    <!-- Trainings-Missionen (Comic Panels) -->
+    <section class="missions-section">
+      <h2 class="section-heading">TRAINING WÄHLEN</h2>
+      
+      <div class="mission-grid">
+        <button class="mission-panel" data-xp="25" data-power="350" data-name="Kniebeugen-Salve">
+          <div class="panel-icon">🦵</div>
+          <div class="panel-info">
+            <h3>15x KNIEBEUGEN</h3>
+            <p>Schwerkraft-Training</p>
+          </div>
+          <span class="xp-pill">+25 XP</span>
+        </button>
+
+        <button class="mission-panel" data-xp="35" data-power="500" data-name="Liegestütz-Welle">
+          <div class="panel-icon">💪</div>
+          <div class="panel-info">
+            <h3>10x LIEGESTÜTZE</h3>
+            <p>Kamehameha-Kraft</p>
+          </div>
+          <span class="xp-pill">+35 XP</span>
+        </button>
+
+        <button class="mission-panel" data-xp="20" data-power="250" data-name="Hampelmann-Sprint">
+          <div class="panel-icon">⚡</div>
+          <div class="panel-info">
+            <h3>30 SEK. HAMPELMÄNNER</h3>
+            <p>Telekinese-Speed</p>
+          </div>
+          <span class="xp-pill">+20 XP</span>
+        </button>
+
+        <button class="mission-panel boss" data-xp="60" data-power="1200" data-name="Super-Saiyajin-Prüfung">
+          <div class="panel-icon">🔥</div>
+          <div class="panel-info">
+            <h3>1 MIN. PLANK + SPRINT</h3>
+            <p>BOSS-HERAUSFORDERUNG</p>
+          </div>
+          <span class="xp-pill">+60 XP</span>
+        </button>
+      </div>
+    </section>
+
+    <footer class="app-footer">
+      <button id="reset-btn" class="reset-link">Fortschritt zurücksetzen</button>
+    </footer>
   </div>
 
   <script src="app.js"></script>
