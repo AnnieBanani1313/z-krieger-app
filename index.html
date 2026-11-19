@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Z-Krieger Akademie</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#ff6b00">
+</head>
+<body>
+
+  <header class="scouter-bar">
+    <div class="scouter-label">KAMPFKRAFT</div>
+    <div class="power-value" id="powerLevel">150</div>
+    <div class="rank-badge" id="rankBadge">Anfänger-Kämpfer</div>
+  </header>
+
+  <main class="container">
+
+    <section id="tab-training" class="tab-content active">
+      <div class="fighter-stage" id="fighterStage">
+        <div class="aura" id="fighterAura"></div>
+        <svg class="fighter-svg" viewBox="0 0 200 220" id="fighterSvg">
+          <path id="fighterHair" d="M60,80 L30,50 L65,55 L50,20 L85,45 L100,10 L115,45 L150,20 L135,55 L170,50 L140,80 Z" fill="#1a1a1a"/>
+          <circle cx="100" cy="85" r="32" fill="#ffcc99"/>
+          <path d="M78,78 L95,84 M122,78 L105,84" stroke="#1a1a1a" stroke-width="4" stroke-linecap="round"/>
+          <circle cx="88" cy="88" r="3" fill="#1a1a1a" id="eyeLeft"/>
+          <circle cx="112" cy="88" r="3" fill="#1a1a1a" id="eyeRight"/>
+          <path d="M60,125 L140,125 L155,210 L45,210 Z" fill="#ff6b00"/>
+          <path d="M80,125 L100,160 L120,125 Z" fill="#0044cc"/>
+          <rect x="52" y="165" width="96" height="12" fill="#0044cc"/>
+        </svg>
+        <div class="form-name" id="formName">Basis-Form</div>
+      </div>
+
+      <div class="progress-wrapper">
+        <div class="progress-text">Nächste Stufe: <span id="nextGoal">1.000</span></div>
+        <div class="progress-bar">
+          <div class="progress-fill" id="progressFill"></div>
+        </div>
+      </div>
+
+      <h2>Schwerkraft-Training</h2>
+      <div class="workout-grid">
+        <button class="action-btn" onclick="train(150, '10 Liegestütze')">
+          <span class="emoji">💪</span>
+          <strong>10 Liegestütze</strong>
+          <small>+150 Power</small>
+        </button>
+        <button class="action-btn" onclick="train(200, '15 Kniebeugen')">
+          <span class="emoji">⚡</span>
+          <strong>15 Kniebeugen</strong>
+          <small>+200 Power</small>
+        </button>
+        <button class="action-btn" onclick="train(120, '20 Hampelmänner')">
+          <span class="emoji">🔥</span>
+          <strong>20 Hampelmänner</strong>
+          <small>+120 Power</small>
+        </button>
+        <button class="action-btn" onclick="train(300, '30 Sek. Plank')">
+          <span class="emoji">🛡️</span>
+          <strong>30 Sek. Plank</strong>
+          <small>+300 Power</small>
+        </button>
+      </div>
+    </section>
+
+    <section id="tab-radar" class="tab-content">
+      <h2>Energie-Radar</h2>
+      <p class="subtitle">Finde alle 7 Kugeln (<span id="ballsFound">0</span>/7), um den Drachen zu rufen!</p>
+
+      <div class="radar-box">
+        <div class="radar-screen" id="radarScreen" onclick="scanRadar(event)">
+          <div class="radar-sweep"></div>
+          <div class="radar-grid-h"></div>
+          <div class="radar-grid-v"></div>
+          <div class="radar-center"></div>
+          <div class="radar-blip" id="radarBlip"></div>
+        </div>
+      </div>
+
+      <p class="radar-hint" id="radarHint">Tippe auf das Radar, um das Signal zu orten!</p>
+      <button class="primary-btn hidden" id="summonBtn" onclick="summonDragon()">🐉 Wunsch-Drachen rufen!</button>
+    </section>
+
+    <section id="tab-battle" class="tab-content">
+      <h2>Ki-Strahl Duell</h2>
+      <p class="subtitle">Tippe so schnell du kannst, um die Energie-Welle abzuwehren!</p>
+
+      <div class="beam-arena">
+        <div class="beam-bar">
+          <div class="beam-player" id="beamPlayer" style="width: 50%;"></div>
+          <div class="beam-clash" id="beamClash" style="left: 50%;">💥</div>
+        </div>
+        <div class="beam-labels">
+          <span>DEIN KI</span>
+          <span>GEGNER</span>
+        </div>
+      </div>
+
+      <div class="battle-controls">
+        <button class="primary-btn" id="startBattleBtn" onclick="startBattle()">Kampf starten!</button>
+        <button class="mash-btn hidden" id="mashBtn" onclick="pushBeam()">⚡ ENERGIE FEUERN! ⚡</button>
+      </div>
+      <p class="battle-status" id="battleStatus"></p>
+    </section>
+
+  </main>
+
+  <nav class="bottom-nav">
+    <button class="nav-btn active" onclick="switchTab('training', this)">
+      <span>🔥</span>Training
+    </button>
+    <button class="nav-btn" onclick="switchTab('radar', this)">
+      <span>📡</span>Radar
+    </button>
+    <button class="nav-btn" onclick="switchTab('battle', this)">
+      <span>💥</span>Duell
+    </button>
+  </nav>
+
+  <div class="modal hidden" id="rewardModal">
+    <div class="modal-card">
+      <div class="modal-icon" id="modalIcon">🐉</div>
+      <h3 id="modalTitle">Der Drache erscheint!</h3>
+      <p id="modalText">Dein Wunsch wurde erfüllt: +1.500 Kampfkraft!</p>
+      <button class="primary-btn" onclick="closeModal()">Genial!</button>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
