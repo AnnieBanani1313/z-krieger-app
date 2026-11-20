@@ -1,9 +1,9 @@
 :root {
-  --bg-black: #09090b;
+  --bg-black: #08080a;
   --card-dark: #131318;
-  --card-border: #272730;
-  --gold: #ff9900;
-  --gold-bright: #ffc800;
+  --card-border: #262630;
+  --gold: #ff8c00;
+  --gold-bright: #ffbe00;
   --text-muted: #8c8c9e;
 }
 
@@ -49,7 +49,7 @@ body {
 
 .hero-title {
   font-family: 'Anton', sans-serif;
-  font-size: 2.25rem;
+  font-size: 2.4rem;
   line-height: 0.95;
   letter-spacing: 1px;
   color: var(--gold-bright);
@@ -61,7 +61,6 @@ body {
   border-radius: 10px;
   padding: 6px 12px;
   text-align: right;
-  box-shadow: 0 0 18px rgba(255, 153, 0, 0.18);
 }
 
 .pill-label {
@@ -77,10 +76,10 @@ body {
   color: #ffffff;
 }
 
-/* Hero Stage & Scanner */
+/* Hero Stage mit riesiger orangener Schrift hinter der Figur */
 .hero-stage {
   position: relative;
-  background: radial-gradient(circle at 50% 45%, #2b1d09 0%, #101014 75%);
+  background: radial-gradient(circle at 50% 45%, #2b1906 0%, #0d0d11 75%);
   border: 1px solid var(--card-border);
   border-radius: 18px;
   padding: 14px;
@@ -89,20 +88,25 @@ body {
 
 .watermark-text {
   position: absolute;
-  top: 48%;
+  top: 44%;
   left: 50%;
   transform: translate(-50%, -50%);
   font-family: 'Anton', sans-serif;
-  font-size: 7rem;
-  color: rgba(255, 255, 255, 0.03);
+  font-size: 4.6rem;
+  line-height: 0.9;
+  color: rgba(255, 140, 0, 0.16);
+  white-space: nowrap;
   pointer-events: none;
+  z-index: 1;
 }
 
 .stage-top-bar {
+  position: relative;
+  z-index: 3;
   display: flex;
   align-items: center;
   gap: 8px;
-  margin-bottom: 10px;
+  margin-bottom: 6px;
 }
 
 .stage-num {
@@ -113,8 +117,8 @@ body {
 
 .fighter-name {
   font-family: 'Anton', sans-serif;
-  font-size: 1.35rem;
-  letter-spacing: 1px;
+  font-size: 1.3rem;
+  letter-spacing: 0.8px;
   flex: 1;
 }
 
@@ -127,34 +131,66 @@ body {
   border-radius: 6px;
 }
 
-/* Kämpfer-Bild mit interaktiven Körperteil-Punkten */
+/* Freigestellter Kämpfer durch mix-blend-mode: lighten */
 .fighter-scanner {
   position: relative;
-  width: 245px;
-  height: 285px;
-  margin: 0 auto 12px;
-  border-radius: 14px;
-  overflow: hidden;
-  border: 2px solid rgba(255, 153, 0, 0.45);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.85);
+  width: 260px;
+  height: 300px;
+  margin: 0 auto 10px;
+  display: grid;
+  place-items: center;
+  z-index: 2;
 }
-
-.fighter-scanner.stage-2 { border-color: #ffd600; box-shadow: 0 0 28px rgba(255, 214, 0, 0.45); }
-.fighter-scanner.stage-3 { border-color: #00e5ff; box-shadow: 0 0 32px rgba(0, 229, 255, 0.5); }
-.fighter-scanner.stage-4 { border-color: #38b6ff; box-shadow: 0 0 38px rgba(56, 182, 255, 0.65); }
 
 .fighter-img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
-  object-position: top center;
+  object-fit: contain;
+  mix-blend-mode: lighten;
+  filter: drop-shadow(0 12px 18px rgba(0, 0, 0, 0.9));
 }
 
-/* Leuchtende Körperteil-Hotspots direkt auf der Figur */
+.placeholder-box {
+  width: 180px;
+  height: 230px;
+  border: 2px dashed rgba(255, 140, 0, 0.5);
+  border-radius: 14px;
+  background: rgba(15, 15, 20, 0.8);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  color: var(--gold-bright);
+  font-family: 'Anton', sans-serif;
+  font-size: 1.2rem;
+}
+
+.placeholder-box small {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.hidden {
+  display: none !important;
+}
+
+.energy-pedestal {
+  position: absolute;
+  bottom: 4px;
+  width: 190px;
+  height: 22px;
+  border-radius: 50%;
+  background: radial-gradient(ellipse at center, rgba(255, 157, 0, 0.65) 0%, transparent 72%);
+  pointer-events: none;
+}
+
+/* Körperteil-Hotspots */
 .body-hotspot {
   position: absolute;
   transform: translate(-50%, -50%);
-  background: rgba(12, 12, 16, 0.85);
+  background: rgba(10, 10, 14, 0.88);
   border: 1.5px solid var(--gold);
   color: #fff;
   border-radius: 99px;
@@ -163,45 +199,49 @@ body {
   font-weight: 700;
   font-size: 0.72rem;
   cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 5px;
   z-index: 5;
-  transition: all 0.2s ease;
-  box-shadow: 0 0 12px rgba(0, 0, 0, 0.8);
 }
 
 .body-hotspot.active {
   background: var(--gold-bright);
   color: #000;
   border-color: #fff;
-  transform: translate(-50%, -50%) scale(1.1);
-  box-shadow: 0 0 18px var(--gold);
+  transform: translate(-50%, -50%) scale(1.08);
 }
 
-.pulse-ring {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: var(--gold-bright);
-  display: inline-block;
+/* Stufen 1-5 Pills */
+.stage-pills {
+  position: relative;
+  z-index: 3;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 6px;
+  margin-bottom: 10px;
 }
 
-.body-hotspot.active .pulse-ring {
-  background: #000;
+.stage-pill {
+  background: #17171f;
+  border: 1px solid var(--card-border);
+  color: #fff;
+  border-radius: 8px;
+  padding: 5px 2px;
+  font-family: 'Anton', sans-serif;
+  font-size: 0.82rem;
+  cursor: pointer;
 }
 
-.energy-pedestal {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 14px;
-  background: linear-gradient(90deg, transparent, var(--gold), transparent);
-  opacity: 0.8;
+.stage-pill.active {
+  background: var(--gold);
+  color: #000;
+  border-color: var(--gold-bright);
 }
 
-/* Körperteil-Level Übersicht */
+.stage-pill.locked {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* Körperteil-Stats & XP */
 .body-stats-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -210,23 +250,21 @@ body {
 }
 
 .stat-box {
-  background: rgba(0, 0, 0, 0.45);
+  background: rgba(0, 0, 0, 0.5);
   border: 1px solid var(--card-border);
   border-radius: 8px;
-  padding: 5px 8px;
+  padding: 5px;
   text-align: center;
 }
 
 .stat-box.active-box {
   border-color: var(--gold);
-  background: rgba(255, 153, 0, 0.12);
 }
 
 .stat-name {
   display: block;
   font-size: 0.65rem;
   color: var(--text-muted);
-  letter-spacing: 1px;
 }
 
 .stat-box strong {
@@ -235,7 +273,6 @@ body {
   color: var(--gold-bright);
 }
 
-/* XP Balken */
 .xp-wrapper {
   display: flex;
   align-items: center;
@@ -253,7 +290,7 @@ body {
 .xp-bar-fill {
   height: 100%;
   background: linear-gradient(90deg, var(--gold), var(--gold-bright));
-  transition: width 0.35s ease;
+  transition: width 0.3s ease;
 }
 
 .xp-numbers {
@@ -262,22 +299,81 @@ body {
   color: var(--text-muted);
 }
 
-/* Trainings-Bereich & Modus-Umschalter */
+/* 15 Kämpfer Auswahl im orangenen Dribbble-Karten-Look */
 .section-top {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 8px;
-  gap: 6px;
 }
 
 .section-top h3 {
   font-family: 'Anton', sans-serif;
   font-size: 1.05rem;
   letter-spacing: 0.8px;
-  color: #ffffff;
 }
 
+.hint-text {
+  font-size: 0.75rem;
+  color: var(--gold);
+}
+
+.roster-scroll {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  padding-bottom: 6px;
+}
+
+.char-card {
+  flex: 0 0 86px;
+  background: linear-gradient(180deg, #ff9900 0%, #c95b00 100%);
+  border: 2px solid #2b2b35;
+  border-radius: 12px;
+  padding: 6px 4px;
+  color: #000;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+
+.char-card:not(.active) {
+  background: var(--card-dark);
+  color: #fff;
+}
+
+.char-card.active {
+  border-color: #fff;
+  box-shadow: 0 0 16px rgba(255, 153, 0, 0.45);
+}
+
+.char-card img {
+  width: 68px;
+  height: 78px;
+  object-fit: contain;
+  mix-blend-mode: lighten;
+}
+
+.char-fallback-num {
+  width: 68px;
+  height: 78px;
+  display: grid;
+  place-items: center;
+  font-family: 'Anton', sans-serif;
+  font-size: 1.5rem;
+  color: rgba(255, 255, 255, 0.35);
+}
+
+.char-card span {
+  font-family: 'Anton', sans-serif;
+  font-size: 0.75rem;
+  letter-spacing: 0.5px;
+  margin-top: 2px;
+}
+
+/* Übungen & Tabs */
 .difficulty-tabs {
   display: flex;
   background: var(--card-dark);
@@ -321,12 +417,6 @@ body {
   color: #fff;
   cursor: pointer;
   text-align: left;
-  transition: transform 0.1s;
-}
-
-.workout-card:active {
-  transform: scale(0.98);
-  background: #1c1c24;
 }
 
 .workout-title {
@@ -345,92 +435,25 @@ body {
   font-size: 1.05rem;
 }
 
-/* Roster Karten unten */
-.hint-text {
-  font-size: 0.75rem;
-  color: var(--text-muted);
-}
-
-.roster-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 8px;
-}
-
-.roster-card {
-  background: var(--card-dark);
-  border: 2px solid var(--card-border);
-  border-radius: 10px;
-  padding: 4px;
-  color: #fff;
-  cursor: pointer;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
-}
-
-.roster-card img {
-  width: 100%;
-  height: 62px;
-  object-fit: cover;
-  object-position: top;
-  border-radius: 6px;
-}
-
-.roster-card span {
-  font-size: 0.66rem;
-  font-weight: 700;
-}
-
-.roster-card.active {
-  border-color: var(--gold-bright);
-  background: #241b0c;
-}
-
-.roster-card.locked img {
-  filter: grayscale(100%) brightness(0.35);
-}
-
-.roster-card.locked {
-  cursor: not-allowed;
-  opacity: 0.7;
-}
-
-/* Modal & Effekte */
-.shake {
-  animation: pulseHit 0.28s ease;
-}
-
-@keyframes pulseHit {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(0.985); }
-}
-
+/* Level-Up Modal */
 .levelup-overlay {
   position: fixed;
   inset: 0;
   background: rgba(0, 0, 0, 0.88);
-  backdrop-filter: blur(6px);
   z-index: 50;
   display: grid;
   place-items: center;
   padding: 20px;
 }
 
-.levelup-overlay.hidden {
-  display: none;
-}
-
 .levelup-card {
-  background: linear-gradient(180deg, #1f170a, #121216);
+  background: #18140d;
   border: 2px solid var(--gold);
   border-radius: 18px;
   padding: 26px 20px;
   text-align: center;
   max-width: 340px;
   width: 100%;
-  box-shadow: 0 0 40px rgba(255, 153, 0, 0.35);
 }
 
 .badge-gold {
@@ -449,15 +472,10 @@ body {
   margin: 12px 0 8px;
 }
 
-.levelup-card p {
-  color: #c4c4d4;
-  font-size: 0.95rem;
-}
-
 .btn-gold {
   margin-top: 18px;
   width: 100%;
-  background: linear-gradient(90deg, var(--gold), var(--gold-bright));
+  background: var(--gold-bright);
   color: #000;
   border: none;
   border-radius: 10px;
@@ -467,15 +485,5 @@ body {
   cursor: pointer;
 }
 
-.bottom-bar {
-  text-align: center;
-}
-
-.reset-btn {
-  background: none;
-  border: none;
-  color: var(--text-muted);
-  font-size: 0.75rem;
-  text-decoration: underline;
-  cursor: pointer;
-}
+.bottom-bar { text-align: center; }
+.reset-btn { background: none; border: none; color: var(--text-muted); font-size: 0.75rem; text-decoration: underline; cursor: pointer; }
