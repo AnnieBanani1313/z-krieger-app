@@ -1,3 +1,7 @@
+const fontLink = document.createElement("link");
+fontLink.rel = "stylesheet";
+fontLink.href = "https://" + "fonts." + "://googleapis.com";
+document.head.appendChild(fontLink);
 const CHARACTERS = [
   { id: 1, name: "SON-BLITZ", attack: "SONNEN-KAMEHA", focus: "GANZKÖRPER", bio: "Ein furchtloser Saiyajin-Krieger mit unbändigem Trainingswillen.", color: "#ffb703" },
   { id: 2, name: "PRINZ-KI", attack: "FINALER BLITZ", focus: "ARME & BRUST", bio: "Stolz, zielstrebig und Meister der schweren Schwerkraft.", color: "#5ce1e6" },
