@@ -1,25 +1,3 @@
-@font-face {
-  font-family: 'Anton';
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-  src: url(https://gstatic.com) format('truetype');
-}
-@font-face {
-  font-family: 'Rajdhani';
-  font-style: normal;
-  font-weight: 600;
-  font-display: swap;
-  src: url(https://gstatic.com) format('truetype');
-}
-@font-face {
-  font-family: 'Rajdhani';
-  font-style: normal;
-  font-weight: 700;
-  font-display: swap;
-  src: url(https://gstatic.com) format('truetype');
-}
-
 :root {
   --bg: #0b0b0d;
   --surface: #141418;
@@ -135,6 +113,7 @@ body {
 .ki-sub-line strong { color: #ffffff; }
 .avatar-thumb { width: 38px; height: 38px; border-radius: 10px; background: var(--orange); overflow: hidden; }
 .avatar-thumb img { width: 100%; height: 100%; object-fit: cover; object-position: top; }
+
 /* SCREEN 2: KARUSSELL */
 .dragon-svg { position: absolute; left: -25px; top: 25%; width: 245px; height: 360px; opacity: 0.045; pointer-events: none; z-index: 0; }
 .mockup-split-body { flex: 1; position: relative; display: flex; margin-top: 6px; }
@@ -284,3 +263,4 @@ body {
 .levelup-card { background: var(--surface); border: 2px solid var(--orange); border-radius: 16px; padding: 24px; text-align: center; max-width: 330px; width: 100%; display: flex; flex-direction: column; gap: 12px; }
 .orange-tag { align-self: center; background: var(--orange); color: #0a0a0c; font-family: 'Anton', sans-serif; font-size: 0.92rem; letter-spacing: 0.8px; padding: 3px 12px; border-radius: 6px; }
 .reset-link { background: none; border: none; color: var(--muted); font-size: 0.75rem; text-decoration: underline; cursor: pointer; margin: 4px auto; }
+
