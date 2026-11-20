@@ -37,7 +37,7 @@
     <button id="enter-app-btn" class="tall-orange-btn">KRIEGER WÄHLEN →</button>
   </section>
 
-  <!-- SCREEN 2: ÜBERLAPPENDES KÄMPFER-KARUSSELL -->
+  <!-- SCREEN 2: LÜCKENLOSES NEON-KARUSSELL OHNE TEXT AUF DEN KACHELN -->
   <section id="select-screen" class="poster-screen select-layout hidden">
     <svg class="dragon-svg" viewBox="0 0 200 320" fill="none">
       <path d="M40 30 C115 10, 165 65, 120 115 C75 165, 175 185, 130 245 C95 290, 25 265, 48 215 C70 165, 10 140, 40 90 Z" stroke="#ffffff" stroke-width="20" stroke-linecap="round"/>
@@ -58,6 +58,7 @@
     </header>
 
     <div class="mockup-split-body">
+      <!-- Linke Spalte: Titel oben, Scroll-Linie, gewählter Kriegername & Hinweis unten -->
       <div class="left-info-col">
         <div>
           <span class="orange-kicker-tall">WÄHLE DEINEN</span>
@@ -68,33 +69,35 @@
           <div id="scroll-thumb" class="scroll-thumb"></div>
         </div>
 
-        <p class="orange-bottom-caption">UND STARTE DEIN<br>TRAINING...</p>
+        <div class="selected-info-left">
+          <div id="name-curr" class="left-fighter-name">SON-BLITZ</div>
+          <div class="left-pills">
+            <span id="lvl-curr" class="orange-mini-pill">LVL 1</span>
+            <span id="evo-curr" class="dark-mini-pill">STUFE 1/5</span>
+          </div>
+          <p class="orange-bottom-caption">UND STARTE DEIN<br>TRAINING...</p>
+        </div>
       </div>
 
+      <!-- Rechts: Lückenlos aneinanderliegende Neon-Kacheln ohne Text -->
       <div id="staggered-carousel" class="staggered-carousel">
-        <!-- Karte Oben -->
-        <div id="card-prev" class="s-card card-top">
-          <div id="fb-prev" class="s-fallback">#15</div>
-        </div>
-        <img id="img-prev" class="s-char-img char-top" alt="" />
+        <div class="neon-stack">
+          <div id="card-prev" class="s-card card-top">
+            <div id="fb-prev" class="s-fallback">#15</div>
+          </div>
 
-        <!-- Karte Mitte (großes Quadrat, weiter links) -->
-        <div id="card-curr" class="s-card card-center">
-          <div id="fb-curr" class="s-fallback">#01</div>
-          <div class="center-card-footer">
-            <div id="name-curr" class="center-name">SON-BLITZ</div>
-            <div class="center-pills">
-              <span id="lvl-curr" class="dark-pill">LVL 1</span>
-              <span id="evo-curr" class="dark-pill">STUFE · 1</span>
-            </div>
+          <div id="card-curr" class="s-card card-center">
+            <div id="fb-curr" class="s-fallback">#01</div>
+          </div>
+
+          <div id="card-next" class="s-card card-bottom">
+            <div id="fb-next" class="s-fallback">#02</div>
           </div>
         </div>
-        <img id="img-curr" class="s-char-img char-center" alt="" />
 
-        <!-- Karte Unten -->
-        <div id="card-next" class="s-card card-bottom">
-          <div id="fb-next" class="s-fallback">#02</div>
-        </div>
+        <!-- Die 3 Figuren schweben frei und groß über den Kacheln -->
+        <img id="img-prev" class="s-char-img char-top" alt="" />
+        <img id="img-curr" class="s-char-img char-center" alt="" />
         <img id="img-next" class="s-char-img char-bottom" alt="" />
       </div>
     </div>
@@ -194,4 +197,5 @@
 
   <script src="app.js"></script>
 </body>
-</html>
+  </html>
+  
