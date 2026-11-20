@@ -79,7 +79,6 @@ const BODY_WORKOUTS = {
     ]
   }
 };
-
 let state = JSON.parse(localStorage.getItem("zwarriors_neon_v7")) || {
   level: 1, xp: 0, powerLevel: 1000, carouselIndex: 0, selectedChar: 1,
   selectedStage: 1, selectedPart: "arms", difficulty: "easy", partXP: { arms: 0, core: 0, legs: 0 }
@@ -159,6 +158,7 @@ function updateStaggeredCarousel() {
     const charObj = [cPrev, cCurr, cNext][i];
     const fb = document.getElementById(`fb-${pos}`);
     const im = document.getElementById(`img-${pos}`);
+    im.classList.toggle("is-c3", charObj.id === 3);
     fb.style.display = "grid";
     loadSmartImage(
       im,
@@ -206,7 +206,6 @@ document.getElementById("card-curr").addEventListener("click", () => {
   playSound(false);
   openCharacterDetails(CHARACTERS[state.carouselIndex].id);
 });
-
 function openCharacterDetails(charId) {
   const c = CHARACTERS.find(item => item.id === charId) || CHARACTERS.at(0);
   state.selectedChar = c.id;
@@ -218,6 +217,7 @@ function openCharacterDetails(charId) {
   document.getElementById("detail-focus").textContent = c.focus;
 
   const imgEl = document.getElementById("detail-img");
+  imgEl.classList.toggle("is-c3", c.id === 3);
   const phEl = document.getElementById("detail-placeholder");
   document.getElementById("detail-placeholder-code").textContent = `c${c.id}_s1.png`;
   phEl.classList.add("hidden");
@@ -299,6 +299,7 @@ function updateUI() {
   loadSmartImage(document.getElementById("header-avatar-img"), `c${state.selectedChar}_s1`, () => {});
 
   const imgEl = document.getElementById("fighter-img");
+  imgEl.classList.toggle("is-c3", state.selectedChar === 3);
   const placeholderEl = document.getElementById("placeholder-box");
   document.getElementById("placeholder-code").textContent = `${baseFile}.png`;
   placeholderEl.classList.add("hidden");
