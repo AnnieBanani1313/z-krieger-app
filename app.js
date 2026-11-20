@@ -1,270 +1,373 @@
-:root {
-  --bg: #0b0b0d;
-  --surface: #141418;
-  --orange: #ff9900;
-  --orange-bright: #ffb703;
-  --muted: #9898a6;
+const CHARACTERS = [
+  { id: 1, name: "SON-BLITZ", attack: "SONNEN-KAMEHA", focus: "GANZKÖRPER", bio: "Ein furchtloser Saiyajin-Krieger mit unbändigem Trainingswillen.", color: "#ffb703" },
+  { id: 2, name: "PRINZ-KI", attack: "FINALER BLITZ", focus: "ARME & BRUST", bio: "Stolz, zielstrebig und Meister der schweren Schwerkraft.", color: "#5ce1e6" },
+  { id: 3, name: "CYBER-RED", attack: "FLAMMEN-HIEB", focus: "REAKTION & KERN", bio: "High-Tech-Kampfrüstung und blitzschnelle Reflexe.", color: "#ff5c77" },
+  { id: 4, name: "SHADOW-X", attack: "PHANTOM-SALVE", focus: "BAUCH & BALANCE", bio: "Bewegt sich lautlos wie der Wind.", color: "#c77dff" },
+  { id: 5, name: "NOVA-GOLD", attack: "SUPERNOVA", focus: "GANZKÖRPER", bio: "Seine goldene Energie erhellt die gesamte Arena.", color: "#ffe66d" },
+  { id: 6, name: "TITAN-FORCE", attack: "TITANEN-WALL", focus: "ARME & CORE", bio: "Ein unerschütterlicher Verteidiger mit starkem Ki-Schild.", color: "#48cae4" },
+  { id: 7, name: "BLITZ-KID", attack: "DONNER-SPRINT", focus: "BEINE & SPEED", bio: "Jung, extrem wendig und voller Schnellkraft.", color: "#ff9e5e" },
+  { id: 8, name: "FROST-ZEN", attack: "GLETSCHER-STRAHL", focus: "KI-KERN", bio: "Bleibt selbst unter höchstem Druck eiskalt.", color: "#72efdd" },
+  { id: 9, name: "FLAME-REX", attack: "MAGMA-FAUST", focus: "BRUST & SCHULTERN", bio: "Seine glühende Kampf-Aura steigt mit jedem Training.", color: "#ff6b6b" },
+  { id: 10, name: "ULTRA-VEX", attack: "KOMETEN-REGEN", focus: "GANZKÖRPER", bio: "Nutzt kosmische Energie für maximale Sprungkraft.", color: "#b8c0ff" },
+  { id: 11, name: "SOLAR-KAI", attack: "HELIOS-WELLE", focus: "AUSDAUER", bio: "Zieht seine Kraft direkt aus dem Licht der Sonne.", color: "#ffd166" },
+  { id: 12, name: "DARK-ORION", attack: "ECLIPSE-SCHLAG", focus: "ARME & RÜCKEN", bio: "Geheimnisvoller Einzelgänger mit gewaltiger Schlagkraft.", color: "#80ffdb" },
+  { id: 13, name: "AERO-DASH", attack: "WIRBELSTURM", focus: "BEINE & AGILITÄT", bio: "Beherrscht den Himmel und bewegt sich blitzschnell.", color: "#64dfdf" },
+  { id: 14, name: "OMEGA-GOD", attack: "OMEGA-URKNALL", focus: "ALLE BEREICHE", bio: "Der ultimative Meister-Krieger aller Techniken.", color: "#ff758f" },
+  { id: 15, name: "STURM-GREEN", attack: "OMEGA-STURM", focus: "BEINE & KRAFT", bio: "Entfesselt gewaltige smaragdgrüne Natur-Energie.", color: "#52e588" }
+];
+
+const STAGE_RULES = [
+  { stage: 1, minLevel: 1 },
+  { stage: 2, minLevel: 2 },
+  { stage: 3, minLevel: 4 },
+  { stage: 4, minLevel: 6 },
+  { stage: 5, minLevel: 8 }
+];
+
+const BODY_WORKOUTS = {
+  arms: {
+    label: "TRAINING: ARME & BRUST",
+    easy: [
+      { title: "10x Knie-Liegestütze", sub: "Einfach · Basis", xp: 25, power: 400 },
+      { title: "20 Sek. Schattenboxen", sub: "Einfach · Ki-Fäuste", xp: 20, power: 350 }
+    ],
+    advanced: [
+      { title: "12x Echte Liegestütze", sub: "Profi · Kamehameha", xp: 45, power: 900 },
+      { title: "10x Dips am Stuhl", sub: "Profi · Trizeps", xp: 45, power: 950 }
+    ],
+    master: [
+      { title: "22x Tiefe Liegestütze", sub: "Meister · 100x G", xp: 80, power: 2000 },
+      { title: "10x Diamant-Liegestütze", sub: "Meister · Final-Ki", xp: 90, power: 2400 }
+    ]
+  },
+  core: {
+    label: "TRAINING: BAUCH & KI-KERN",
+    easy: [
+      { title: "20 Sek. Plank", sub: "Einfach · Ki-Schild", xp: 25, power: 450 },
+      { title: "10x Crunches", sub: "Einfach · Körpermitte", xp: 25, power: 400 }
+    ],
+    advanced: [
+      { title: "40 Sek. Plank", sub: "Profi · Goldene Aura", xp: 45, power: 950 },
+      { title: "18x Sit-Ups", sub: "Profi · Saiyajin-Rumpf", xp: 45, power: 900 }
+    ],
+    master: [
+      { title: "70 Sek. Plank", sub: "Meister · Abwehr", xp: 85, power: 2200 },
+      { title: "25x Beinheben", sub: "Meister · Göttlicher Kern", xp: 80, power: 2100 }
+    ]
+  },
+  legs: {
+    label: "TRAINING: BEINE & SPRUNGKRAFT",
+    easy: [
+      { title: "15x Kniebeugen", sub: "Einfach · Fester Stand", xp: 25, power: 450 },
+      { title: "25 Sek. Hampelmänner", sub: "Einfach · Speed", xp: 20, power: 350 }
+    ],
+    advanced: [
+      { title: "25x Kniebeugen", sub: "Profi · 10x Schwerkraft", xp: 45, power: 950 },
+      { title: "14x Ausfallschritte", sub: "Profi · Ausweichen", xp: 45, power: 900 }
+    ],
+    master: [
+      { title: "15x Sprung-Kniebeugen", sub: "Meister · Raketen-Start", xp: 85, power: 2300 },
+      { title: "45 Sek. Wandsitzen", sub: "Meister · 100x G", xp: 80, power: 2100 }
+    ]
+  }
+};
+let state = JSON.parse(localStorage.getItem("zwarriors_neon_v7")) || {
+  level: 1, xp: 0, powerLevel: 1000, carouselIndex: 0, selectedChar: 1,
+  selectedStage: 1, selectedPart: "arms", difficulty: "easy", partXP: { arms: 0, core: 0, legs: 0 }
+};
+
+function showScreen(id) {
+  ["intro-screen", "select-screen", "detail-screen", "arena-screen"].forEach(s => {
+    document.getElementById(s).classList.toggle("hidden", s !== id);
+  });
 }
 
-* { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
-
-body {
-  background-color: var(--bg);
-  color: #ffffff;
-  font-family: 'Rajdhani', sans-serif;
-  min-height: 100dvh;
-  overflow-x: hidden;
-  overscroll-behavior-y: contain;
+function playSound(isLevelUp = false) {
+  try {
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    const ctx = new AudioCtx();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = isLevelUp ? "sawtooth" : "triangle";
+    osc.frequency.setValueAtTime(isLevelUp ? 220 : 190, ctx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(isLevelUp ? 880 : 540, ctx.currentTime + (isLevelUp ? 0.45 : 0.18));
+    gain.gain.setValueAtTime(0.14, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + (isLevelUp ? 0.5 : 0.2));
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start();
+    osc.stop(ctx.currentTime + (isLevelUp ? 0.5 : 0.2));
+  } catch (e) {}
 }
 
-.hidden { display: none !important; }
-
-.poster-screen {
-  max-width: 430px;
-  min-height: 100dvh;
-  margin: 0 auto;
-  padding: 18px 20px 26px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  position: relative;
-  overflow: hidden;
-  background: #0b0b0d;
-  overscroll-behavior-y: contain;
+function loadSmartImage(imgEl, baseName, onFail, onSuccess) {
+  imgEl.style.display = "none";
+  imgEl.onload = () => {
+    imgEl.style.display = "block";
+    if (onSuccess) onSuccess();
+  };
+  imgEl.onerror = () => {
+    imgEl.onerror = () => {
+      imgEl.style.display = "none";
+      imgEl.removeAttribute("src");
+      if (onFail) onFail();
+    };
+    imgEl.src = `${baseName}.jpg`;
+  };
+  imgEl.src = `${baseName}.png`;
 }
 
-.select-layout { height: 100dvh; }
-
-.tall-orange-title {
-  font-family: 'Anton', sans-serif;
-  font-weight: 400;
-  font-size: 4.5rem;
-  line-height: 0.88;
-  letter-spacing: 1px;
-  color: var(--orange);
-  text-transform: uppercase;
-  -webkit-text-stroke: 1.5px var(--orange);
-  transform: scaleY(1.22);
-  transform-origin: left top;
-  position: relative;
-  z-index: 1;
+function getMaxUnlockedStage(lvl) {
+  let max = 1;
+  STAGE_RULES.forEach(s => { if (lvl >= s.minLevel) max = s.stage; });
+  return max;
 }
 
-.tall-orange-title.select-big-word {
-  font-size: 3.7rem;
-  line-height: 0.9;
-  margin-top: 2px;
+function updateStaggeredCarousel() {
+  const total = CHARACTERS.length;
+  const idxCurr = (state.carouselIndex + total) % total;
+  const idxPrev = (idxCurr - 1 + total) % total;
+  const idxNext = (idxCurr + 1) % total;
+
+  const cPrev = CHARACTERS[idxPrev];
+  const cCurr = CHARACTERS[idxCurr];
+  const cNext = CHARACTERS[idxNext];
+
+  document.getElementById("select-power").textContent = state.powerLevel.toLocaleString("de-DE");
+  document.getElementById("card-prev").style.background = cPrev.color;
+  document.getElementById("card-curr").style.background = cCurr.color;
+  document.getElementById("card-next").style.background = cNext.color;
+
+  document.getElementById("name-curr").textContent = cCurr.name;
+  document.getElementById("lvl-curr").textContent = `LVL ${state.level}`;
+  document.getElementById("evo-curr").textContent = `STUFE · ${getMaxUnlockedStage(state.level)}`;
+
+  document.getElementById("fb-prev").textContent = `#${String(cPrev.id).padStart(2, "0")}`;
+  document.getElementById("fb-curr").textContent = `#${String(cCurr.id).padStart(2, "0")}`;
+  document.getElementById("fb-next").textContent = `#${String(cNext.id).padStart(2, "0")}`;
+
+  ["prev", "curr", "next"].forEach((pos, i) => {
+    const charObj = [cPrev, cCurr, cNext][i];
+    const fb = document.getElementById(`fb-${pos}`);
+    const im = document.getElementById(`img-${pos}`);
+    fb.style.display = "grid";
+    loadSmartImage(
+      im,
+      `c${charObj.id}_s1`,
+      () => { fb.style.display = "grid"; },
+      () => { fb.style.display = "none"; }
+    );
+  });
+
+  const progress = (idxCurr / (total - 1)) * 34;
+  document.getElementById("scroll-thumb").style.transform = `translateY(${progress}px)`;
 }
 
-.tall-orange-title.center-name-title {
-  font-family: 'Anton', sans-serif;
-  font-size: 2.3rem;
-  letter-spacing: 1px;
-  color: #ffffff;
-  -webkit-text-stroke: 0.8px #ffffff;
-  transform: scaleY(1.15);
-  transform-origin: center;
-  margin-bottom: 6px;
+function stepCarousel(dir) {
+  state.carouselIndex = (state.carouselIndex + dir + CHARACTERS.length) % CHARACTERS.length;
+  playSound(false);
+  updateStaggeredCarousel();
 }
 
-.tall-orange-title.small { font-size: 2.5rem; transform-origin: center; }
+let touchStartY = 0;
+let isSwiping = false;
+const carouselEl = document.getElementById("staggered-carousel");
 
-.tall-orange-heading {
-  font-family: 'Anton', sans-serif;
-  font-size: 1.5rem;
-  letter-spacing: 0.8px;
-  color: var(--orange-bright);
-  text-transform: uppercase;
-  -webkit-text-stroke: 0.6px var(--orange-bright);
-  transform: scaleY(1.12);
+carouselEl.addEventListener("touchstart", e => {
+  if (e.touches && e.touches.length > 0) {
+    touchStartY = e.touches.item(0).clientY;
+    isSwiping = true;
+  }
+}, { passive: true });
+
+carouselEl.addEventListener("touchmove", e => {
+  if (isSwiping) e.preventDefault();
+}, { passive: false });
+
+carouselEl.addEventListener("touchend", e => {
+  if (!isSwiping || !e.changedTouches || e.changedTouches.length === 0) return;
+  isSwiping = false;
+  const diff = touchStartY - e.changedTouches.item(0).clientY;
+  if (Math.abs(diff) > 25) stepCarousel(diff > 0 ? 1 : -1);
+});
+
+document.getElementById("card-prev").addEventListener("click", () => stepCarousel(-1));
+document.getElementById("card-next").addEventListener("click", () => stepCarousel(1));
+document.getElementById("card-curr").addEventListener("click", () => {
+  playSound(false);
+  openCharacterDetails(CHARACTERS[state.carouselIndex].id);
+});
+function openCharacterDetails(charId) {
+  const c = CHARACTERS.find(item => item.id === charId) || CHARACTERS.at(0);
+  state.selectedChar = c.id;
+
+  document.getElementById("detail-num").textContent = String(c.id).padStart(3, "0");
+  document.getElementById("detail-name").textContent = c.name;
+  document.getElementById("detail-bio").textContent = c.bio;
+  document.getElementById("detail-attack").textContent = c.attack;
+  document.getElementById("detail-focus").textContent = c.focus;
+
+  const imgEl = document.getElementById("detail-img");
+  const phEl = document.getElementById("detail-placeholder");
+  document.getElementById("detail-placeholder-code").textContent = `c${c.id}_s1.png`;
+  phEl.classList.add("hidden");
+
+  loadSmartImage(imgEl, `c${c.id}_s1`, () => { phEl.classList.remove("hidden"); });
+  showScreen("detail-screen");
 }
 
-.flex-1 { flex: 1; }
+function renderWorkouts() {
+  const partData = BODY_WORKOUTS[state.selectedPart] || BODY_WORKOUTS.arms;
+  document.getElementById("selected-part-title").textContent = partData.label;
+  const list = document.getElementById("workout-list");
+  list.innerHTML = "";
 
-.tall-orange-btn {
-  width: 100%;
-  background: var(--orange);
-  color: #0b0b0d;
-  border: none;
-  border-radius: 10px;
-  padding: 15px 14px;
-  font-family: 'Anton', sans-serif;
-  font-size: 1.55rem;
-  letter-spacing: 1.2px;
-  text-transform: uppercase;
-  -webkit-text-stroke: 0.8px #0b0b0d;
-  cursor: pointer;
-  box-shadow: 0 8px 25px rgba(255, 140, 0, 0.35);
+  const exercises = partData[state.difficulty] || partData.easy;
+  exercises.forEach(ex => {
+    const btn = document.createElement("button");
+    btn.className = "workout-card";
+    btn.innerHTML = `<div><div class="workout-title">${ex.title}</div><div class="workout-sub">${ex.sub}</div></div><span class="xp-tag">+${ex.xp} XP</span>`;
+    btn.addEventListener("click", () => completeExercise(ex.xp, ex.power));
+    list.appendChild(btn);
+  });
+
+  document.querySelectorAll(".body-hotspot").forEach(spot => spot.classList.toggle("active", spot.dataset.part === state.selectedPart));
+  document.querySelectorAll(".stat-box").forEach(box => box.classList.toggle("active-box", box.dataset.partBox === state.selectedPart));
+  document.querySelectorAll(".diff-tab").forEach(tab => tab.classList.toggle("active", tab.dataset.diff === state.difficulty));
 }
 
-/* SCREEN 1: INTRO */
-.poster-hero-top { position: relative; height: 280px; display: flex; align-items: flex-start; }
-.poster-overlap-char { position: absolute; right: -16px; top: 18px; width: 255px; height: 295px; object-fit: contain; z-index: 5; pointer-events: none; filter: drop-shadow(0 16px 24px rgba(0, 0, 0, 0.9)); }
-.intro-bottom-block { display: flex; flex-direction: column; gap: 10px; z-index: 6; }
-.poster-numbers-row { display: flex; gap: 20px; font-family: 'Anton', sans-serif; font-size: 1.25rem; letter-spacing: 1px; color: #666675; }
-.poster-numbers-row .active-num { color: var(--orange); }
-.poster-subheadline { font-family: 'Anton', sans-serif; font-size: 1.85rem; letter-spacing: 0.8px; color: #ffffff; text-transform: uppercase; -webkit-text-stroke: 0.6px #ffffff; }
-.poster-copy { color: #a8a8b8; font-size: 0.9rem; line-height: 1.35; font-weight: 600; margin-bottom: 4px; }
-.poster-copy.center { text-align: center; }
+function completeExercise(gainedXP, gainedPower) {
+  const oldMax = getMaxUnlockedStage(state.level);
+  state.xp += gainedXP;
+  state.powerLevel += gainedPower;
+  state.partXP[state.selectedPart] = (state.partXP[state.selectedPart] || 0) + gainedXP;
 
-/* HEADER & NAVIGATION */
-.poster-nav { display: flex; justify-content: space-between; align-items: center; z-index: 20; }
-.dark-square-btn { width: 40px; height: 40px; background: #1c1c22; border: 1px solid #2c2c35; border-radius: 10px; color: var(--orange); font-size: 1.6rem; display: grid; place-items: center; cursor: pointer; }
-.user-profile-box { display: flex; align-items: center; gap: 10px; }
-.user-texts { text-align: right; line-height: 1.08; }
-.hello-orange { display: block; font-family: 'Anton', sans-serif; font-size: 1.15rem; letter-spacing: 0.8px; color: var(--orange); -webkit-text-stroke: 0.4px var(--orange); }
-.ki-sub-line { display: block; font-size: 0.72rem; color: var(--muted); font-weight: 700; }
-.ki-sub-line strong { color: #ffffff; }
-.avatar-thumb { width: 38px; height: 38px; border-radius: 10px; background: var(--orange); overflow: hidden; }
-.avatar-thumb img { width: 100%; height: 100%; object-fit: cover; object-position: top; }
-  /* SCREEN 2: KARUSSELL */
-.dragon-svg { position: absolute; left: -25px; top: 25%; width: 245px; height: 360px; opacity: 0.045; pointer-events: none; z-index: 0; }
-.mockup-split-body { flex: 1; position: relative; display: flex; margin-top: 6px; }
-.left-info-col { width: 46%; display: flex; flex-direction: column; justify-content: space-between; padding: 6px 0 14px; z-index: 1; pointer-events: none; }
-.orange-kicker-tall { display: block; font-family: 'Anton', sans-serif; font-size: 1.55rem; letter-spacing: 0.8px; color: var(--orange-bright); line-height: 1; -webkit-text-stroke: 0.6px var(--orange-bright); position: relative; z-index: 1; }
-.scroll-indicator { width: 3px; height: 54px; background: #282830; border-radius: 99px; margin-left: 6px; overflow: hidden; }
-.scroll-thumb { width: 100%; height: 20px; background: var(--orange); border-radius: 99px; transition: transform 0.25s ease; }
-.orange-bottom-caption { font-family: 'Anton', sans-serif; font-size: 1.25rem; letter-spacing: 0.6px; line-height: 1.05; color: var(--orange); -webkit-text-stroke: 0.4px var(--orange); }
-
-.staggered-carousel {
-  position: absolute;
-  right: -20px;
-  top: 0;
-  bottom: 0;
-  width: calc(100% + 20px);
-  touch-action: none;
-  overflow: visible;
-  z-index: 5;
+  const xpNeeded = state.level * 100;
+  if (state.xp >= xpNeeded) {
+    state.xp -= xpNeeded;
+    state.level += 1;
+    const newMax = getMaxUnlockedStage(state.level);
+    if (newMax > oldMax) {
+      state.selectedStage = newMax;
+      playSound(true);
+      document.getElementById("levelup-badge").textContent = "NEUE STUFE";
+      document.getElementById("levelup-title").textContent = `STUFE ${newMax}`;
+      document.getElementById("levelup-desc").textContent = `Stufe ${newMax} ist jetzt freigeschaltet!`;
+    } else {
+      playSound(false);
+      document.getElementById("levelup-badge").textContent = "LEVEL UP";
+      document.getElementById("levelup-title").textContent = `LEVEL ${state.level}`;
+      document.getElementById("levelup-desc").textContent = `Kampfkraft steigt auf ${state.powerLevel.toLocaleString("de-DE")}!`;
+    }
+    document.getElementById("levelup-overlay").classList.remove("hidden");
+  } else {
+    playSound(false);
+  }
+  updateUI();
 }
 
-.neon-stack {
-  position: absolute;
-  right: 0;
-  top: 50%;
-  width: 100%;
-  transform: translateY(-48%);
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 0px;
+function updateUI() {
+  const xpNeeded = state.level * 100;
+  const maxUnlocked = getMaxUnlockedStage(state.level);
+  if (state.selectedStage > maxUnlocked) state.selectedStage = maxUnlocked;
+
+  const charObj = CHARACTERS.find(c => c.id === state.selectedChar) || CHARACTERS.at(0);
+  const baseFile = `c${state.selectedChar}_s${state.selectedStage}`;
+
+  document.getElementById("power-level").textContent = state.powerLevel.toLocaleString("de-DE");
+  document.getElementById("char-num").textContent = String(state.selectedChar).padStart(3, "0");
+  document.getElementById("fighter-title").textContent = `${charObj.name} · STUFE ${state.selectedStage}`;
+  document.getElementById("bg-watermark").textContent = charObj.name;
+  document.getElementById("level-label").textContent = `LVL ${state.level}`;
+  document.getElementById("xp-text").textContent = `${state.xp} / ${xpNeeded} XP`;
+  document.getElementById("ki-bar-fill").style.width = `${Math.min(100, (state.xp / xpNeeded) * 100)}%`;
+
+  document.getElementById("stat-arms").textContent = `LVL ${1 + Math.floor((state.partXP.arms || 0) / 60)}`;
+  document.getElementById("stat-core").textContent = `LVL ${1 + Math.floor((state.partXP.core || 0) / 60)}`;
+  document.getElementById("stat-legs").textContent = `LVL ${1 + Math.floor((state.partXP.legs || 0) / 60)}`;
+
+  loadSmartImage(document.getElementById("header-avatar-img"), `c${state.selectedChar}_s1`, () => {});
+
+  const imgEl = document.getElementById("fighter-img");
+  const placeholderEl = document.getElementById("placeholder-box");
+  document.getElementById("placeholder-code").textContent = `${baseFile}.png`;
+  placeholderEl.classList.add("hidden");
+
+  loadSmartImage(imgEl, baseFile, () => { placeholderEl.classList.remove("hidden"); });
+
+  const pillsContainer = document.getElementById("stage-pills");
+  pillsContainer.innerHTML = "";
+  STAGE_RULES.forEach(s => {
+    const unlocked = s.stage <= maxUnlocked;
+    const btn = document.createElement("button");
+    btn.className = `stage-pill ${s.stage === state.selectedStage ? "active" : ""} ${!unlocked ? "locked" : ""}`;
+    btn.textContent = unlocked ? `STUFE ${s.stage}` : `🔒 ${s.stage}`;
+    if (unlocked) {
+      btn.addEventListener("click", () => {
+        state.selectedStage = s.stage;
+        playSound(false);
+        updateUI();
+      });
+    }
+    pillsContainer.appendChild(btn);
+  });
+
+  localStorage.setItem("zwarriors_neon_v7", JSON.stringify(state));
 }
 
-.s-card { cursor: pointer; transition: all 0.28s cubic-bezier(0.22, 1, 0.36, 1); position: relative; }
+document.getElementById("enter-app-btn").addEventListener("click", () => {
+  playSound(false);
+  updateStaggeredCarousel();
+  showScreen("select-screen");
+});
 
-.card-top {
-  width: 165px;
-  height: 145px;
-  margin-right: 0;
-  z-index: 2;
-  border-radius: 22px 0 0 0;
-  clip-path: polygon(0 16%, 100% 0, 100% 100%, 0 100%);
-  margin-bottom: -14px;
-}
+document.getElementById("back-to-intro").addEventListener("click", () => showScreen("intro-screen"));
+document.getElementById("back-to-carousel").addEventListener("click", () => {
+  updateStaggeredCarousel();
+  showScreen("select-screen");
+});
 
-.card-center {
-  width: 220px;
-  height: 235px;
-  margin-right: 18px;
-  z-index: 6;
-  border-radius: 24px;
-  box-shadow: 0 22px 48px rgba(0, 0, 0, 0.9);
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  padding: 12px 16px;
-}
+document.getElementById("confirm-fighter-btn").addEventListener("click", () => {
+  playSound(true);
+  updateUI();
+  renderWorkouts();
+  showScreen("arena-screen");
+});
 
-.center-card-footer {
-  position: absolute;
-  right: 18px;
-  width: 220px;
-  bottom: 131px;
-  padding: 28px 16px 12px;
-  border-radius: 0 0 24px 24px;
-  background: linear-gradient(to top, rgba(10, 10, 12, 0.95) 0%, rgba(10, 10, 12, 0.65) 55%, transparent 100%);
-  z-index: 16;
-  pointer-events: none;
-}
+document.getElementById("arena-back-btn").addEventListener("click", () => {
+  updateStaggeredCarousel();
+  showScreen("select-screen");
+});
 
-.center-name { font-family: 'Anton', sans-serif; font-size: 1.55rem; letter-spacing: 0.6px; color: #ffffff; line-height: 1; margin-bottom: 4px; }
-.center-pills { display: flex; gap: 6px; }
-.dark-pill { background: var(--orange); color: #0a0a0c; font-family: 'Anton', sans-serif; font-size: 0.78rem; letter-spacing: 0.6px; padding: 2px 9px; border-radius: 6px; }
+document.querySelectorAll(".body-hotspot").forEach(spot => {
+  spot.addEventListener("click", () => {
+    state.selectedPart = spot.dataset.part;
+    playSound(false);
+    renderWorkouts();
+  });
+});
 
-.card-bottom {
-  width: 165px;
-  height: 145px;
-  margin-right: 0;
-  z-index: 3;
-  border-radius: 0 0 0 22px;
-  clip-path: polygon(0 0, 100% 0, 100% 100%, 0 84%);
-  margin-top: -14px;
-}
+document.querySelectorAll(".diff-tab").forEach(tab => {
+  tab.addEventListener("click", () => {
+    state.difficulty = tab.dataset.diff;
+    renderWorkouts();
+  });
+});
 
-.s-char-img {
-  position: absolute;
-  object-fit: contain;
-  pointer-events: none;
-  border: none !important;
-  outline: none !important;
-  filter: drop-shadow(0 14px 20px rgba(0, 0, 0, 0.85));
-}
+document.getElementById("close-levelup").addEventListener("click", () => {
+  document.getElementById("levelup-overlay").classList.add("hidden");
+});
 
-.s-char-img:not([src]),
-.s-char-img[src=""] { opacity: 0 !important; visibility: hidden !important; }
+document.getElementById("reset-btn").addEventListener("click", () => {
+  if (confirm("Wirklich bei Level 1 neu starten?")) {
+    state = { level: 1, xp: 0, powerLevel: 1000, carouselIndex: 0, selectedChar: 1, selectedStage: 1, selectedPart: "arms", difficulty: "easy", partXP: { arms: 0, core: 0, legs: 0 } };
+    updateUI();
+    renderWorkouts();
+    showScreen("intro-screen");
+  }
+});
 
-/* Nachbar-Figuren liegen hinter der Hauptkarte (z-index: 4 < card-center: 6) */
-.char-top { top: -12px; right: 6px; width: 155px; height: 175px; z-index: 4; }
-.char-center { top: 44%; right: 26px; width: 205px; height: 230px; transform: translateY(-58%); z-index: 15; }
-.char-bottom { bottom: -12px; right: 6px; width: 155px; height: 175px; z-index: 4; }
-.s-fallback { position: absolute; inset: 0; display: grid; place-items: center; font-family: 'Anton', sans-serif; font-size: 2.3rem; color: rgba(0, 0, 0, 0.25); }
-
-/* SCREEN 3 & 4 */
-.orange-num-tag { font-family: 'Anton', sans-serif; font-size: 1.5rem; color: var(--orange); letter-spacing: 1px; }
-.fighters-backdrop-area { position: relative; height: 290px; display: grid; place-items: center; }
-.mega-fighters-word { position: absolute; top: 12%; left: 50%; transform: translateX(-50%) scaleY(1.25); font-family: 'Anton', sans-serif; font-size: 5.5rem; line-height: 0.85; letter-spacing: 2px; color: var(--orange); -webkit-text-stroke: 1.5px var(--orange); white-space: nowrap; z-index: 1; pointer-events: none; }
-.fighters-center-char { position: relative; z-index: 5; width: 265px; height: 295px; object-fit: contain; }
-.fighters-bio-block { text-align: center; z-index: 4; }
-.specs-strip { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 12px; }
-.specs-strip div { background: var(--surface); border: 1px solid #262630; border-radius: 8px; padding: 8px; }
-.specs-strip span { display: block; font-size: 0.65rem; color: var(--muted); letter-spacing: 1px; }
-.specs-strip strong { font-family: 'Anton', sans-serif; font-size: 1.15rem; letter-spacing: 0.8px; color: var(--orange); }
-
-.ki-badge { background: #16161c; border: 1px solid var(--orange); border-radius: 8px; padding: 4px 12px; font-family: 'Anton', sans-serif; font-size: 1.15rem; letter-spacing: 0.8px; color: var(--orange); }
-.ki-badge span { color: #ffffff; }
-.arena-mode { justify-content: flex-start; gap: 14px; }
-.arena-poster-stage { position: relative; background: #0d0d10; border: 1px solid #262630; border-radius: 14px; padding: 14px; overflow: hidden; }
-.arena-bg-word { top: 30%; font-size: 4.5rem; opacity: 0.25; }
-.arena-top-info { position: relative; z-index: 4; display: flex; align-items: center; gap: 8px; }
-.orange-pill { background: var(--orange); color: #0a0a0c; font-family: 'Anton', sans-serif; font-size: 0.92rem; letter-spacing: 0.6px; padding: 2px 9px; border-radius: 6px; }
-.fighter-scanner { position: relative; width: 245px; height: 270px; margin: 0 auto 8px; display: grid; place-items: center; z-index: 3; }
-.arena-char-img { width: 100%; height: 100%; object-fit: contain; mix-blend-mode: screen; }
-.placeholder-box { width: 170px; height: 210px; border: 2px dashed var(--orange); border-radius: 14px; display: grid; place-items: center; font-family: 'Anton', sans-serif; font-size: 1.3rem; color: var(--orange); }
-.body-hotspot { position: absolute; transform: translate(-50%, -50%); background: rgba(10, 10, 12, 0.92); border: 1.5px solid var(--orange); color: #ffffff; border-radius: 99px; padding: 4px 10px; font-family: 'Anton', sans-serif; font-size: 0.85rem; letter-spacing: 0.6px; cursor: pointer; }
-.body-hotspot.active { background: var(--orange); color: #0a0a0c; border-color: #ffffff; }
-.stage-pills { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; margin-bottom: 10px; }
-.stage-pill { background: #141418; border: 1px solid #262630; color: #fff; border-radius: 7px; padding: 5px 2px; font-family: 'Anton', sans-serif; font-size: 0.85rem; letter-spacing: 0.5px; cursor: pointer; }
-.stage-pill.active { background: var(--orange); color: #0a0a0c; }
-.stage-pill.locked { opacity: 0.4; }
-.body-stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 10px; }
-.stat-box { background: #141418; border: 1px solid #262630; border-radius: 8px; padding: 5px; text-align: center; }
-.stat-box.active-box { border-color: var(--orange); }
-.stat-box span { display: block; font-size: 0.65rem; color: var(--muted); }
-.stat-box strong { font-family: 'Anton', sans-serif; font-size: 1.05rem; letter-spacing: 0.5px; color: var(--orange); }
-.xp-row { display: flex; align-items: center; gap: 10px; }
-.xp-track { flex: 1; height: 8px; background: #141418; border-radius: 99px; overflow: hidden; }
-.xp-fill { height: 100%; background: var(--orange); transition: width 0.3s ease; }
-.xp-row span { font-size: 0.78rem; font-weight: 700; color: var(--muted); }
-.training-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
-.diff-switch { display: flex; background: var(--surface); border-radius: 8px; padding: 2px; }
-.diff-tab { background: transparent; border: none; color: var(--muted); font-family: 'Anton', sans-serif; font-size: 0.82rem; letter-spacing: 0.5px; padding: 4px 8px; border-radius: 6px; cursor: pointer; }
-.diff-tab.active { background: var(--orange); color: #0a0a0c; }
-.workout-list { display: flex; flex-direction: column; gap: 8px; }
-.workout-card { display: flex; justify-content: space-between; align-items: center; background: var(--surface); border: 1px solid #262630; border-left: 4px solid var(--orange); border-radius: 10px; padding: 11px 14px; color: #fff; cursor: pointer; text-align: left; }
-.workout-title { font-size: 0.98rem; font-weight: 700; }
-.workout-sub { font-size: 0.75rem; color: var(--muted); }
-.xp-tag { font-family: 'Anton', sans-serif; color: var(--orange); font-size: 1.2rem; letter-spacing: 0.5px; }
-.levelup-overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.9); z-index: 50; display: grid; place-items: center; padding: 20px; }
-.levelup-card { background: var(--surface); border: 2px solid var(--orange); border-radius: 16px; padding: 24px; text-align: center; max-width: 330px; width: 100%; display: flex; flex-direction: column; gap: 12px; }
-.orange-tag { align-self: center; background: var(--orange); color: #0a0a0c; font-family: 'Anton', sans-serif; font-size: 0.92rem; letter-spacing: 0.8px; padding: 3px 12px; border-radius: 6px; }
-.reset-link { background: none; border: none; color: var(--muted); font-size: 0.75rem; text-decoration: underline; cursor: pointer; margin: 4px auto; }
-  
+loadSmartImage(document.getElementById("intro-hero-img"), "c1_s1", () => {});
+updateStaggeredCarousel();
+updateUI();
+renderWorkouts();
