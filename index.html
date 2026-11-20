@@ -1,269 +1,196 @@
-:root {
-  --bg: #0b0b0d;
-  --surface: #141418;
-  --orange: #ff9900;
-  --orange-bright: #ffb703;
-  --muted: #9898a6;
-}
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Z-Krieger Training</title>
+  <link rel="preconnect" href="https://googleapis.com">
+  <link rel="preconnect" href="https://gstatic.com" crossorigin>
+  <link href="https://googleapis.com/css2?family=Anton&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css?v=3" />
+</head>
+<body>
 
-* { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
+  <!-- SCREEN 1: INTRO -->
+  <section id="intro-screen" class="poster-screen">
+    <div class="poster-hero-top">
+      <h1 class="tall-orange-title">WERDE<br>ZUM<br>KRIEGER</h1>
+      <img id="intro-hero-img" class="poster-overlap-char" alt="Krieger" />
+    </div>
 
-body {
-  background-color: var(--bg);
-  color: #ffffff;
-  font-family: 'Rajdhani', sans-serif;
-  min-height: 100dvh;
-  overflow-x: hidden;
-  overscroll-behavior-y: contain;
-}
+    <div class="intro-bottom-block">
+      <div class="poster-numbers-row">
+        <span class="active-num">01</span>
+        <span>02</span>
+        <span>03</span>
+      </div>
+      <h2 class="poster-subheadline">DEINE KI-REISE BEGINNT</h2>
+      <p class="poster-copy">Wähle deinen Kämpfer, meistere tägliche Workouts und schalte neue Transformations-Stufen frei.</p>
+      <button id="enter-app-btn" class="tall-orange-btn">TRAINING STARTEN</button>
+    </div>
+  </section>
 
-.hidden { display: none !important; }
+  <!-- SCREEN 2: KRIEGER AUSWÄHLEN -->
+  <section id="select-screen" class="poster-screen select-layout hidden">
+    <header class="poster-nav">
+      <button id="back-to-intro" class="dark-square-btn" aria-label="Zurück">&lt;</button>
+      <div class="user-profile-box">
+        <div class="user-texts">
+          <span class="hello-orange">HALLO, KRIEGER</span>
+          <span class="ki-sub-line">GESAMT-KI: <strong id="select-power">1.000</strong></span>
+        </div>
+        <div class="avatar-thumb">
+          <img id="header-avatar-img" alt="Avatar" />
+        </div>
+      </div>
+    </header>
 
-.poster-screen {
-  max-width: 430px;
-  min-height: 100dvh;
-  margin: 0 auto;
-  padding: 18px 20px 26px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  position: relative;
-  overflow: hidden;
-  background: #0b0b0d;
-  overscroll-behavior-y: contain;
-}
+    <div class="mockup-split-body">
+      <div class="left-info-col">
+        <div>
+          <span class="orange-kicker-tall">WÄHLE DEINEN</span>
+          <h2 class="tall-orange-title select-big-word">KRIEGER</h2>
+        </div>
 
-.select-layout { height: 100dvh; }
+        <div class="scroll-indicator">
+          <div id="scroll-thumb" class="scroll-thumb"></div>
+        </div>
 
-.tall-orange-title {
-  font-family: 'Anton', sans-serif;
-  font-weight: 400;
-  font-size: 4.5rem;
-  line-height: 0.88;
-  letter-spacing: 1px;
-  color: var(--orange);
-  text-transform: uppercase;
-  -webkit-text-stroke: 1.5px var(--orange);
-  transform: scaleY(1.22);
-  transform-origin: left top;
-  position: relative;
-  z-index: 1;
-}
+        <p class="orange-bottom-caption">UND STARTE DEIN<br>TRAINING...</p>
+      </div>
 
-.tall-orange-title.select-big-word {
-  font-size: 3.7rem;
-  line-height: 0.9;
-  margin-top: 2px;
-}
+      <div id="staggered-carousel" class="staggered-carousel">
+        <div class="neon-stack">
+          <div id="card-prev" class="s-card card-top"><div id="fb-prev" class="s-fallback">#15</div></div>
+          <div id="card-curr" class="s-card card-center"><div id="fb-curr" class="s-fallback">#01</div></div>
+          <div id="card-next" class="s-card card-bottom"><div id="fb-next" class="s-fallback">#02</div></div>
 
-.tall-orange-title.center-name-title {
-  font-family: 'Anton', sans-serif;
-  font-size: 2.3rem;
-  letter-spacing: 1px;
-  color: #ffffff;
-  -webkit-text-stroke: 0.8px #ffffff;
-  transform: scaleY(1.15);
-  transform-origin: center;
-  margin-bottom: 6px;
-}
+          <img id="img-prev" class="s-char-img char-top" alt="" />
+          <img id="img-curr" class="s-char-img char-center" alt="" />
+          <img id="img-next" class="s-char-img char-bottom" alt="" />
 
-.tall-orange-title.small { font-size: 2.5rem; transform-origin: center; }
+          <div class="center-card-footer">
+            <div id="name-curr" class="center-name">SON-BLITZ</div>
+            <div class="center-pills">
+              <span id="lvl-curr" class="dark-pill">LVL 1</span>
+              <span id="evo-curr" class="dark-pill">STUFE · 1</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+    <!-- SCREEN 3: FIGHTER STECKBRIEF -->
+  <section id="detail-screen" class="poster-screen hidden">
+    <header class="poster-nav">
+      <button id="back-to-carousel" class="dark-square-btn" aria-label="Zurück">&lt;</button>
+      <span id="detail-num" class="orange-num-tag">001</span>
+    </header>
 
-.tall-orange-heading {
-  font-family: 'Anton', sans-serif;
-  font-size: 1.5rem;
-  letter-spacing: 0.8px;
-  color: var(--orange-bright);
-  text-transform: uppercase;
-  -webkit-text-stroke: 0.6px var(--orange-bright);
-  transform: scaleY(1.12);
-}
+    <div class="fighters-backdrop-area">
+      <div class="mega-fighters-word">FIGHTER</div>
+      <img id="detail-img" class="fighters-center-char" alt="Kämpfer" />
+      <div id="detail-placeholder" class="placeholder-box hidden">
+        <span id="detail-placeholder-code">c1_s1.png</span>
+      </div>
+    </div>
 
-.flex-1 { flex: 1; }
+    <div class="fighters-bio-block">
+      <h2 id="detail-name" class="tall-orange-title center-name-title">SON-BLITZ</h2>
+      <p id="detail-bio" class="poster-copy center">Ein furchtloser Saiyajin-Krieger mit unbändigem Trainingswillen.</p>
 
-.tall-orange-btn {
-  width: 100%;
-  background: var(--orange);
-  color: #0b0b0d;
-  border: none;
-  border-radius: 10px;
-  padding: 15px 14px;
-  font-family: 'Anton', sans-serif;
-  font-size: 1.55rem;
-  letter-spacing: 1.2px;
-  text-transform: uppercase;
-  -webkit-text-stroke: 0.8px #0b0b0d;
-  cursor: pointer;
-  box-shadow: 0 8px 25px rgba(255, 140, 0, 0.35);
-}
+      <div class="specs-strip">
+        <div>
+          <span>SPEZIAL-ATTACKE</span>
+          <strong id="detail-attack">SONNEN-KAMEHA</strong>
+        </div>
+        <div>
+          <span>FOKUS</span>
+          <strong id="detail-focus">GANZKÖRPER</strong>
+        </div>
+      </div>
+    </div>
 
-/* SCREEN 1: INTRO */
-.poster-hero-top { position: relative; height: 280px; display: flex; align-items: flex-start; }
-.poster-overlap-char { position: absolute; right: -16px; top: 18px; width: 255px; height: 295px; object-fit: contain; z-index: 5; pointer-events: none; filter: drop-shadow(0 16px 24px rgba(0, 0, 0, 0.9)); }
-.intro-bottom-block { display: flex; flex-direction: column; gap: 10px; z-index: 6; }
-.poster-numbers-row { display: flex; gap: 20px; font-family: 'Anton', sans-serif; font-size: 1.25rem; letter-spacing: 1px; color: #666675; }
-.poster-numbers-row .active-num { color: var(--orange); }
-.poster-subheadline { font-family: 'Anton', sans-serif; font-size: 1.85rem; letter-spacing: 0.8px; color: #ffffff; text-transform: uppercase; -webkit-text-stroke: 0.6px #ffffff; }
-.poster-copy { color: #a8a8b8; font-size: 0.9rem; line-height: 1.35; font-weight: 600; margin-bottom: 4px; }
-.poster-copy.center { text-align: center; }
+    <button id="confirm-fighter-btn" class="tall-orange-btn">KRIEGER WÄHLEN</button>
+  </section>
 
-/* HEADER & NAVIGATION */
-.poster-nav { display: flex; justify-content: space-between; align-items: center; z-index: 20; }
-.dark-square-btn { width: 40px; height: 40px; background: #1c1c22; border: 1px solid #2c2c35; border-radius: 10px; color: var(--orange); font-size: 1.6rem; display: grid; place-items: center; cursor: pointer; }
-.user-profile-box { display: flex; align-items: center; gap: 10px; }
-.user-texts { text-align: right; line-height: 1.08; }
-.hello-orange { display: block; font-family: 'Anton', sans-serif; font-size: 1.15rem; letter-spacing: 0.8px; color: var(--orange); -webkit-text-stroke: 0.4px var(--orange); }
-.ki-sub-line { display: block; font-size: 0.72rem; color: var(--muted); font-weight: 700; }
-.ki-sub-line strong { color: #ffffff; }
-.avatar-thumb { width: 38px; height: 38px; border-radius: 10px; background: var(--orange); overflow: hidden; }
-.avatar-thumb img { width: 100%; height: 100%; object-fit: cover; object-position: top; }
-/* SCREEN 2: KARUSSELL */
-.dragon-svg { position: absolute; left: -25px; top: 25%; width: 245px; height: 360px; opacity: 0.045; pointer-events: none; z-index: 0; }
-.mockup-split-body { flex: 1; position: relative; display: flex; margin-top: 6px; }
-.left-info-col { width: 46%; display: flex; flex-direction: column; justify-content: space-between; padding: 6px 0 14px; z-index: 1; pointer-events: none; }
-.orange-kicker-tall { display: block; font-family: 'Anton', sans-serif; font-size: 1.55rem; letter-spacing: 0.8px; color: var(--orange-bright); line-height: 1; -webkit-text-stroke: 0.6px var(--orange-bright); position: relative; z-index: 1; }
-.scroll-indicator { width: 3px; height: 54px; background: #282830; border-radius: 99px; margin-left: 6px; overflow: hidden; }
-.scroll-thumb { width: 100%; height: 20px; background: var(--orange); border-radius: 99px; transition: transform 0.25s ease; }
-.orange-bottom-caption { font-family: 'Anton', sans-serif; font-size: 1.25rem; letter-spacing: 0.6px; line-height: 1.05; color: var(--orange); -webkit-text-stroke: 0.4px var(--orange); }
+  <!-- SCREEN 4: TRAININGS-ARENA -->
+  <section id="arena-screen" class="poster-screen arena-mode hidden">
+    <header class="poster-nav">
+      <button id="arena-back-btn" class="dark-square-btn" aria-label="Zurück">&lt;</button>
+      <div class="ki-badge">KI: <span id="power-level">1.000</span></div>
+    </header>
 
-.staggered-carousel {
-  position: absolute;
-  right: -20px;
-  top: 0;
-  bottom: 0;
-  width: calc(100% + 20px);
-  touch-action: none;
-  overflow: visible;
-  z-index: 5;
-}
+    <div class="arena-poster-stage">
+      <div id="bg-watermark" class="mega-fighters-word arena-bg-word">SON-BLITZ</div>
+      <div class="arena-top-info">
+        <span id="char-num" class="orange-num-tag">001</span>
+        <span id="fighter-title" class="orange-pill">SON-BLITZ · STUFE 1</span>
+      </div>
 
-.neon-stack {
-  position: absolute;
-  right: 0;
-  top: 50%;
-  width: 100%;
-  transform: translateY(-48%);
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 0px;
-}
+      <div class="fighter-scanner">
+        <img id="fighter-img" class="arena-char-img" alt="Arena Kämpfer" />
+        <div id="placeholder-box" class="placeholder-box hidden">
+          <span id="placeholder-code">c1_s1.png</span>
+        </div>
 
-.s-card { cursor: pointer; transition: all 0.28s cubic-bezier(0.22, 1, 0.36, 1); position: relative; }
+        <button class="body-hotspot active" data-part="arms" style="top: 36%; left: 22%;">ARME</button>
+        <button class="body-hotspot" data-part="core" style="top: 48%; left: 52%;">KERN</button>
+        <button class="body-hotspot" data-part="legs" style="top: 74%; left: 68%;">BEINE</button>
+      </div>
 
-.card-top {
-  width: 165px;
-  height: 145px;
-  margin-right: 0;
-  z-index: 2;
-  border-radius: 22px 0 0 0;
-  clip-path: polygon(0 16%, 100% 0, 100% 100%, 0 100%);
-  margin-bottom: -14px;
-}
+      <div id="stage-pills" class="stage-pills"></div>
 
-.card-center {
-  width: 220px;
-  height: 235px;
-  margin-right: 18px;
-  z-index: 6;
-  border-radius: 24px;
-  box-shadow: 0 22px 48px rgba(0, 0, 0, 0.9);
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  padding: 12px 16px;
-}
+      <div class="body-stats-grid">
+        <div class="stat-box active-box" data-part-box="arms">
+          <span>ARME &amp; BRUST</span>
+          <strong id="stat-arms">LVL 1</strong>
+        </div>
+        <div class="stat-box" data-part-box="core">
+          <span>BAUCH &amp; KERN</span>
+          <strong id="stat-core">LVL 1</strong>
+        </div>
+        <div class="stat-box" data-part-box="legs">
+          <span>BEINE &amp; SPEED</span>
+          <strong id="stat-legs">LVL 1</strong>
+        </div>
+      </div>
 
-.center-card-footer {
-  position: absolute;
-  right: 18px;
-  width: 220px;
-  bottom: 131px;
-  padding: 28px 16px 12px;
-  border-radius: 0 0 24px 24px;
-  background: linear-gradient(to top, rgba(10, 10, 12, 0.95) 0%, rgba(10, 10, 12, 0.65) 55%, transparent 100%);
-  z-index: 16;
-  pointer-events: none;
-}
+      <div class="xp-row">
+        <span id="level-label">LVL 1</span>
+        <div class="xp-track">
+          <div id="ki-bar-fill" class="xp-fill" style="width: 0%;"></div>
+        </div>
+        <span id="xp-text">0 / 100 XP</span>
+      </div>
+    </div>
 
-.center-name { font-family: 'Anton', sans-serif; font-size: 1.55rem; letter-spacing: 0.6px; color: #ffffff; line-height: 1; margin-bottom: 4px; }
-.center-pills { display: flex; gap: 6px; }
-.dark-pill { background: var(--orange); color: #0a0a0c; font-family: 'Anton', sans-serif; font-size: 0.78rem; letter-spacing: 0.6px; padding: 2px 9px; border-radius: 6px; }
+    <div class="flex-1">
+      <div class="training-head">
+        <h3 id="selected-part-title" class="tall-orange-heading">TRAINING: ARME &amp; BRUST</h3>
+        <div class="diff-switch">
+          <button class="diff-tab active" data-diff="easy">EINFACH</button>
+          <button class="diff-tab" data-diff="advanced">PROFI</button>
+          <button class="diff-tab" data-diff="master">MEISTER</button>
+        </div>
+      </div>
 
-.card-bottom {
-  width: 165px;
-  height: 145px;
-  margin-right: 0;
-  z-index: 3;
-  border-radius: 0 0 0 22px;
-  clip-path: polygon(0 0, 100% 0, 100% 100%, 0 84%);
-  margin-top: -14px;
-}
+      <div id="workout-list" class="workout-list"></div>
+    </div>
 
-.s-char-img {
-  position: absolute;
-  object-fit: contain;
-  pointer-events: none;
-  border: none !important;
-  outline: none !important;
-  filter: drop-shadow(0 14px 20px rgba(0, 0, 0, 0.85));
-}
+    <button id="reset-btn" class="reset-link">Fortschritt zurücksetzen</button>
+  </section>
 
-.s-char-img:not([src]),
-.s-char-img[src=""] { opacity: 0 !important; visibility: hidden !important; }
+  <!-- LEVEL UP OVERLAY -->
+  <div id="levelup-overlay" class="levelup-overlay hidden">
+    <div class="levelup-card">
+      <span id="levelup-badge" class="orange-tag">LEVEL UP</span>
+      <h2 id="levelup-title" class="tall-orange-title small">LEVEL 2</h2>
+      <p id="levelup-desc" class="poster-copy center">Deine Kampfkraft steigt!</p>
+      <button id="close-levelup" class="tall-orange-btn">WEITER</button>
+    </div>
+  </div>
 
-/* Nachbar-Figuren passen auf ihre eigene Karte & liegen hinter der Hauptkarte */
-.char-top { top: -6px; right: 12px; width: 135px; height: 145px; z-index: 4; }
-.char-center { top: 44%; right: 26px; width: 205px; height: 230px; transform: translateY(-58%); z-index: 15; }
-.char-bottom { bottom: -6px; right: 12px; width: 135px; height: 145px; z-index: 4; }
-.s-fallback { position: absolute; inset: 0; display: grid; place-items: center; font-family: 'Anton', sans-serif; font-size: 2.3rem; color: rgba(0, 0, 0, 0.25); }
-
-/* SCREEN 3 & 4 */
-.orange-num-tag { font-family: 'Anton', sans-serif; font-size: 1.5rem; color: var(--orange); letter-spacing: 1px; }
-.fighters-backdrop-area { position: relative; height: 290px; display: grid; place-items: center; }
-.mega-fighters-word { position: absolute; top: 12%; left: 50%; transform: translateX(-50%) scaleY(1.25); font-family: 'Anton', sans-serif; font-size: 5.5rem; line-height: 0.85; letter-spacing: 2px; color: var(--orange); -webkit-text-stroke: 1.5px var(--orange); white-space: nowrap; z-index: 1; pointer-events: none; }
-.fighters-center-char { position: relative; z-index: 5; width: 265px; height: 295px; object-fit: contain; }
-.fighters-bio-block { text-align: center; z-index: 4; }
-.specs-strip { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 12px; }
-.specs-strip div { background: var(--surface); border: 1px solid #262630; border-radius: 8px; padding: 8px; }
-.specs-strip span { display: block; font-size: 0.65rem; color: var(--muted); letter-spacing: 1px; }
-.specs-strip strong { font-family: 'Anton', sans-serif; font-size: 1.15rem; letter-spacing: 0.8px; color: var(--orange); }
-
-.ki-badge { background: #16161c; border: 1px solid var(--orange); border-radius: 8px; padding: 4px 12px; font-family: 'Anton', sans-serif; font-size: 1.15rem; letter-spacing: 0.8px; color: var(--orange); }
-.ki-badge span { color: #ffffff; }
-.arena-mode { justify-content: flex-start; gap: 14px; }
-.arena-poster-stage { position: relative; background: #0d0d10; border: 1px solid #262630; border-radius: 14px; padding: 14px; overflow: hidden; }
-.arena-bg-word { top: 30%; font-size: 4.5rem; opacity: 0.25; }
-.arena-top-info { position: relative; z-index: 4; display: flex; align-items: center; gap: 8px; }
-.orange-pill { background: var(--orange); color: #0a0a0c; font-family: 'Anton', sans-serif; font-size: 0.92rem; letter-spacing: 0.6px; padding: 2px 9px; border-radius: 6px; }
-.fighter-scanner { position: relative; width: 245px; height: 270px; margin: 0 auto 8px; display: grid; place-items: center; z-index: 3; }
-.arena-char-img { width: 100%; height: 100%; object-fit: contain; mix-blend-mode: screen; }
-.placeholder-box { width: 170px; height: 210px; border: 2px dashed var(--orange); border-radius: 14px; display: grid; place-items: center; font-family: 'Anton', sans-serif; font-size: 1.3rem; color: var(--orange); }
-.body-hotspot { position: absolute; transform: translate(-50%, -50%); background: rgba(10, 10, 12, 0.92); border: 1.5px solid var(--orange); color: #ffffff; border-radius: 99px; padding: 4px 10px; font-family: 'Anton', sans-serif; font-size: 0.85rem; letter-spacing: 0.6px; cursor: pointer; }
-.body-hotspot.active { background: var(--orange); color: #0a0a0c; border-color: #ffffff; }
-.stage-pills { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; margin-bottom: 10px; }
-.stage-pill { background: #141418; border: 1px solid #262630; color: #fff; border-radius: 7px; padding: 5px 2px; font-family: 'Anton', sans-serif; font-size: 0.85rem; letter-spacing: 0.5px; cursor: pointer; }
-.stage-pill.active { background: var(--orange); color: #0a0a0c; }
-.stage-pill.locked { opacity: 0.4; }
-.body-stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 10px; }
-.stat-box { background: #141418; border: 1px solid #262630; border-radius: 8px; padding: 5px; text-align: center; }
-.stat-box.active-box { border-color: var(--orange); }
-.stat-box span { display: block; font-size: 0.65rem; color: var(--muted); }
-.stat-box strong { font-family: 'Anton', sans-serif; font-size: 1.05rem; letter-spacing: 0.5px; color: var(--orange); }
-.xp-row { display: flex; align-items: center; gap: 10px; }
-.xp-track { flex: 1; height: 8px; background: #141418; border-radius: 99px; overflow: hidden; }
-.xp-fill { height: 100%; background: var(--orange); transition: width 0.3s ease; }
-.xp-row span { font-size: 0.78rem; font-weight: 700; color: var(--muted); }
-.training-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
-.diff-switch { display: flex; background: var(--surface); border-radius: 8px; padding: 2px; }
-.diff-tab { background: transparent; border: none; color: var(--muted); font-family: 'Anton', sans-serif; font-size: 0.82rem; letter-spacing: 0.5px; padding: 4px 8px; border-radius: 6px; cursor: pointer; }
-.diff-tab.active { background: var(--orange); color: #0a0a0c; }
-.workout-list { display: flex; flex-direction: column; gap: 8px; }
-.workout-card { display: flex; justify-content: space-between; align-items: center; background: var(--surface); border: 1px solid #262630; border-left: 4px solid var(--orange); border-radius: 10px; padding: 11px 14px; color: #fff; cursor: pointer; text-align: left; }
-.workout-title { font-size: 0.98rem; font-weight: 700; }
-.workout-sub { font-size: 0.75rem; color: var(--muted); }
-.xp-tag { font-family: 'Anton', sans-serif; color: var(--orange); font-size: 1.2rem; letter-spacing: 0.5px; }
-.levelup-overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.9); z-index: 50; display: grid; place-items: center; padding: 20px; }
-.levelup-card { background: var(--surface); border: 2px solid var(--orange); border-radius: 16px; padding: 24px; text-align: center; max-width: 330px; width: 100%; display: flex; flex-direction: column; gap: 12px; }
-.orange-tag { align-self: center; background: var(--orange); color: #0a0a0c; font-family: 'Anton', sans-serif; font-size: 0.92rem; letter-spacing: 0.8px; padding: 3px 12px; border-radius: 6px; }
-.reset-link { background: none; border: none; color: var(--muted); font-size: 0.75rem; text-decoration: underline; cursor: pointer; margin: 4px auto; }
+  <script src="app.js?v=3"></script>
+</body>
+</html>
