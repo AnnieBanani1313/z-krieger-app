@@ -71,7 +71,6 @@ const BODY_WORKOUTS = {
     ]
   }
 };
-
 let state = JSON.parse(localStorage.getItem("zwarriors_neon_v7")) || {
   level: 1, xp: 0, powerLevel: 1000, carouselIndex: 0, selectedChar: 1,
   selectedStage: 1, selectedPart: "arms", difficulty: "easy", partXP: { arms: 0, core: 0, legs: 0 }
@@ -101,11 +100,16 @@ function playSound(isLevelUp = false) {
   } catch (e) {}
 }
 
-function loadSmartImage(imgEl, baseName, onFail) {
-  imgEl.style.display = "block";
+function loadSmartImage(imgEl, baseName, onFail, onSuccess) {
+  imgEl.style.display = "none";
+  imgEl.onload = () => {
+    imgEl.style.display = "block";
+    if (onSuccess) onSuccess();
+  };
   imgEl.onerror = () => {
     imgEl.onerror = () => {
       imgEl.style.display = "none";
+      imgEl.removeAttribute("src");
       if (onFail) onFail();
     };
     imgEl.src = `${baseName}.jpg`;
@@ -147,8 +151,12 @@ function updateStaggeredCarousel() {
     const fb = document.getElementById(`fb-${pos}`);
     const im = document.getElementById(`img-${pos}`);
     fb.style.display = "grid";
-    loadSmartImage(im, `c${charObj.id}_s1`, () => {});
-    im.onload = () => { fb.style.display = "none"; };
+    loadSmartImage(
+      im,
+      `c${charObj.id}_s1`,
+      () => { fb.style.display = "grid"; },
+      () => { fb.style.display = "none"; }
+    );
   });
 
   const progress = (idxCurr / (total - 1)) * 34;
@@ -180,9 +188,7 @@ carouselEl.addEventListener("touchend", e => {
   if (!isSwiping || !e.changedTouches || e.changedTouches.length === 0) return;
   isSwiping = false;
   const diff = touchStartY - e.changedTouches[0].clientY;
-  if (Math.abs(diff) > 25) {
-    stepCarousel(diff > 0 ? 1 : -1);
-  }
+  if (Math.abs(diff) > 25) stepCarousel(diff > 0 ? 1 : -1);
 });
 
 document.getElementById("card-prev").addEventListener("click", () => stepCarousel(-1));
@@ -191,7 +197,6 @@ document.getElementById("card-curr").addEventListener("click", () => {
   playSound(false);
   openCharacterDetails(CHARACTERS[state.carouselIndex].id);
 });
-
 function openCharacterDetails(charId) {
   const c = CHARACTERS.find(item => item.id === charId) || CHARACTERS[0];
   state.selectedChar = c.id;
@@ -207,10 +212,7 @@ function openCharacterDetails(charId) {
   document.getElementById("detail-placeholder-code").textContent = `c${c.id}_s1.png`;
   phEl.classList.add("hidden");
 
-  loadSmartImage(imgEl, `c${c.id}_s1`, () => {
-    phEl.classList.remove("hidden");
-  });
-
+  loadSmartImage(imgEl, `c${c.id}_s1`, () => { phEl.classList.remove("hidden"); });
   showScreen("detail-screen");
 }
 
@@ -291,9 +293,7 @@ function updateUI() {
   document.getElementById("placeholder-code").textContent = `${baseFile}.png`;
   placeholderEl.classList.add("hidden");
 
-  loadSmartImage(imgEl, baseFile, () => {
-    placeholderEl.classList.remove("hidden");
-  });
+  loadSmartImage(imgEl, baseFile, () => { placeholderEl.classList.remove("hidden"); });
 
   const pillsContainer = document.getElementById("stage-pills");
   pillsContainer.innerHTML = "";
