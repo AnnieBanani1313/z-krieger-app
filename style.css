@@ -97,8 +97,6 @@ body {
 .poster-hero-top { position: relative; height: 280px; display: flex; align-items: flex-start; }
 .poster-overlap-char { position: absolute; right: -16px; top: 18px; width: 255px; height: 295px; object-fit: contain; z-index: 5; pointer-events: none; filter: drop-shadow(0 16px 24px rgba(0, 0, 0, 0.9)); }
 .intro-bottom-block { display: flex; flex-direction: column; gap: 10px; z-index: 6; }
-.poster-numbers-row { display: flex; gap: 20px; font-family: 'Anton', sans-serif; font-size: 1.25rem; letter-spacing: 1px; color: #666675; }
-.poster-numbers-row .active-num { color: var(--orange); }
 .poster-subheadline { font-family: 'Anton', sans-serif; font-size: 1.85rem; letter-spacing: 0.8px; color: #ffffff; text-transform: uppercase; -webkit-text-stroke: 0.6px #ffffff; }
 .poster-copy { color: #a8a8b8; font-size: 0.9rem; line-height: 1.35; font-weight: 600; margin-bottom: 4px; }
 .poster-copy.center { text-align: center; }
@@ -213,10 +211,10 @@ body {
 .char-bottom { bottom: -6px; right: 12px; width: 135px; height: 145px; z-index: 4; }
 .s-fallback { position: absolute; inset: 0; display: grid; place-items: center; font-family: 'Anton', sans-serif; font-size: 2.3rem; color: rgba(0, 0, 0, 0.25); }
 
-/* Cyber-Red (id 3) proportional vergrößern */
-.char-center.is-c3 { transform: translateY(-58%) scale(1.42) !important; }
+/* Cyber-Red (id 3) vergrößern & hochsetzen, damit die Haare oben herausragen */
+.char-center.is-c3 { transform: translateY(-70%) scale(1.48) !important; }
 .char-top.is-c3,
-.char-bottom.is-c3,
+.char-bottom.is-c3 { transform: translateY(-10px) scale(1.42) !important; }
 .fighters-center-char.is-c3,
 .arena-char-img.is-c3 { transform: scale(1.42) !important; }
 
@@ -269,4 +267,3 @@ body {
 .levelup-card { background: var(--surface); border: 2px solid var(--orange); border-radius: 16px; padding: 24px; text-align: center; max-width: 330px; width: 100%; display: flex; flex-direction: column; gap: 12px; }
 .orange-tag { align-self: center; background: var(--orange); color: #0a0a0c; font-family: 'Anton', sans-serif; font-size: 0.92rem; letter-spacing: 0.8px; padding: 3px 12px; border-radius: 6px; }
 .reset-link { background: none; border: none; color: var(--muted); font-size: 0.75rem; text-decoration: underline; cursor: pointer; margin: 4px auto; }
-                  
