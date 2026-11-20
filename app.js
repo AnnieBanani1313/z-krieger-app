@@ -1,7 +1,11 @@
-const fontLink = document.createElement("link");
-fontLink.rel = "stylesheet";
-fontLink.href = "https://" + "fonts." + "://googleapis.com";
-document.head.appendChild(fontLink);
+(function loadAppFonts() {
+  const host = ["fonts", "googleapis", "com"].join(".");
+  const link = document.createElement("link");
+  link.rel = "stylesheet";
+  link.href = `https://${host}/css2?family=Anton&family=Rajdhani:wght@600;700&display=swap`;
+  document.head.appendChild(link);
+})();
+
 const CHARACTERS = [
   { id: 1, name: "SON-BLITZ", attack: "SONNEN-KAMEHA", focus: "GANZKÖRPER", bio: "Ein furchtloser Saiyajin-Krieger mit unbändigem Trainingswillen.", color: "#ffb703" },
   { id: 2, name: "PRINZ-KI", attack: "FINALER BLITZ", focus: "ARME & BRUST", bio: "Stolz, zielstrebig und Meister der schweren Schwerkraft.", color: "#5ce1e6" },
@@ -75,6 +79,7 @@ const BODY_WORKOUTS = {
     ]
   }
 };
+
 let state = JSON.parse(localStorage.getItem("zwarriors_neon_v7")) || {
   level: 1, xp: 0, powerLevel: 1000, carouselIndex: 0, selectedChar: 1,
   selectedStage: 1, selectedPart: "arms", difficulty: "easy", partXP: { arms: 0, core: 0, legs: 0 }
@@ -201,6 +206,7 @@ document.getElementById("card-curr").addEventListener("click", () => {
   playSound(false);
   openCharacterDetails(CHARACTERS[state.carouselIndex].id);
 });
+
 function openCharacterDetails(charId) {
   const c = CHARACTERS.find(item => item.id === charId) || CHARACTERS.at(0);
   state.selectedChar = c.id;
