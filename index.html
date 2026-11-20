@@ -3,39 +3,135 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Z-Warriors · 15 Kämpfer Edition</title>
+  <title>Z-Warriors · Training App</title>
   <link rel="manifest" href="manifest.json" />
   <link rel="preconnect" href="https://googleapis.com">
   <link href="https://googleapis.com/css2?family=Anton&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <!-- Level-Up / Verwandlungs-Modal -->
-  <div id="levelup-overlay" class="levelup-overlay hidden">
-    <div class="levelup-card">
-      <div class="badge-gold" id="levelup-badge">NEUE STUFE</div>
-      <h2 id="levelup-title">STUFE 2 ERREICHT</h2>
-      <p id="levelup-desc">Deine Kampfkraft explodiert!</p>
-      <button id="close-levelup" class="btn-gold">WEITER KÄMPFEN</button>
-    </div>
-  </div>
 
-  <div class="app-shell">
-    <!-- Top Header -->
-    <header class="game-header">
-      <div>
-        <span class="sub-tag">SAIYANS NEVER DIE</span>
-        <h1 class="hero-title">FIGHTERS</h1>
+  <!-- ==========================================
+       SCREEN 1: EPISCHER STARTBILDSCHIRM (INTRO)
+       ========================================== -->
+  <section id="intro-screen" class="intro-screen">
+    <div class="intro-glow"></div>
+    <div class="intro-dragon">🐉</div>
+
+    <div class="intro-content">
+      <span class="intro-kicker">SAIYANS NEVER DIE · EDITION</span>
+      <h1 class="intro-logo">Z-WARRIORS</h1>
+      <p class="intro-subtitle">
+        Trainiere deinen Körper, lade dein Ki auf und verwandle deinen Krieger durch alle 5 legendären Stufen!
+      </p>
+
+      <div class="intro-preview-box">
+        <img id="intro-hero-img" src="c1_s1.png" alt="Z-Krieger" class="intro-hero-img" />
+        <div class="energy-pedestal"></div>
       </div>
+
+      <div class="intro-steps">
+        <div class="step-pill"><span>1</span> Krieger wählen</div>
+        <div class="step-pill"><span>2</span> Körper trainieren</div>
+        <div class="step-pill"><span>3</span> Verwandeln</div>
+      </div>
+    </div>
+
+    <button id="enter-app-btn" class="btn-gold big-start">KRIEGER AUSWÄHLEN →</button>
+  </section>
+
+  <!-- ==========================================
+       SCREEN 2: VERTIKALES KÄMPFER-KARUSSELL
+       ========================================== -->
+  <section id="select-screen" class="select-screen hidden">
+    <div class="dragon-watermark">🐉</div>
+
+    <header class="select-header">
+      <div class="top-row">
+        <button id="back-to-intro" class="mini-back">← START</button>
+        <div class="mini-power">GESAMT-KI: <strong id="select-power">1.000</strong></div>
+      </div>
+      <h2 class="select-title">Wähle deinen<br><span>Krieger</span></h2>
+      <p class="select-hint">Swipe nach oben/unten & tippe für Infos ↕</p>
+    </header>
+
+    <div class="carousel-wrapper">
+      <div id="vertical-carousel" class="vertical-carousel">
+        <!-- Die 15 farbigen Karten werden per JS geladen -->
+      </div>
+    </div>
+
+    <div class="select-footer">
+      <p class="footer-note">Tippe auf eine Karte, um Spezialkräfte & Stufen zu sehen.</p>
+    </div>
+  </section>
+
+  <!-- ==========================================
+       SCREEN 3: KÄMPFER-INFOS (STECKBRIEF)
+       ========================================== -->
+  <section id="detail-screen" class="detail-screen hidden">
+    <div class="detail-bg-glow" id="detail-bg-glow"></div>
+
+    <header class="detail-header">
+      <button id="back-to-carousel" class="mini-back">← ZURÜCK</button>
+      <span class="detail-num" id="detail-num">#001</span>
+    </header>
+
+    <div class="detail-hero-area">
+      <div class="detail-watermark" id="detail-watermark">SON-BLITZ</div>
+      <img id="detail-img" src="c1_s1.png" alt="Kämpfer" class="detail-img" />
+      <div id="detail-placeholder" class="placeholder-box hidden">
+        <span id="detail-placeholder-code">c1_s1.png</span>
+        <small>Platzhalter</small>
+      </div>
+      <div class="energy-pedestal"></div>
+    </div>
+
+    <div class="detail-card-panel">
+      <span class="detail-class" id="detail-class">BLITZ-KÄMPFER</span>
+      <h2 class="detail-name" id="detail-name">SON-BLITZ</h2>
+      <p class="detail-bio" id="detail-bio">
+        Ein furchtloser junger Krieger mit unbändigem Trainingswillen und extrem schneller Ki-Aufladung.
+      </p>
+
+      <div class="detail-specs">
+        <div class="spec-item">
+          <span>SPEZIAL-ATTACKE</span>
+          <strong id="detail-attack">Sonnen-Kameha</strong>
+        </div>
+        <div class="spec-item">
+          <span>STÄRKSTER BEREICH</span>
+          <strong id="detail-focus">Ganzkörper & Speed</strong>
+        </div>
+      </div>
+
+      <button id="confirm-fighter-btn" class="btn-gold">DIESEN KRIEGER AUSWÄHLEN ⚡</button>
+    </div>
+  </section>
+
+  <!-- ==========================================
+       SCREEN 4: TRAININGS-ARENA & KÖRPERTEILE
+       ========================================== -->
+  <section id="arena-screen" class="app-shell hidden">
+    <div id="levelup-overlay" class="levelup-overlay hidden">
+      <div class="levelup-card">
+        <div class="badge-gold" id="levelup-badge">NEUE STUFE</div>
+        <h2 id="levelup-title">STUFE 2 ERREICHT</h2>
+        <p id="levelup-desc">Deine Kampfkraft explodiert!</p>
+        <button id="close-levelup" class="btn-gold">WEITER KÄMPFEN</button>
+      </div>
+    </div>
+
+    <header class="game-header">
+      <button id="arena-back-btn" class="mini-back">← KRIEGER WECHSELN</button>
       <div class="power-pill">
         <span class="pill-label">GESAMT-KI</span>
         <span id="power-level" class="pill-value">1.000</span>
       </div>
     </header>
 
-    <!-- Haupt-Bühne: Riesige Hintergrundschrift + Freigestellter Kämpfer + Hotspots -->
     <section class="hero-stage">
-      <div class="watermark-text" id="bg-watermark">KÄMPFER 01</div>
+      <div class="watermark-text" id="bg-watermark">SON-BLITZ</div>
 
       <div class="stage-top-bar">
         <span class="stage-num" id="char-num">001</span>
@@ -43,66 +139,34 @@
         <span class="level-tag" id="level-label">LVL 1</span>
       </div>
 
-      <!-- Kämpfer-Bühne (mix-blend-mode entfernt schwarzen Hintergrund automatisch!) -->
-      <div class="fighter-scanner" id="aura-wrapper">
+      <div class="fighter-scanner">
         <img id="fighter-img" src="c1_s1.png" alt="Kämpfer" class="fighter-img" />
         <div id="placeholder-box" class="placeholder-box hidden">
           <span id="placeholder-code">c1_s1.png</span>
-          <small>Bild noch nicht hochgeladen</small>
+          <small>Bild hochladen</small>
         </div>
 
-        <!-- Anklickbare Körperteile -->
-        <button class="body-hotspot active" data-part="arms" style="top: 38%; left: 16%;">
-          <span>💪 ARME</span>
-        </button>
-        <button class="body-hotspot" data-part="core" style="top: 52%; left: 50%;">
-          <span>⚡ KERN</span>
-        </button>
-        <button class="body-hotspot" data-part="legs" style="top: 76%; left: 30%;">
-          <span>🦵 BEINE</span>
-        </button>
+        <button class="body-hotspot active" data-part="arms" style="top: 38%; left: 16%;"><span>💪 ARME</span></button>
+        <button class="body-hotspot" data-part="core" style="top: 52%; left: 50%;"><span>⚡ KERN</span></button>
+        <button class="body-hotspot" data-part="legs" style="top: 76%; left: 30%;"><span>🦵 BEINE</span></button>
 
         <div class="energy-pedestal"></div>
       </div>
 
-      <!-- Stufen-Umschalter (1 bis 5 für den gewählten Charakter) -->
       <div class="stage-pills" id="stage-pills"></div>
 
-      <!-- Körperteil-Level -->
       <div class="body-stats-grid">
-        <div class="stat-box" data-part-box="arms">
-          <span class="stat-name">ARME</span>
-          <strong id="stat-arms">LVL 1</strong>
-        </div>
-        <div class="stat-box" data-part-box="core">
-          <span class="stat-name">KI-KERN</span>
-          <strong id="stat-core">LVL 1</strong>
-        </div>
-        <div class="stat-box" data-part-box="legs">
-          <span class="stat-name">BEINE</span>
-          <strong id="stat-legs">LVL 1</strong>
-        </div>
+        <div class="stat-box" data-part-box="arms"><span class="stat-name">ARME</span><strong id="stat-arms">LVL 1</strong></div>
+        <div class="stat-box" data-part-box="core"><span class="stat-name">KI-KERN</span><strong id="stat-core">LVL 1</strong></div>
+        <div class="stat-box" data-part-box="legs"><span class="stat-name">BEINE</span><strong id="stat-legs">LVL 1</strong></div>
       </div>
 
-      <!-- XP Balken -->
       <div class="xp-wrapper">
-        <div class="xp-bar-bg">
-          <div id="ki-bar-fill" class="xp-bar-fill" style="width: 0%;"></div>
-        </div>
+        <div class="xp-bar-bg"><div id="ki-bar-fill" class="xp-bar-fill" style="width: 0%;"></div></div>
         <span id="xp-text" class="xp-numbers">0 / 100 XP</span>
       </div>
     </section>
 
-    <!-- Kämpfer-Auswahl (Alle 15 Charaktere horizontal scrollbar im Dribbble-Look) -->
-    <section class="roster-section">
-      <div class="section-top">
-        <h3>WÄHLE DEINEN KRIEGER (15)</h3>
-        <span class="hint-text">Wischen →</span>
-      </div>
-      <div class="roster-scroll" id="character-roster"></div>
-    </section>
-
-    <!-- Körperteil-Training (Einfach -> Fortgeschritten -> Meister) -->
     <section class="training-section">
       <div class="section-top">
         <h3 id="selected-part-title">TRAINING: ARME & BRUST</h3>
@@ -118,7 +182,7 @@
     <footer class="bottom-bar">
       <button id="reset-btn" class="reset-btn">Fortschritt zurücksetzen</button>
     </footer>
-  </div>
+  </section>
 
   <script src="app.js"></script>
 </body>
