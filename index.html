@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Z-Warriors Body & Ki Training</title>
+  <title>Z-Warriors · 15 Kämpfer Edition</title>
   <link rel="manifest" href="manifest.json" />
   <link rel="preconnect" href="https://googleapis.com">
   <link href="https://googleapis.com/css2?family=Anton&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
@@ -13,19 +13,19 @@
   <!-- Level-Up / Verwandlungs-Modal -->
   <div id="levelup-overlay" class="levelup-overlay hidden">
     <div class="levelup-card">
-      <div class="badge-gold" id="levelup-badge">NEUE VERWANDLUNG</div>
-      <h2 id="levelup-title">SUPER-KRIEGER 1</h2>
-      <p id="levelup-desc">Deine Körperkraft steigt auf ein neues Level!</p>
-      <button id="close-levelup" class="btn-gold">WEITER TRAINIEREN</button>
+      <div class="badge-gold" id="levelup-badge">NEUE STUFE</div>
+      <h2 id="levelup-title">STUFE 2 ERREICHT</h2>
+      <p id="levelup-desc">Deine Kampfkraft explodiert!</p>
+      <button id="close-levelup" class="btn-gold">WEITER KÄMPFEN</button>
     </div>
   </div>
 
   <div class="app-shell">
-    <!-- Top Header wie im Mockup -->
+    <!-- Top Header -->
     <header class="game-header">
       <div>
         <span class="sub-tag">SAIYANS NEVER DIE</span>
-        <h1 class="hero-title">Z-WARRIORS</h1>
+        <h1 class="hero-title">FIGHTERS</h1>
       </div>
       <div class="power-pill">
         <span class="pill-label">GESAMT-KI</span>
@@ -33,42 +33,42 @@
       </div>
     </header>
 
-    <!-- Interaktive Kämpfer-Bühne mit Körperteil-Hotspots -->
+    <!-- Haupt-Bühne: Riesige Hintergrundschrift + Freigestellter Kämpfer + Hotspots -->
     <section class="hero-stage">
-      <div class="watermark-text" id="bg-watermark">001</div>
+      <div class="watermark-text" id="bg-watermark">KÄMPFER 01</div>
 
       <div class="stage-top-bar">
-        <span class="stage-num" id="stage-num">001</span>
-        <h2 class="fighter-name" id="rank-name">BASIS-KRIEGER</h2>
+        <span class="stage-num" id="char-num">001</span>
+        <h2 class="fighter-name" id="fighter-title">SON-BLITZ · STUFE 1</h2>
         <span class="level-tag" id="level-label">LVL 1</span>
       </div>
 
-      <!-- Kämpferbild + anklickbare Körperteile -->
+      <!-- Kämpfer-Bühne (mix-blend-mode entfernt schwarzen Hintergrund automatisch!) -->
       <div class="fighter-scanner" id="aura-wrapper">
-        <img id="fighter-img" src="img_stufe1.jpg" alt="Z-Krieger" class="fighter-img" />
+        <img id="fighter-img" src="c1_s1.png" alt="Kämpfer" class="fighter-img" />
+        <div id="placeholder-box" class="placeholder-box hidden">
+          <span id="placeholder-code">c1_s1.png</span>
+          <small>Bild noch nicht hochgeladen</small>
+        </div>
 
-        <!-- Hotspot 1: Arme & Schultern -->
-        <button class="body-hotspot active" data-part="arms" style="top: 36%; left: 16%;">
-          <span class="pulse-ring"></span>
-          <span class="spot-label">💪 ARME</span>
+        <!-- Anklickbare Körperteile -->
+        <button class="body-hotspot active" data-part="arms" style="top: 38%; left: 16%;">
+          <span>💪 ARME</span>
         </button>
-
-        <!-- Hotspot 2: Bauch / Ki-Kern -->
-        <button class="body-hotspot" data-part="core" style="top: 50%; left: 50%;">
-          <span class="pulse-ring"></span>
-          <span class="spot-label">⚡ KI-KERN</span>
+        <button class="body-hotspot" data-part="core" style="top: 52%; left: 50%;">
+          <span>⚡ KERN</span>
         </button>
-
-        <!-- Hotspot 3: Beine -->
-        <button class="body-hotspot" data-part="legs" style="top: 74%; left: 32%;">
-          <span class="pulse-ring"></span>
-          <span class="spot-label">🦵 BEINE</span>
+        <button class="body-hotspot" data-part="legs" style="top: 76%; left: 30%;">
+          <span>🦵 BEINE</span>
         </button>
 
         <div class="energy-pedestal"></div>
       </div>
 
-      <!-- Körperteil-Power-Leiste (wächst pro Körperteil!) -->
+      <!-- Stufen-Umschalter (1 bis 5 für den gewählten Charakter) -->
+      <div class="stage-pills" id="stage-pills"></div>
+
+      <!-- Körperteil-Level -->
       <div class="body-stats-grid">
         <div class="stat-box" data-part-box="arms">
           <span class="stat-name">ARME</span>
@@ -84,7 +84,7 @@
         </div>
       </div>
 
-      <!-- Gesamt XP Balken -->
+      <!-- XP Balken -->
       <div class="xp-wrapper">
         <div class="xp-bar-bg">
           <div id="ki-bar-fill" class="xp-bar-fill" style="width: 0%;"></div>
@@ -93,46 +93,26 @@
       </div>
     </section>
 
-    <!-- Aktives Körperteil + Modus (Einfach -> Fortgeschritten -> Meister) -->
+    <!-- Kämpfer-Auswahl (Alle 15 Charaktere horizontal scrollbar im Dribbble-Look) -->
+    <section class="roster-section">
+      <div class="section-top">
+        <h3>WÄHLE DEINEN KRIEGER (15)</h3>
+        <span class="hint-text">Wischen →</span>
+      </div>
+      <div class="roster-scroll" id="character-roster"></div>
+    </section>
+
+    <!-- Körperteil-Training (Einfach -> Fortgeschritten -> Meister) -->
     <section class="training-section">
       <div class="section-top">
         <h3 id="selected-part-title">TRAINING: ARME & BRUST</h3>
         <div class="difficulty-tabs">
           <button class="diff-tab active" data-diff="easy">EINFACH</button>
-          <button class="diff-tab" data-diff="advanced">FORTGESCHR.</button>
+          <button class="diff-tab" data-diff="advanced">PROFI</button>
           <button class="diff-tab" data-diff="master">MEISTER</button>
         </div>
       </div>
-
-      <div class="workout-list" id="workout-list">
-        <!-- Übungen für das gewählte Körperteil werden hier geladen -->
-      </div>
-    </section>
-
-    <!-- Formen & Entwicklungs-Karten (wie im Dribbble-Mockup unten) -->
-    <section class="roster-section">
-      <div class="section-top">
-        <h3>FORMEN-ENTWICKLUNG</h3>
-        <span class="hint-text">Tippe auf eine Form</span>
-      </div>
-      <div class="roster-grid" id="stage-switcher">
-        <button class="roster-card active" data-stage="1">
-          <img src="img_stufe1.jpg" alt="001" />
-          <span>001 BASIS</span>
-        </button>
-        <button class="roster-card locked" data-stage="2">
-          <img src="img_stufe2.png" alt="002" />
-          <span>🔒 002</span>
-        </button>
-        <button class="roster-card locked" data-stage="3">
-          <img src="img_stufe3.png" alt="003" />
-          <span>🔒 003</span>
-        </button>
-        <button class="roster-card locked" data-stage="4">
-          <img src="img_stufe4.png" alt="004" />
-          <span>🔒 004</span>
-        </button>
-      </div>
+      <div class="workout-list" id="workout-list"></div>
     </section>
 
     <footer class="bottom-bar">
