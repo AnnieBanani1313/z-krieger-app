@@ -98,12 +98,12 @@ const BODY_WORKOUTS = {
   arms: {
     label: "TRAINING: ARME & BRUST",
     easy: [
-      { title: "10x Knie-Liegestütze", sub: "Einfach · Basis", xp: 25, power: 400, pose: "pushup", tip: "Knie auf den Boden, Rücken gerade halten und Brust tief absenken." },
+      { title: "10x Knie-Liegestütze", sub: "Einfach · Basis", xp: 25, power: 400, pose: "kneepushup", tip: "Knie auf den Boden, Rücken gerade halten und Brust tief absenken." },
       { title: "20 Sek. Schattenboxen", sub: "Einfach · Ki-Fäuste", xp: 20, power: 350, pose: "punch", sec: 20, tip: "Lockere Deckung, schnelle gerade Schläge nach vorn und Ki-Fokus halten!" }
     ],
     advanced: [
       { title: "12x Echte Liegestütze", sub: "Profi · Kamehameha", xp: 45, power: 900, pose: "pushup", tip: "Körper wie ein Brett spannen, Ellbogen eng führen und explosiv hochdrücken." },
-      { title: "10x Dips am Stuhl", sub: "Profi · Trizeps", xp: 45, power: 950, pose: "pushup", tip: "Hände an die Stuhlkante, Po dicht am Stuhl absenken und kraftvoll strecken." }
+      { title: "10x Dips am Stuhl", sub: "Profi · Trizeps", xp: 45, power: 950, pose: "dips", tip: "Hände an die Stuhlkante, Po dicht am Stuhl absenken und kraftvoll strecken." }
     ],
     master: [
       { title: "22x Tiefe Liegestütze", sub: "Meister · 100x G", xp: 80, power: 2000, pose: "pushup", tip: "Bis kurz vor den Boden absenken, 1 Sekunde halten und mit voller Ki-Kraft hoch." },
@@ -122,7 +122,7 @@ const BODY_WORKOUTS = {
     ],
     master: [
       { title: "70 Sek. Plank", sub: "Meister · Abwehr", xp: 85, power: 2200, pose: "plank", sec: 70, tip: "Unzerstörbarer Ki-Schild! Jede Sekunde stärkt deine Rumpf-Verteidigung." },
-      { title: "25x Beinheben", sub: "Meister · Göttlicher Kern", xp: 80, power: 2100, pose: "situp", tip: "Beine gestreckt langsam heben und kontrolliert absenken, ohne Hohlkreuz." }
+      { title: "25x Beinheben", sub: "Meister · Göttlicher Kern", xp: 80, power: 2100, pose: "legraise", tip: "Beine gestreckt langsam heben und kontrolliert absenken, ohne Hohlkreuz." }
     ]
   },
   legs: {
@@ -133,64 +133,64 @@ const BODY_WORKOUTS = {
     ],
     advanced: [
       { title: "25x Kniebeugen", sub: "Profi · 10x Schwerkraft", xp: 45, power: 950, pose: "squat", tip: "Tief in die Hocke gehen und über die Fersen explosiv nach oben drücken." },
-      { title: "14x Ausfallschritte", sub: "Profi · Ausweichen", xp: 45, power: 900, pose: "squat", tip: "Großer Schritt nach vorn, hinteres Knie knapp über dem Boden abstoppen." }
+      { title: "14x Ausfallschritte", sub: "Profi · Ausweichen", xp: 45, power: 900, pose: "lunge", tip: "Großer Schritt nach vorn, hinteres Knie knapp über dem Boden abstoppen." }
     ],
     master: [
       { title: "15x Sprung-Kniebeugen", sub: "Meister · Raketen-Start", xp: 85, power: 2300, pose: "jump", tip: "Aus der tiefen Kniebeuge mit voller Kraft abspringen und weich landen!" },
-      { title: "45 Sek. Wandsitzen", sub: "Meister · 100x G", xp: 80, power: 2100, pose: "squat", sec: 45, tip: "Rücken fest an die Wand, Knie im 90-Grad-Winkel – halte der Schwerkraft stand!" }
+      { title: "45 Sek. Wandsitzen", sub: "Meister · 100x G", xp: 80, power: 2100, pose: "wallsit", sec: 45, tip: "Rücken fest an die Wand, Knie im 90-Grad-Winkel – halte der Schwerkraft stand!" }
     ]
   }
 };
-        const CHARACTER_WORKOUTS = {
+const CHARACTER_WORKOUTS = {
   1: {
     arms: {
-      easy: [{ title: "10x Knie-Liegestütze", sub: "Einfach · Kamehameha-Basis", xp: 25, power: 400, pose: "pushup", tip: "Knie auf den Boden, Rücken gerade halten und Brust tief absenken." }, { title: "20 Sek. Ki-Schattenboxen", sub: "Einfach · Schnelle Fäuste", xp: 20, power: 350, pose: "punch", sec: 20, tip: "Schnelle Kombos nach vorn schlagen und dein Ki in den Fäusten bündeln!" }],
-      advanced: [{ title: "15x Echte Liegestütze", sub: "Profi · Kaioken x2", xp: 45, power: 900, pose: "pushup", tip: "Volle Körperspannung halten und explosiv nach oben drücken." }, { title: "12x Stuhl-Dips", sub: "Profi · Arm-Power", xp: 45, power: 950, pose: "pushup", tip: "Arme sauber beugen und den Trizeps voll durchstrecken." }],
+      easy: [{ title: "10x Knie-Liegestütze", sub: "Einfach · Kamehameha-Basis", xp: 25, power: 400, pose: "kneepushup", tip: "Knie auf den Boden, Rücken gerade halten und Brust tief absenken." }, { title: "20 Sek. Ki-Schattenboxen", sub: "Einfach · Schnelle Fäuste", xp: 20, power: 350, pose: "punch", sec: 20, tip: "Schnelle Kombos nach vorn schlagen und dein Ki in den Fäusten bündeln!" }],
+      advanced: [{ title: "15x Echte Liegestütze", sub: "Profi · Kaioken x2", xp: 45, power: 900, pose: "pushup", tip: "Volle Körperspannung halten und explosiv nach oben drücken." }, { title: "12x Stuhl-Dips", sub: "Profi · Arm-Power", xp: 45, power: 950, pose: "dips", tip: "Arme sauber beugen und den Trizeps voll durchstrecken." }],
       master: [{ title: "25x Tiefe Liegestütze", sub: "Meister · Kaioken x10", xp: 80, power: 2000, pose: "pushup", tip: "Maximale Tiefe für maximale Kaioken-Kraft!" }, { title: "12x Diamant-Liegestütze", sub: "Meister · Super-Kameha", xp: 90, power: 2400, pose: "pushup", tip: "Hände eng im Dreieck unter der Brust platzieren." }]
     },
     core: {
       easy: [{ title: "20 Sek. Ki-Plank", sub: "Einfach · Stabile Aura", xp: 25, power: 450, pose: "plank", sec: 20, tip: "Körper gerade wie ein Pfeil halten und Bauch anspannen." }, { title: "12x Crunches", sub: "Einfach · Körpermitte", xp: 25, power: 400, pose: "situp", tip: "Kontrolliert einrollen und oben kurz halten." }],
       advanced: [{ title: "45 Sek. Plank", sub: "Profi · Schwerkraft-Kern", xp: 45, power: 950, pose: "plank", sec: 45, tip: "Trotz Schwerkraft stabil bleiben und ruhig atmen." }, { title: "20x Sit-Ups", sub: "Profi · Saiyajin-Rumpf", xp: 45, power: 900, pose: "situp", tip: "Kraftvoll aufrichten und langsam abrollen." }],
-      master: [{ title: "75 Sek. Plank", sub: "Meister · Ultra-Abwehr", xp: 85, power: 2200, pose: "plank", sec: 75, tip: "Volle Konzentration – nichts erschüttert deine Deckung!" }, { title: "25x Beinheben", sub: "Meister · Volle Kontrolle", xp: 80, power: 2100, pose: "situp", tip: "Beine gestreckt heben und kontrolliert absenken." }]
+      master: [{ title: "75 Sek. Plank", sub: "Meister · Ultra-Abwehr", xp: 85, power: 2200, pose: "plank", sec: 75, tip: "Volle Konzentration – nichts erschüttert deine Deckung!" }, { title: "25x Beinheben", sub: "Meister · Volle Kontrolle", xp: 80, power: 2100, pose: "legraise", tip: "Beine gestreckt heben und kontrolliert absenken." }]
     },
     legs: {
       easy: [{ title: "15x Kniebeugen", sub: "Einfach · Fester Stand", xp: 25, power: 450, pose: "squat", tip: "Sauber in die Hocke gehen, Knie bleiben hinter den Zehenspitzen." }, { title: "25 Sek. Hampelmänner", sub: "Einfach · Aufwärmen", xp: 20, power: 350, pose: "jump", sec: 25, tip: "Schneller Rhythmus auf den Fußballen." }],
-      advanced: [{ title: "25x Kniebeugen", sub: "Profi · 10x Schwerkraft", xp: 45, power: 950, pose: "squat", tip: "Tief runter und kraftvoll hochdrücken." }, { title: "16x Ausfallschritte", sub: "Profi · Blitz-Ausweichen", xp: 45, power: 900, pose: "squat", tip: "Weite Schritte im Wechsel für maximale Beinstabilität." }],
-      master: [{ title: "18x Sprung-Kniebeugen", sub: "Meister · Wolken-Sprung", xp: 85, power: 2300, pose: "jump", tip: "Explosiv in den Himmel abspringen!" }, { title: "50 Sek. Wandsitzen", sub: "Meister · 100x G", xp: 80, power: 2100, pose: "squat", sec: 50, tip: "90-Grad-Winkel an der Wand halten, bis die Zeit abläuft." }]
+      advanced: [{ title: "25x Kniebeugen", sub: "Profi · 10x Schwerkraft", xp: 45, power: 950, pose: "squat", tip: "Tief runter und kraftvoll hochdrücken." }, { title: "16x Ausfallschritte", sub: "Profi · Blitz-Ausweichen", xp: 45, power: 900, pose: "lunge", tip: "Weite Schritte im Wechsel für maximale Beinstabilität." }],
+      master: [{ title: "18x Sprung-Kniebeugen", sub: "Meister · Wolken-Sprung", xp: 85, power: 2300, pose: "jump", tip: "Explosiv in den Himmel abspringen!" }, { title: "50 Sek. Wandsitzen", sub: "Meister · 100x G", xp: 80, power: 2100, pose: "wallsit", sec: 50, tip: "90-Grad-Winkel an der Wand halten, bis die Zeit abläuft." }]
     }
   },
   2: {
     arms: {
-      easy: [{ title: "12x Wand-Liegestütze", sub: "Einfach · Prinzen-Stolz", xp: 25, power: 400, pose: "pushup", tip: "Saubere Spannung vom Kopf bis zu den Fersen." }, { title: "25 Sek. Armkreisen", sub: "Einfach · Schulter-Ki", xp: 20, power: 350, pose: "punch", sec: 25, tip: "Arme gestreckt halten und kraftvolle Kreise ziehen." }],
+      easy: [{ title: "12x Wand-Liegestütze", sub: "Einfach · Prinzen-Stolz", xp: 25, power: 400, pose: "wallpushup", tip: "Hände an die Wand stützen und Körper gerade vor und zurück drücken." }, { title: "25 Sek. Armkreisen", sub: "Einfach · Schulter-Ki", xp: 20, power: 350, pose: "armcircles", sec: 25, tip: "Arme seitlich gestreckt halten und kraftvolle Kreise ziehen." }],
       advanced: [{ title: "15x Breite Liegestütze", sub: "Profi · Galick-Strahl", xp: 45, power: 950, pose: "pushup", tip: "Hände weiter als schulterbreit für maximale Brust-Power." }, { title: "12x Schulter-Drücken (Pike)", sub: "Profi · 300x G", xp: 50, power: 1000, pose: "pushup", tip: "Hüfte hoch wie ein umgekehrtes V und Kopf Richtung Boden senken." }],
       master: [{ title: "20x Explosiv-Liegestütze", sub: "Meister · Finaler Blitz", xp: 85, power: 2200, pose: "pushup", tip: "So schnell hochdrücken, dass die Hände kurz abheben!" }, { title: "15x Diamant-Liegestütze", sub: "Meister · Royal Blue", xp: 90, power: 2500, pose: "pushup", tip: "Hände eng zusammen für königliche Armkraft." }]
     },
     core: {
       easy: [{ title: "25 Sek. Unterarm-Plank", sub: "Einfach · Eiserner Wille", xp: 25, power: 450, pose: "plank", sec: 25, tip: "Kein Durchhängen – halte den Körper eisern gerade." }, { title: "12x Käfer-Crunches", sub: "Einfach · Balance", xp: 25, power: 400, pose: "situp", tip: "Ellbogen und gegenüberliegendes Knie sauber zusammenführen." }],
       advanced: [{ title: "45 Sek. Seitlicher Plank", sub: "Profi · Ki-Rüstung", xp: 45, power: 950, pose: "plank", sec: 45, tip: "Hüfte hochdrücken und seitliche Bauchmuskeln anspannen." }, { title: "20x Russian Twists", sub: "Profi · Dreh-Impuls", xp: 45, power: 900, pose: "situp", tip: "Oberkörper leicht zurücklehnen und kontrolliert von Seite zu Seite drehen." }],
-      master: [{ title: "60 Sek. Kommando-Plank", sub: "Meister · 400x G Raum", xp: 85, power: 2300, pose: "plank", sec: 60, tip: "Im Wechsel vom Unterarm- in den hohen Stütz wandern." }, { title: "20x V-Ups (Klappmesser)", sub: "Meister · Stolz des Prinzen", xp: 90, power: 2400, pose: "situp", tip: "Arme und gestreckte Beine gleichzeitig oben zusammenführen." }]
+      master: [{ title: "60 Sek. Kommando-Plank", sub: "Meister · 400x G Raum", xp: 85, power: 2300, pose: "plank", sec: 60, tip: "Im Wechsel vom Unterarm- in den hohen Stütz wandern." }, { title: "20x V-Ups (Klappmesser)", sub: "Meister · Stolz des Prinzen", xp: 90, power: 2400, pose: "legraise", tip: "Arme und gestreckte Beine gleichzeitig oben zusammenführen." }]
     },
     legs: {
       easy: [{ title: "15x Sumo-Kniebeugen", sub: "Einfach · Tiefer Stand", xp: 25, power: 450, pose: "squat", tip: "Breiter Stand, Fußspitzen leicht nach außen und tief absenken." }, { title: "20x Wadenheben", sub: "Einfach · Sprungansatz", xp: 20, power: 350, pose: "jump", tip: "Weit auf die Zehenspitzen hochdrücken und kurz halten." }],
-      advanced: [{ title: "20x Ausfallschritte rückwärts", sub: "Profi · Konter-Schritt", xp: 45, power: 950, pose: "squat", tip: "Kontrolliert nach hinten steigen und über das vordere Bein hochdrücken." }, { title: "35 Sek. Wandsitzen", sub: "Profi · Schwerkraft", xp: 45, power: 900, pose: "squat", sec: 35, tip: "Oberschenkel parallel zum Boden halten." }],
-      master: [{ title: "12x Bulgarische Kniebeugen", sub: "Meister · Einzelbein-Kraft", xp: 85, power: 2300, pose: "squat", tip: "Hinteren Fuß auf einen Stuhl legen und tief beugen." }, { title: "20x Ausfallschritt-Sprünge", sub: "Meister · Überschall", xp: 90, power: 2400, pose: "jump", tip: "Beine explosiv in der Luft wechseln!" }]
+      advanced: [{ title: "20x Ausfallschritte rückwärts", sub: "Profi · Konter-Schritt", xp: 45, power: 950, pose: "lunge", tip: "Kontrolliert nach hinten steigen und über das vordere Bein hochdrücken." }, { title: "35 Sek. Wandsitzen", sub: "Profi · Schwerkraft", xp: 45, power: 900, pose: "wallsit", sec: 35, tip: "Oberschenkel parallel zum Boden halten." }],
+      master: [{ title: "12x Bulgarische Kniebeugen", sub: "Meister · Einzelbein-Kraft", xp: 85, power: 2300, pose: "lunge", tip: "Hinteren Fuß auf einen Stuhl legen und tief beugen." }, { title: "20x Ausfallschritt-Sprünge", sub: "Meister · Überschall", xp: 90, power: 2400, pose: "jump", tip: "Beine explosiv in der Luft wechseln!" }]
     }
   },
   3: {
     arms: {
-      easy: [{ title: "25 Sek. Speed-Punches", sub: "Einfach · Turbo-Fäuste", xp: 25, power: 400, pose: "punch", sec: 25, tip: "Maximale Schlagfrequenz nach vorn – Schultern locker lassen!" }, { title: "10x Schulter-Tippen im Plank", sub: "Einfach · Reflexe", xp: 25, power: 450, pose: "pushup", tip: "Im hohen Stütz abwechselnd die gegenüberliegende Schulter antippen." }],
+      easy: [{ title: "25 Sek. Speed-Punches", sub: "Einfach · Turbo-Fäuste", xp: 25, power: 400, pose: "punch", sec: 25, tip: "Maximale Schlagfrequenz nach vorn – Schultern locker lassen!" }, { title: "10x Schulter-Tippen im Plank", sub: "Einfach · Reflexe", xp: 25, power: 450, pose: "shouldertap", tip: "Im hohen Stütz abwechselnd die gegenüberliegende Schulter antippen." }],
       advanced: [{ title: "14x Enge Liegestütze", sub: "Profi · Plasma-Stoß", xp: 45, power: 950, pose: "pushup", tip: "Ellbogen eng am Körper führen für maximale Stoßkraft." }, { title: "30 Sek. Oberkörper-Boxen", sub: "Profi · Overdrive", xp: 45, power: 900, pose: "punch", sec: 30, tip: "Volles Tempo mit Haken und Geraden!" }],
-      master: [{ title: "20x Wechsel-Liegestütze", sub: "Meister · Flammen-Hieb", xp: 85, power: 2200, pose: "pushup", tip: "Nach jedem Liegestütz eine Hand versetzen." }, { title: "40 Sek. Bergsteiger (Speed)", sub: "Meister · System-Maximum", xp: 90, power: 2400, pose: "plank", sec: 40, tip: "Knie im Sprint-Tempo unter die Brust ziehen." }]
+      master: [{ title: "20x Wechsel-Liegestütze", sub: "Meister · Flammen-Hieb", xp: 85, power: 2200, pose: "pushup", tip: "Nach jedem Liegestütz eine Hand versetzen." }, { title: "40 Sek. Bergsteiger (Speed)", sub: "Meister · System-Maximum", xp: 90, power: 2400, pose: "climber", sec: 40, tip: "Knie im Sprint-Tempo unter die Brust ziehen." }]
     },
     core: {
-      easy: [{ title: "15x Mountain Climbers", sub: "Einfach · Antrieb", xp: 25, power: 450, pose: "plank", tip: "Hände fest unter den Schultern, Knie zügig vorziehen." }, { title: "20 Sek. Hollow Hold", sub: "Einfach · Panzer-Kern", xp: 25, power: 400, pose: "situp", sec: 20, tip: "Unteren Rücken fest in den Boden drücken, Schultern und Beine leicht heben." }],
-      advanced: [{ title: "30x Fahrrad-Crunches", sub: "Profi · Cyber-Rotation", xp: 45, power: 950, pose: "situp", tip: "Fließende Rotation von Ellbogen zu Knie." }, { title: "45 Sek. Plank mit Kniezug", sub: "Profi · Reaktor-Stabilität", xp: 50, power: 1000, pose: "plank", sec: 45, tip: "Im Plank abwechselnd das Knie seitlich zum Ellbogen ziehen." }],
-      master: [{ title: "50x Fahrrad-Crunches", sub: "Meister · Hyper-Kern", xp: 85, power: 2300, pose: "situp", tip: "Sauber durchziehen ohne Schwung zu holen!" }, { title: "60 Sek. Hollow Body Hold", sub: "Meister · Titan-Schild", xp: 90, power: 2400, pose: "situp", sec: 60, tip: "Volle Rumpfspannung für 60 Sekunden halten." }]
+      easy: [{ title: "15x Mountain Climbers", sub: "Einfach · Antrieb", xp: 25, power: 450, pose: "climber", tip: "Hände fest unter den Schultern, Knie zügig vorziehen." }, { title: "20 Sek. Hollow Hold", sub: "Einfach · Panzer-Kern", xp: 25, power: 400, pose: "legraise", sec: 20, tip: "Unteren Rücken fest in den Boden drücken, Schultern und Beine leicht heben." }],
+      advanced: [{ title: "30x Fahrrad-Crunches", sub: "Profi · Cyber-Rotation", xp: 45, power: 950, pose: "situp", tip: "Fließende Rotation von Ellbogen zu Knie." }, { title: "45 Sek. Plank mit Kniezug", sub: "Profi · Reaktor-Stabilität", xp: 50, power: 1000, pose: "climber", sec: 45, tip: "Im Plank abwechselnd das Knie seitlich zum Ellbogen ziehen." }],
+      master: [{ title: "50x Fahrrad-Crunches", sub: "Meister · Hyper-Kern", xp: 85, power: 2300, pose: "situp", tip: "Sauber durchziehen ohne Schwung zu holen!" }, { title: "60 Sek. Hollow Body Hold", sub: "Meister · Titan-Schild", xp: 90, power: 2400, pose: "legraise", sec: 60, tip: "Volle Rumpfspannung für 60 Sekunden halten." }]
     },
     legs: {
-      easy: [{ title: "25 Sek. Kniehebelauf", sub: "Einfach · Sprint-Modul", xp: 25, power: 450, pose: "jump", sec: 25, tip: "Knie hoch auf Hüfthöhe ziehen und Arme aktiv mitnehmen." }, { title: "15x Skater-Sprünge", sub: "Einfach · Ausweich-Sensor", xp: 25, power: 400, pose: "jump", tip: "Seitlich von einem Bein aufs andere springen und stabil landen." }],
-      advanced: [{ title: "40 Sek. High Knees", sub: "Profi · Nachbrenner", xp: 45, power: 950, pose: "jump", sec: 40, tip: "Höchstgeschwindigkeit halten!" }, { title: "18x Seitliche Ausfallschritte", sub: "Profi · Ausweich-Manöver", xp: 45, power: 900, pose: "squat", tip: "Weit zur Seite steigen, Standbein beugen und zurückdrücken." }],
-      master: [{ title: "15x Burpees", sub: "Meister · Vollgas-Modus", xp: 90, power: 2500, pose: "jump", tip: "Liegestütz, Beine vorspringen und Strecksprung nach oben!" }, { title: "20x Skater-Sprünge weit", sub: "Meister · Lichtgeschwindigkeit", xp: 85, power: 2200, pose: "jump", tip: "Maximale Sprungweite von Seite zu Seite." }]
+      easy: [{ title: "25 Sek. Kniehebelauf", sub: "Einfach · Sprint-Modul", xp: 25, power: 450, pose: "jump", sec: 25, tip: "Knie hoch auf Hüfthöhe ziehen und Arme aktiv mitnehmen." }, { title: "15x Skater-Sprünge", sub: "Einfach · Ausweich-Sensor", xp: 25, power: 400, pose: "lunge", tip: "Seitlich von einem Bein aufs andere springen und stabil landen." }],
+      advanced: [{ title: "40 Sek. High Knees", sub: "Profi · Nachbrenner", xp: 45, power: 950, pose: "jump", sec: 40, tip: "Höchstgeschwindigkeit halten!" }, { title: "18x Seitliche Ausfallschritte", sub: "Profi · Ausweich-Manöver", xp: 45, power: 900, pose: "lunge", tip: "Weit zur Seite steigen, Standbein beugen und zurückdrücken." }],
+      master: [{ title: "15x Burpees", sub: "Meister · Vollgas-Modus", xp: 90, power: 2500, pose: "jump", tip: "Liegestütz, Beine vorspringen und Strecksprung nach oben!" }, { title: "20x Skater-Sprünge weit", sub: "Meister · Lichtgeschwindigkeit", xp: 85, power: 2200, pose: "lunge", tip: "Maximale Sprungweite von Seite zu Seite." }]
     }
   }
 };
@@ -274,57 +274,119 @@ function getComicSVG(pose) {
     </linearGradient>
   </defs>
   <ellipse cx="130" cy="70" rx="95" ry="48" fill="url(#kiAura)"/>
-  <g stroke="#ff9900" stroke-opacity="0.22" stroke-width="1.5">
-    <line x1="10" y1="22" x2="75" y2="22"/><line x1="185" y1="18" x2="250" y2="18"/>
-    <line x1="5" y1="102" x2="65" y2="102"/><line x1="195" y1="98" x2="255" y2="98"/>
-  </g>
   <line x1="20" y1="112" x2="240" y2="112" stroke="#3a3a48" stroke-width="3" stroke-linecap="round"/>`;
 
   const hair = (x, y, rot = 0) => `<g transform="translate(${x},${y}) rotate(${rot})">
     <polygon points="-10,-6 -22,-18 -6,-13 -12,-28 0,-16 6,-30 10,-15 22,-22 12,-8 20,-2 8,2" fill="#141418" stroke="#ffb703" stroke-width="1.2"/>
     <circle cx="2" cy="2" r="9" fill="#f4c095" stroke="#141418" stroke-width="1.5"/>
-    <path d="M2,1 L8,3" stroke="#141418" stroke-width="2" stroke-linecap="round"/>
   </g>`;
 
   const svgs = {
     pushup: `<svg viewBox="0 0 260 125" width="235" height="120">${bg}
-      <g opacity="0.28" transform="translate(0,-14)">
-        <path d="M55,95 L115,72 L168,54" stroke="#ffb703" stroke-width="12" stroke-linecap="round" fill="none"/>
-      </g>
       <path d="M48,106 L108,88 L164,66" stroke="#1d3557" stroke-width="13" stroke-linecap="round" fill="none"/>
       <path d="M108,88 L166,65" stroke="url(#giGrad)" stroke-width="16" stroke-linecap="round" fill="none"/>
-      <path d="M162,68 L156,90 L164,108" stroke="#f4c095" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-      <rect x="155" y="103" width="16" height="7" rx="3" fill="#ff9900"/>
+      <path d="M162,68 L156,90 L164,108" stroke="#f4c095" stroke-width="9" stroke-linecap="round" fill="none"/>
       ${hair(182, 58, 18)}
       <path d="M214,48 L214,88 M206,79 L214,90 L222,79" stroke="#ffb703" stroke-width="3.5" fill="none" stroke-linecap="round"/>
     </svg>`,
 
-    plank: `<svg viewBox="0 0 260 125" width="235" height="120">${bg}
+    kneepushup: `<svg viewBox="0 0 260 125" width="235" height="120">${bg}
+      <polyline points="42,92 84,106 122,82" stroke="#1d3557" stroke-width="13" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+      <path d="M122,82 L172,62" stroke="url(#giGrad)" stroke-width="16" stroke-linecap="round"/>
+      <path d="M168,65 L164,90 L170,108" stroke="#f4c095" stroke-width="9" stroke-linecap="round" fill="none"/>
+      ${hair(188, 54, 18)}
+      <path d="M214,48 L214,88 M206,79 L214,90 L222,79" stroke="#ffb703" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+    </svg>`,
+
+    wallpushup: `<svg viewBox="0 0 260 125" width="235" height="120">${bg}
+      <line x1="196" y1="12" x2="196" y2="112" stroke="#ffb703" stroke-width="5" stroke-linecap="round"/>
+      <path d="M108,108 L130,68" stroke="#1d3557" stroke-width="13" stroke-linecap="round"/>
+      <path d="M130,68 L150,36" stroke="url(#giGrad)" stroke-width="16" stroke-linecap="round"/>
+      <path d="M148,40 L192,42" stroke="#f4c095" stroke-width="9" stroke-linecap="round"/>
+      ${hair(156, 20, 22)}
+      <path d="M164,62 L186,62 M179,56 L188,62 L179,68" stroke="#ffb703" stroke-width="3" fill="none" stroke-linecap="round"/>
+    </svg>`,
+
+    armcircles: `<svg viewBox="0 0 260 125" width="235" height="120">${bg}
+      <polyline points="122,76 112,108" stroke="#1d3557" stroke-width="13" stroke-linecap="round"/>
+      <polyline points="138,76 148,108" stroke="#1d3557" stroke-width="13" stroke-linecap="round"/>
+      <path d="M130,40 L130,76" stroke="url(#giGrad)" stroke-width="18" stroke-linecap="round"/>
+      <line x1="74" y1="46" x2="186" y2="46" stroke="#f4c095" stroke-width="8" stroke-linecap="round"/>
+      <circle cx="68" cy="46" r="14" stroke="#ffb703" stroke-width="2.5" stroke-dasharray="5 3" fill="none"/>
+      <circle cx="192" cy="46" r="14" stroke="#ffb703" stroke-width="2.5" stroke-dasharray="5 3" fill="none"/>
+      ${hair(130, 23, 0)}
+    </svg>`,
+
+    shouldertap: `<svg viewBox="0 0 260 125" width="235" height="120">${bg}
+      <path d="M46,106 L108,82 L168,54" stroke="#1d3557" stroke-width="13" stroke-linecap="round" fill="none"/>
+      <path d="M108,82 L168,54" stroke="url(#giGrad)" stroke-width="16" stroke-linecap="round"/>
+      <line x1="166" y1="56" x2="166" y2="108" stroke="#f4c095" stroke-width="9" stroke-linecap="round"/>
+      <polyline points="164,58 148,68 158,52" stroke="#ffb703" stroke-width="7" stroke-linecap="round" fill="none"/>
+      <circle cx="158" cy="50" r="8" stroke="#ff9900" stroke-width="2.5" fill="none"/>
+      ${hair(184, 46, 15)}
+    </svg>`,
+
+    dips: `<svg viewBox="0 0 260 125" width="235" height="120">${bg}
+      <polyline points="55,110 55,64 95,64 95,110" stroke="#555" stroke-width="5" fill="none" stroke-linecap="round"/>
+      <polyline points="124,84 162,86 184,108" stroke="#1d3557" stroke-width="13" stroke-linecap="round" fill="none"/>
+      <path d="M116,46 L124,84" stroke="url(#giGrad)" stroke-width="16" stroke-linecap="round"/>
+      <polyline points="116,48 92,62" stroke="#f4c095" stroke-width="8" stroke-linecap="round" fill="none"/>
+      ${hair(116, 30, 0)}
+      <path d="M144,44 L144,74 M138,67 L144,76 L150,67" stroke="#ffb703" stroke-width="3" fill="none" stroke-linecap="round"/>
+    </svg>`,
+        plank: `<svg viewBox="0 0 260 125" width="235" height="120">${bg}
       <path d="M45,104 L112,88 L174,74" stroke="#1d3557" stroke-width="13" stroke-linecap="round" fill="none"/>
       <path d="M112,88 L176,73" stroke="url(#giGrad)" stroke-width="16" stroke-linecap="round" fill="none"/>
       <polyline points="172,76 168,104 190,104" stroke="#f4c095" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-      <rect x="166" y="99" width="14" height="7" rx="3" fill="#ff9900"/>
       ${hair(194, 68, 12)}
       <path d="M95,62 Q135,50 175,60" stroke="#ffb703" stroke-width="2.5" stroke-dasharray="5 4" fill="none"/>
     </svg>`,
 
-    squat: `<svg viewBox="0 0 260 125" width="235" height="120">${bg}
-      <g opacity="0.25" transform="translate(0,-16)">
-        <line x1="130" y1="36" x2="130" y2="75" stroke="#ffb703" stroke-width="14" stroke-linecap="round"/>
-      </g>
-      <polyline points="122,76 154,84 134,108" stroke="#1d3557" stroke-width="13" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-      <path d="M128,42 L120,76" stroke="url(#giGrad)" stroke-width="17" stroke-linecap="round"/>
-      <polyline points="128,46 164,54 182,48" stroke="#f4c095" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-      ${hair(130, 26, 0)}
-      <path d="M84,48 L84,88 M76,79 L84,90 L92,79" stroke="#ffb703" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+    climber: `<svg viewBox="0 0 260 125" width="235" height="120">${bg}
+      <polyline points="52,106 108,82 142,92 126,104" stroke="#1d3557" stroke-width="13" stroke-linecap="round" fill="none"/>
+      <path d="M108,82 L168,54" stroke="url(#giGrad)" stroke-width="16" stroke-linecap="round"/>
+      <line x1="166" y1="56" x2="166" y2="108" stroke="#f4c095" stroke-width="9" stroke-linecap="round"/>
+      ${hair(184, 46, 15)}
+      <path d="M112,98 L144,86 M136,83 L146,86 L140,94" stroke="#ffb703" stroke-width="3" fill="none" stroke-linecap="round"/>
     </svg>`,
 
     situp: `<svg viewBox="0 0 260 125" width="235" height="120">${bg}
       <polyline points="126,104 162,74 188,106" stroke="#1d3557" stroke-width="13" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
       <path d="M126,104 L104,58" stroke="url(#giGrad)" stroke-width="17" stroke-linecap="round"/>
-      <polyline points="106,62 134,56 146,66" stroke="#f4c095" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+      <polyline points="106,62 134,56 146,66" stroke="#f4c095" stroke-width="8" stroke-linecap="round" fill="none"/>
       ${hair(98, 42, -18)}
       <path d="M68,88 Q68,54 88,42 M80,38 L91,41 L85,50" stroke="#ffb703" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+    </svg>`,
+
+    legraise: `<svg viewBox="0 0 260 125" width="235" height="120">${bg}
+      <path d="M68,104 L124,104" stroke="url(#giGrad)" stroke-width="16" stroke-linecap="round"/>
+      <path d="M124,104 L176,46" stroke="#1d3557" stroke-width="13" stroke-linecap="round"/>
+      ${hair(52, 98, -75)}
+      <path d="M192,88 Q192,58 182,42 M176,48 L181,40 L189,45" stroke="#ffb703" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+    </svg>`,
+
+    squat: `<svg viewBox="0 0 260 125" width="235" height="120">${bg}
+      <polyline points="122,76 154,84 134,108" stroke="#1d3557" stroke-width="13" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+      <path d="M128,42 L120,76" stroke="url(#giGrad)" stroke-width="17" stroke-linecap="round"/>
+      <polyline points="128,46 164,54 182,48" stroke="#f4c095" stroke-width="8" stroke-linecap="round" fill="none"/>
+      ${hair(130, 26, 0)}
+      <path d="M84,48 L84,88 M76,79 L84,90 L92,79" stroke="#ffb703" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+    </svg>`,
+
+    lunge: `<svg viewBox="0 0 260 125" width="235" height="120">${bg}
+      <polyline points="124,74 162,76 162,108" stroke="#1d3557" stroke-width="13" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+      <polyline points="124,74 96,102 72,104" stroke="#1d3557" stroke-width="12" stroke-linecap="round" fill="none"/>
+      <path d="M124,38 L124,74" stroke="url(#giGrad)" stroke-width="17" stroke-linecap="round"/>
+      ${hair(124, 22, 0)}
+      <path d="M178,68 L178,98 M172,91 L178,100 L184,91" stroke="#ffb703" stroke-width="3" fill="none" stroke-linecap="round"/>
+    </svg>`,
+
+    wallsit: `<svg viewBox="0 0 260 125" width="235" height="120">${bg}
+      <line x1="94" y1="14" x2="94" y2="112" stroke="#ffb703" stroke-width="5" stroke-linecap="round"/>
+      <polyline points="104,76 146,76 146,108" stroke="#1d3557" stroke-width="13" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+      <path d="M104,38 L104,76" stroke="url(#giGrad)" stroke-width="17" stroke-linecap="round"/>
+      ${hair(106, 22, 0)}
+      <text x="164" y="82" fill="#ffb703" font-family="Anton, sans-serif" font-size="16">90°</text>
     </svg>`,
 
     punch: `<svg viewBox="0 0 260 125" width="235" height="120">${bg}
@@ -332,7 +394,6 @@ function getComicSVG(pose) {
       <polyline points="108,76 130,108" stroke="#1d3557" stroke-width="13" stroke-linecap="round"/>
       <path d="M106,40 L106,76" stroke="url(#giGrad)" stroke-width="18" stroke-linecap="round"/>
       <line x1="108" y1="48" x2="174" y2="46" stroke="#f4c095" stroke-width="9" stroke-linecap="round"/>
-      <circle cx="178" cy="46" r="7" fill="#ffb703"/>
       <polygon points="188,46 218,36 208,46 218,56" fill="#ff9900"/>
       ${hair(106, 24, 0)}
     </svg>`,
@@ -598,7 +659,26 @@ function updateUI() {
 
   document.getElementById("stat-arms").textContent = `LVL ${1 + Math.floor((state.partXP.arms || 0) / 60)}`;
   document.getElementById("stat-core").textContent = `LVL ${1 + Math.floor((state.partXP.core || 0) / 60)}`;
-  document.getElementById("stat-legs").textContent = `LVL ${1 + Math.floor((state.partXP.legs || 0) / 60)}`;
+
+function updateUI() {
+  const xpNeeded = state.level * 100;
+  const maxUnlocked = getMaxUnlockedStage(state.level);
+  if (state.selectedStage > maxUnlocked) state.selectedStage = maxUnlocked;
+
+  const charObj = CHARACTERS.find(c => c.id === state.selectedChar) || CHARACTERS.at(0);
+  const baseFile = `c${state.selectedChar}_s${state.selectedStage}`;
+
+  document.getElementById("power-level").textContent = state.powerLevel.toLocaleString("de-DE");
+  document.getElementById("char-num").textContent = String(state.selectedChar).padStart(3, "0");
+  document.getElementById("fighter-title").textContent = `${charObj.name} · STUFE ${state.selectedStage}`;
+  document.getElementById("bg-watermark").textContent = charObj.name;
+  document.getElementById("level-label").textContent = `LVL ${state.level}`;
+  document.getElementById("xp-text").textContent = `${state.xp} / ${xpNeeded} XP`;
+  document.getElementById("ki-bar-fill").style.width = `${Math.min(100, (state.xp / xpNeeded) * 100)}%`;
+
+  document.getElementById("stat-arms").textContent = `LVL ${1 + Math.floor((state.partXP.arms || 0) / 60)}`;
+  document.getElementById("stat-core").textContent = `LVL ${1 + Math.floor((state.partXP.core || 0) / 60)}`;
+    document.getElementById("stat-legs").textContent = `LVL ${1 + Math.floor((state.partXP.legs || 0) / 60)}`;
 
   loadSmartImage(document.getElementById("header-avatar-img"), `c${state.selectedChar}_s1`, () => {});
 
@@ -632,8 +712,7 @@ function updateUI() {
 
   localStorage.setItem("zwarriors_neon_v8", JSON.stringify(state));
 }
-
-document.getElementById("ex-complete-btn").addEventListener("click", () => {
+  document.getElementById("ex-complete-btn").addEventListener("click", () => {
   clearInterval(timerInterval);
   document.getElementById("exercise-modal").classList.add("hidden");
   if (activeExercise) completeExercise(activeExercise.xp, activeExercise.power);
@@ -700,3 +779,4 @@ loadSmartImage(document.getElementById("intro-hero-img"), "c1_s1", () => {});
 updateStaggeredCarousel();
 updateUI();
 renderWorkouts();
+  
