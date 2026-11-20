@@ -6,14 +6,12 @@
   <title>SAIYANS NEVER DIE · Z-Warriors</title>
   <link rel="manifest" href="manifest.json" />
   <link rel="preconnect" href="https://googleapis.com">
-  <link href="https://googleapis.com/css2?family=Anton&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
+  <link href="https://googleapis.com/css2?family=Bebas+Neue&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
-  <!-- ==========================================
-       SCREEN 1: STARTBILDSCHIRM ("SAIYANS NEVER DIE")
-       ========================================== -->
+  <!-- SCREEN 1: STARTBILDSCHIRM ("SAIYANS NEVER DIE") -->
   <section id="intro-screen" class="poster-screen">
     <div class="poster-hero-top">
       <h1 class="tall-orange-title">SAIYANS<br>NEVER<br>DIE</h1>
@@ -39,17 +37,13 @@
     <button id="enter-app-btn" class="tall-orange-btn">KRIEGER WÄHLEN →</button>
   </section>
 
-  <!-- ==========================================
-       SCREEN 2: EXAKTE KÄMPFERAUSWAHL AUS DEM BILD + DICKE ORANGE SCHRIFT
-       ========================================== -->
+  <!-- SCREEN 2: VERTIKALES KÄMPFER-KARUSSELL -->
   <section id="select-screen" class="poster-screen select-layout hidden">
-    <!-- Drachen-Wasserzeichen links im Hintergrund -->
     <svg class="dragon-svg" viewBox="0 0 200 320" fill="none">
       <path d="M40 30 C115 10, 165 65, 120 115 C75 165, 175 185, 130 245 C95 290, 25 265, 48 215 C70 165, 10 140, 40 90 Z" stroke="#ffffff" stroke-width="20" stroke-linecap="round"/>
       <circle cx="95" cy="58" r="11" fill="#ffffff"/>
     </svg>
 
-    <!-- Top Header: Links Zurück-Button, Rechts Hallo Krieger + Avatar -->
     <header class="poster-nav">
       <button id="back-to-intro" class="dark-square-btn">‹</button>
       <div class="user-profile-box">
@@ -63,7 +57,6 @@
       </div>
     </header>
 
-    <!-- Hauptbereich: Links Titel, Scroll-Linie & Text unten / Rechts 3-Karten-Karussell -->
     <div class="mockup-split-body">
       <div class="left-info-col">
         <div>
@@ -71,7 +64,6 @@
           <h2 class="tall-orange-title select-big-word">KRIEGER</h2>
         </div>
 
-        <!-- Vertikale Scroll-Linie links wie im Bild -->
         <div class="scroll-indicator">
           <div id="scroll-thumb" class="scroll-thumb"></div>
         </div>
@@ -79,15 +71,12 @@
         <p class="orange-bottom-caption">UND STARTE DEIN<br>TRAINING...</p>
       </div>
 
-      <!-- Gestaffeltes 3-Karten-Karussell rechts -->
       <div id="staggered-carousel" class="staggered-carousel">
-        <!-- Karte Oben (Grün, rechts versetzt) -->
         <div id="card-prev" class="s-card card-top">
           <img id="img-prev" class="s-char-img" alt="" />
           <div id="fb-prev" class="s-fallback">#15</div>
         </div>
 
-        <!-- Karte Mitte (Groß, Orange, weiter links) -->
         <div id="card-curr" class="s-card card-center">
           <img id="img-curr" class="s-char-img" alt="" />
           <div id="fb-curr" class="s-fallback">#01</div>
@@ -100,7 +89,6 @@
           </div>
         </div>
 
-        <!-- Karte Unten (Eisblau, rechts versetzt) -->
         <div id="card-next" class="s-card card-bottom">
           <img id="img-next" class="s-char-img" alt="" />
           <div id="fb-next" class="s-fallback">#02</div>
@@ -109,9 +97,7 @@
     </div>
   </section>
 
-  <!-- ==========================================
-       SCREEN 3: KÄMPFER-INFOS ("FIGHTERS")
-       ========================================== -->
+  <!-- SCREEN 3: KÄMPFER-INFOS ("FIGHTERS") -->
   <section id="detail-screen" class="poster-screen hidden">
     <header class="poster-nav">
       <button id="back-to-carousel" class="dark-square-btn">‹</button>
@@ -139,9 +125,7 @@
     <button id="confirm-fighter-btn" class="tall-orange-btn">DIESEN KRIEGER AUSWÄHLEN</button>
   </section>
 
-  <!-- ==========================================
-       SCREEN 4: TRAININGS-ARENA & KÖRPERTEILE
-       ========================================== -->
+  <!-- SCREEN 4: TRAININGS-ARENA & KÖRPERTEILE -->
   <section id="arena-screen" class="poster-screen arena-mode hidden">
     <div id="levelup-overlay" class="levelup-overlay hidden">
       <div class="levelup-card">
