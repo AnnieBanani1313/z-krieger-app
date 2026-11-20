@@ -4,10 +4,9 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>SAIYANS NEVER DIE · Z-Warriors</title>
-  <link rel="manifest" href="manifest.json" />
-  <link rel="preconnect" href="https://googleapis.com">
-  <link href="https://googleapis.com/css2?family=Anton&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
@@ -69,21 +68,24 @@
       </div>
 
       <div id="staggered-carousel" class="staggered-carousel">
-        <div class="neon-stack">
-          <div id="card-prev" class="s-card card-top">
-            <div id="fb-prev" class="s-fallback">#15</div>
-          </div>
+  <div class="neon-stack">
+    <div id="card-prev" class="s-card card-top"><div id="fb-prev" class="s-fallback">#15</div></div>
+    <div id="card-curr" class="s-card card-center"><div id="fb-curr" class="s-fallback">#01</div></div>
+    <div id="card-next" class="s-card card-bottom"><div id="fb-next" class="s-fallback">#02</div></div>
 
-          <div id="card-curr" class="s-card card-center">
-            <div id="fb-curr" class="s-fallback">#01</div>
-            <div class="center-card-footer">
-              <div id="name-curr" class="center-name">SON-BLITZ</div>
-              <div class="center-pills">
-                <span id="lvl-curr" class="dark-pill">LVL 1</span>
-                <span id="evo-curr" class="dark-pill">STUFE · 1</span>
-              </div>
-            </div>
-          </div>
+    <img id="img-prev" class="s-char-img char-top" alt="" />
+    <img id="img-curr" class="s-char-img char-center" alt="" />
+    <img id="img-next" class="s-char-img char-bottom" alt="" />
+
+    <div class="center-card-footer">
+      <div id="name-curr" class="center-name">SON-BLITZ</div>
+      <div class="center-pills">
+        <span id="lvl-curr" class="dark-pill">LVL 1</span>
+        <span id="evo-curr" class="dark-pill">STUFE · 1</span>
+      </div>
+    </div>
+  </div>
+</div>
 
           <div id="card-next" class="s-card card-bottom">
             <div id="fb-next" class="s-fallback">#02</div>
