@@ -1,19 +1,19 @@
 const CHARACTERS = [
-  { id: 1, name: "SON-BLITZ", attack: "SONNEN-KAMEHA", focus: "GANZKÖRPER", bio: "Ein furchtloser Saiyajin-Krieger mit unbändigem Trainingswillen. Mit jedem Workout explodiert seine goldene Kampf-Aura.", color: "#ff8c00" },
-  { id: 2, name: "PRINZ-KI", attack: "FINALER BLITZ", focus: "ARME & BRUST", bio: "Stolz, zielstrebig und immer auf der Suche nach der nächsten Transformation. Meister der schweren Schwerkraft.", color: "#38b6ff" },
-  { id: 3, name: "STURM-GREEN", attack: "OMEGA-STURM", focus: "BEINE & KRAFT", bio: "Entfesselt gewaltige smaragdgrüne Natur-Energie und hält selbst den härtesten Ausdauer-Prüfungen stand.", color: "#27ae60" },
-  { id: 4, name: "CYBER-RED", attack: "FLAMMEN-HIEB", focus: "REAKTION & KERN", bio: "Ausgestattet mit einer High-Tech-Kampfrüstung und blitzschnellen Reflexen.", color: "#eb4d4b" },
-  { id: 5, name: "SHADOW-X", attack: "PHANTOM-SALVE", focus: "BAUCH & BALANCE", bio: "Bewegt sich lautlos wie der Wind und überrascht seine Gegner mit schnellen Schüben.", color: "#9b59b6" },
-  { id: 6, name: "NOVA-GOLD", attack: "SUPERNOVA", focus: "GANZKÖRPER", bio: "Seine goldene Energie erhellt die gesamte Arena und verleiht enorme Ausdauer.", color: "#f1c40f" },
-  { id: 7, name: "TITAN-FORCE", attack: "TITANEN-WALL", focus: "ARME & CORE", bio: "Ein unerschütterlicher Verteidiger, dessen Ki-Schild keinen Angriff durchlässt.", color: "#00cec9" },
-  { id: 8, name: "BLITZ-KID", attack: "DONNER-SPRINT", focus: "BEINE & SPEED", bio: "Jung, extrem wendig und immer bereit für das nächste Schnellkraft-Training.", color: "#ff793f" },
-  { id: 9, name: "FROST-ZEN", attack: "GLETSCHER-STRAHL", focus: "KI-KERN", bio: "Bleibt selbst unter höchstem Druck eiskalt und kontrolliert jeden Atemzug.", color: "#70a1ff" },
-  { id: 10, name: "FLAME-REX", attack: "MAGMA-FAUST", focus: "BRUST & SCHULTERN", bio: "Seine glühende Kampf-Aura steigt mit jeder absolvierten Liegestütze weiter an.", color: "#ff5252" },
-  { id: 11, name: "ULTRA-VEX", attack: "KOMETEN-REGEN", focus: "GANZKÖRPER", bio: "Nutzt kosmische Energie aus fernen Galaxien für maximale Sprungkraft.", color: "#a29bfe" },
-  { id: 12, name: "SOLAR-KAI", attack: "HELIOS-WELLE", focus: "AUSDAUER", bio: "Zieht seine Kraft direkt aus dem Licht der Sonne und gibt niemals auf.", color: "#ffa502" },
-  { id: 13, name: "DARK-ORION", attack: "ECLIPSE-SCHLAG", focus: "ARME & RÜCKEN", bio: "Ein geheimnisvoller Einzelgänger mit gewaltiger Schlagkraft.", color: "#57606f" },
-  { id: 14, name: "AERO-DASH", attack: "WIRBELSTURM", focus: "BEINE & AGILITÄT", bio: "Beherrscht den Himmel und bewegt sich schneller als das Auge folgen kann.", color: "#1dd1a1" },
-  { id: 15, name: "OMEGA-GOD", attack: "OMEGA-URKNALL", focus: "ALLE BEREICHE", bio: "Der ultimative Meister-Krieger, der alle Kampftechniken in sich vereint.", color: "#ff6b81" }
+  { id: 1, name: "SON-BLITZ", attack: "SONNEN-KAMEHA", focus: "GANZKÖRPER", bio: "Ein furchtloser Saiyajin-Krieger mit unbändigem Trainingswillen. Mit jedem Workout explodiert seine goldene Kampf-Aura.", color: "#ffaa00" },
+  { id: 2, name: "PRINZ-KI", attack: "FINALER BLITZ", focus: "ARME & BRUST", bio: "Stolz, zielstrebig und immer auf der Suche nach der nächsten Transformation. Meister der schweren Schwerkraft.", color: "#4ea8de" },
+  { id: 3, name: "CYBER-RED", attack: "FLAMMEN-HIEB", focus: "REAKTION & KERN", bio: "Ausgestattet mit einer High-Tech-Kampfrüstung und blitzschnellen Reflexen.", color: "#d63031" },
+  { id: 4, name: "SHADOW-X", attack: "PHANTOM-SALVE", focus: "BAUCH & BALANCE", bio: "Bewegt sich lautlos wie der Wind und überrascht seine Gegner mit schnellen Schüben.", color: "#8e44ad" },
+  { id: 5, name: "NOVA-GOLD", attack: "SUPERNOVA", focus: "GANZKÖRPER", bio: "Seine goldene Energie erhellt die gesamte Arena und verleiht enorme Ausdauer.", color: "#f1c40f" },
+  { id: 6, name: "TITAN-FORCE", attack: "TITANEN-WALL", focus: "ARME & CORE", bio: "Ein unerschütterlicher Verteidiger, dessen Ki-Schild keinen Angriff durchlässt.", color: "#00cec9" },
+  { id: 7, name: "BLITZ-KID", attack: "DONNER-SPRINT", focus: "BEINE & SPEED", bio: "Jung, extrem wendig und immer bereit für das nächste Schnellkraft-Training.", color: "#e17055" },
+  { id: 8, name: "FROST-ZEN", attack: "GLETSCHER-STRAHL", focus: "KI-KERN", bio: "Bleibt selbst unter höchstem Druck eiskalt und kontrolliert jeden Atemzug.", color: "#70a1ff" },
+  { id: 9, name: "FLAME-REX", attack: "MAGMA-FAUST", focus: "BRUST & SCHULTERN", bio: "Seine glühende Kampf-Aura steigt mit jeder absolvierten Liegestütze weiter an.", color: "#ff5252" },
+  { id: 10, name: "ULTRA-VEX", attack: "KOMETEN-REGEN", focus: "GANZKÖRPER", bio: "Nutzt kosmische Energie aus fernen Galaxien für maximale Sprungkraft.", color: "#a29bfe" },
+  { id: 11, name: "SOLAR-KAI", attack: "HELIOS-WELLE", focus: "AUSDAUER", bio: "Zieht seine Kraft direkt aus dem Licht der Sonne und gibt niemals auf.", color: "#ffa502" },
+  { id: 12, name: "DARK-ORION", attack: "ECLIPSE-SCHLAG", focus: "ARME & RÜCKEN", bio: "Ein geheimnisvoller Einzelgänger mit gewaltiger Schlagkraft.", color: "#57606f" },
+  { id: 13, name: "AERO-DASH", attack: "WIRBELSTURM", focus: "BEINE & AGILITÄT", bio: "Beherrscht den Himmel und bewegt sich schneller als das Auge folgen kann.", color: "#1dd1a1" },
+  { id: 14, name: "OMEGA-GOD", attack: "OMEGA-URKNALL", focus: "ALLE BEREICHE", bio: "Der ultimative Meister-Krieger, der alle Kampftechniken in sich vereint.", color: "#e84393" },
+  { id: 15, name: "STURM-GREEN", attack: "OMEGA-STURM", focus: "BEINE & KRAFT", bio: "Entfesselt gewaltige smaragdgrüne Natur-Energie und hält selbst den härtesten Ausdauer-Prüfungen stand.", color: "#2b8a3e" }
 ];
 
 const STAGE_RULES = [
@@ -71,7 +71,7 @@ const BODY_WORKOUTS = {
     ]
   }
 };
-let state = JSON.parse(localStorage.getItem("zwarriors_poster_v4")) || {
+let state = JSON.parse(localStorage.getItem("zwarriors_poster_v5")) || {
   level: 1, xp: 0, powerLevel: 1000, carouselIndex: 0, selectedChar: 1,
   selectedStage: 1, selectedPart: "arms", difficulty: "easy", partXP: { arms: 0, core: 0, legs: 0 }
 };
@@ -292,7 +292,7 @@ function updateUI() {
     pillsContainer.appendChild(btn);
   });
 
-  localStorage.setItem("zwarriors_poster_v4", JSON.stringify(state));
+  localStorage.setItem("zwarriors_poster_v5", JSON.stringify(state));
 }
 
 document.getElementById("enter-app-btn").addEventListener("click", () => {
