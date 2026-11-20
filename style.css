@@ -44,26 +44,9 @@ body {
   transform-origin: left top;
 }
 
-.tall-orange-title.select-big-word {
-  font-size: 3.6rem;
-  line-height: 0.86;
-  margin-top: 2px;
-}
-
-.tall-orange-title.center-name-title {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 2.3rem;
-  letter-spacing: 1.5px;
-  color: #ffffff;
-  transform: scaleY(1.15);
-  transform-origin: center;
-  margin-bottom: 6px;
-}
-
-.tall-orange-title.small {
-  font-size: 2.6rem;
-  transform-origin: center;
-}
+.tall-orange-title.select-big-word { font-size: 3.6rem; line-height: 0.86; margin-top: 2px; }
+.tall-orange-title.center-name-title { font-family: 'Bebas Neue', sans-serif; font-size: 2.3rem; letter-spacing: 1.5px; color: #ffffff; transform: scaleY(1.15); transform-origin: center; margin-bottom: 6px; }
+.tall-orange-title.small { font-size: 2.6rem; transform-origin: center; }
 
 .tall-orange-heading {
   font-family: 'Bebas Neue', sans-serif;
@@ -97,33 +80,14 @@ body {
 .poster-banner-box { position: relative; height: 126px; border-radius: 6px; overflow: hidden; background: radial-gradient(circle at center, #0077ff 0%, #051636 100%); border: 1px solid #262630; display: grid; place-items: center; }
 .banner-bg-img { width: 100%; height: 100%; object-fit: cover; object-position: top center; opacity: 0.85; }
 .banner-overlay-text { position: absolute; bottom: 8px; left: 12px; font-family: 'Bebas Neue', sans-serif; font-size: 1.25rem; letter-spacing: 1px; color: #ffffff; text-shadow: 0 2px 8px #000; z-index: 2; }
-
-.poster-numbers-row {
-  display: flex;
-  gap: 20px;
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 1.35rem;
-  letter-spacing: 1.5px;
-  color: #666675;
-  margin-top: 6px;
-}
+.poster-numbers-row { display: flex; gap: 20px; font-family: 'Bebas Neue', sans-serif; font-size: 1.35rem; letter-spacing: 1.5px; color: #666675; margin-top: 6px; }
 .poster-numbers-row .active-num { color: var(--orange); }
-
-.poster-subheadline {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 1.95rem;
-  letter-spacing: 1px;
-  color: #ffffff;
-  text-transform: uppercase;
-  transform: scaleY(1.12);
-  transform-origin: left;
-}
-
+.poster-subheadline { font-family: 'Bebas Neue', sans-serif; font-size: 1.95rem; letter-spacing: 1px; color: #ffffff; text-transform: uppercase; transform: scaleY(1.12); transform-origin: left; }
 .poster-copy { color: #9c9cac; font-size: 0.86rem; line-height: 1.38; font-weight: 600; }
 .poster-copy.center { text-align: center; }
 
 /* HEADER & NAVIGATION */
-.poster-nav { display: flex; justify-content: space-between; align-items: center; z-index: 10; }
+.poster-nav { display: flex; justify-content: space-between; align-items: center; z-index: 15; }
 .dark-square-btn { width: 40px; height: 40px; background: #1c1c22; border: 1px solid #2c2c35; border-radius: 10px; color: var(--orange); font-size: 1.6rem; display: grid; place-items: center; cursor: pointer; }
 .user-profile-box { display: flex; align-items: center; gap: 10px; }
 .user-texts { text-align: right; line-height: 1.05; }
@@ -133,44 +97,112 @@ body {
 .avatar-thumb { width: 38px; height: 38px; border-radius: 10px; background: var(--orange); overflow: hidden; }
 .avatar-thumb img { width: 100%; height: 100%; object-fit: cover; object-position: top; }
 
-/* SCREEN 2: KARUSSELL */
+/* SCREEN 2: ÜBERLAPPENDES 3-KARTEN-KARUSSELL */
 .dragon-svg { position: absolute; left: -25px; top: 25%; width: 245px; height: 360px; opacity: 0.045; pointer-events: none; z-index: 1; }
-.mockup-split-body { flex: 1; position: relative; display: flex; margin-top: 10px; }
-.left-info-col { width: 45%; display: flex; flex-direction: column; justify-content: space-between; padding: 6px 0 18px; z-index: 5; pointer-events: none; }
-.orange-kicker-tall { display: block; font-family: 'Bebas Neue', sans-serif; font-size: 1.65rem; letter-spacing: 1px; color: var(--orange-bright); line-height: 0.95; }
+.mockup-split-body { flex: 1; position: relative; display: flex; margin-top: 6px; }
+.left-info-col { width: 42%; display: flex; flex-direction: column; justify-content: space-between; padding: 6px 0 18px; z-index: 15; pointer-events: none; }
+.orange-kicker-tall { display: block; font-family: 'Bebas Neue', sans-serif; font-size: 1.6rem; letter-spacing: 1px; color: var(--orange-bright); line-height: 0.95; }
 .scroll-indicator { width: 3px; height: 54px; background: #282830; border-radius: 99px; margin-left: 6px; overflow: hidden; }
 .scroll-thumb { width: 100%; height: 20px; background: var(--orange); border-radius: 99px; transition: transform 0.25s ease; }
-.orange-bottom-caption { font-family: 'Bebas Neue', sans-serif; font-size: 1.25rem; letter-spacing: 0.8px; line-height: 1.05; color: var(--orange); }
+.orange-bottom-caption { font-family: 'Bebas Neue', sans-serif; font-size: 1.2rem; letter-spacing: 0.8px; line-height: 1.05; color: var(--orange); }
 
-.staggered-carousel { position: absolute; right: -8px; top: 0; bottom: 0; width: 70%; touch-action: pan-y; }
-.s-card { position: absolute; cursor: pointer; transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1); }
+.staggered-carousel {
+  position: absolute;
+  right: -12px;
+  top: 0;
+  bottom: 0;
+  width: 74%;
+  touch-action: pan-y;
+}
 
-.card-top { top: 2%; right: 0; width: 155px; height: 155px; z-index: 2; opacity: 0.95; border-radius: 22px 0 0 22px; clip-path: polygon(0 0, 100% 0, 100% 100%, 0 78%); }
-.card-top .s-char-img { position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); width: 150px; height: 185px; object-fit: contain; }
+.s-card {
+  position: absolute;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.card-top {
+  top: 8%;
+  right: 0;
+  width: 155px;
+  height: 165px;
+  z-index: 2;
+  border-radius: 22px 0 0 22px;
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 0 80%);
+}
 
 .card-center {
-  top: 50%;
-  right: 22px;
-  transform: translateY(-45%);
+  top: 52%;
+  right: 34px;
+  transform: translateY(-48%);
   width: 215px;
-  height: 215px;
+  height: 220px;
   z-index: 6;
   border-radius: 24px;
-  box-shadow: 0 22px 45px rgba(0, 0, 0, 0.9);
+  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.95);
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
   padding: 14px 16px;
 }
 
-.card-center .s-char-img { position: absolute; bottom: 46px; left: 50%; transform: translateX(-50%); width: 225px; height: 270px; object-fit: contain; pointer-events: none; z-index: 20; }
-.center-name { font-family: 'Bebas Neue', sans-serif; font-size: 1.75rem; letter-spacing: 0.8px; color: #0a0a0c; line-height: 0.95; margin-bottom: 4px; }
-.center-pills { display: flex; gap: 6px; }
+.center-name { font-family: 'Bebas Neue', sans-serif; font-size: 1.8rem; letter-spacing: 0.8px; color: #0a0a0c; line-height: 0.95; margin-bottom: 4px; position: relative; z-index: 12; }
+.center-pills { display: flex; gap: 6px; position: relative; z-index: 12; }
 .dark-pill { background: #0a0a0c; color: var(--orange-bright); font-family: 'Bebas Neue', sans-serif; font-size: 0.88rem; letter-spacing: 0.8px; padding: 2px 9px; border-radius: 6px; }
 
-.card-bottom { bottom: 1%; right: 0; width: 158px; height: 155px; z-index: 3; opacity: 0.95; border-radius: 22px 0 0 22px; clip-path: polygon(0 22%, 100% 0, 100% 100%, 0 100%); }
-.card-bottom .s-char-img { position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); width: 150px; height: 185px; object-fit: contain; }
-.s-fallback { position: absolute; inset: 0; display: grid; place-items: center; font-family: 'Bebas Neue', sans-serif; font-size: 2.6rem; color: rgba(0, 0, 0, 0.32); }
+.card-bottom {
+  bottom: 4%;
+  right: 0;
+  width: 155px;
+  height: 165px;
+  z-index: 3;
+  border-radius: 22px 0 0 22px;
+  clip-path: polygon(0 20%, 100% 0, 100% 100%, 0 100%);
+}
+
+.s-char-img {
+  position: absolute;
+  object-fit: contain;
+  pointer-events: none;
+  filter: drop-shadow(0 12px 18px rgba(0, 0, 0, 0.75));
+}
+
+.char-top {
+  top: 2%;
+  right: -14px;
+  width: 195px;
+  height: 225px;
+  transform: scale(1.25);
+  z-index: 4;
+}
+
+.char-center {
+  top: 52%;
+  right: 12px;
+  width: 265px;
+  height: 310px;
+  transform: translateY(-64%) scale(1.32);
+  z-index: 10;
+}
+
+.char-bottom {
+  bottom: 1%;
+  right: -12px;
+  width: 195px;
+  height: 225px;
+  transform: scale(1.25);
+  z-index: 5;
+}
+
+.s-fallback {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 2.6rem;
+  color: rgba(0, 0, 0, 0.32);
+}
 /* SCREEN 3: FIGHTERS STECKBRIEF */
 .orange-num-tag { font-family: 'Bebas Neue', sans-serif; font-size: 1.65rem; color: var(--orange); letter-spacing: 1px; }
 .fighters-backdrop-area { position: relative; height: 300px; display: grid; place-items: center; }
