@@ -1,27 +1,27 @@
 const CHARACTERS = [
-  { id: 1, name: "SON-BLITZ", role: "BLITZ-KRIEGER", attack: "Sonnen-Kameha", focus: "Ganzkörper & Speed", bio: "Ein furchtloser Kämpfer mit unbändigem Trainingswillen. Je härter das Workout, desto heller leuchtet seine Aura.", color: "linear-gradient(135deg, #ff9d00, #c85a00)" },
-  { id: 2, name: "PRINZ-KI", role: "ELITE-KÄMPFER", attack: "Finaler Blitzstrahl", focus: "Arme & Brustkraft", bio: "Stolz, zielstrebig und immer auf der Suche nach der nächsten Transformation. Meister der schweren Schwerkraft.", color: "linear-gradient(135deg, #38b6ff, #004e98)" },
-  { id: 3, name: "STURM-GREEN", role: "KRAFT-KOLOS", attack: "Omega-Sturmwelle", focus: "Beine & Sprungkraft", bio: "Entfesselt gewaltige smaragdgrüne Natur-Energie und hält selbst den härtesten Ausdauer-Prüfungen stand.", color: "linear-gradient(135deg, #2ecc71, #116634)" },
-  { id: 4, name: "CYBER-RED", role: "ZUKUNFTS-KRIEGER", attack: "Brennender Hieb", focus: "Reaktion & Ki-Kern", bio: "Ausgestattet mit einer High-Tech-Kampfrüstung und blitzschnellen Reflexen.", color: "linear-gradient(135deg, #ff4757, #8a111f)" },
-  { id: 5, name: "SHADOW-X", role: "SCHATTEN-MEISTER", attack: "Phantom-Salve", focus: "Bauch & Balance", bio: "Bewegt sich lautlos wie der Wind und überrascht seine Gegner mit plötzlichen Energie-Schüben.", color: "linear-gradient(135deg, #9b59b6, #45165c)" },
-  { id: 6, name: "NOVA-GOLD", role: "STERNEN-KRIEGER", attack: "Supernova-Kugel", focus: "Ganzkörper-Power", bio: "Seine goldene Energie erhellt die gesamte Arena und verleiht ihm enorme Ausdauer.", color: "linear-gradient(135deg, #f1c40f, #ad7200)" },
-  { id: 7, name: "TITAN-FORCE", role: "SCHILD-WÄCHTER", attack: "Titanen-Wall", focus: "Arme & Core", bio: "Ein unerschütterlicher Verteidiger, dessen Ki-Schild keinen Angriff durchlässt.", color: "linear-gradient(135deg, #00d2d3, #016268)" },
-  { id: 8, name: "BLITZ-KID", role: "TEMPO-TALENT", attack: "Donner-Sprint", focus: "Beine & Schnelligkeit", bio: "Jung, extrem wendig und immer bereit für das nächste Schnellkraft-Training.", color: "linear-gradient(135deg, #ff7f50, #a83500)" },
-  { id: 9, name: "FROST-ZEN", role: "EIS-STRATEGE", attack: "Gletscher-Strahl", focus: "Ki-Kern & Fokus", bio: "Bleibt selbst unter höchstem Druck eiskalt und kontrolliert jeden Atemzug.", color: "linear-gradient(135deg, #70a1ff, #1b328a)" },
-  { id: 10, name: "FLAME-REX", role: "FEUER-KÄMPFER", attack: "Magma-Faust", focus: "Brust & Schultern", bio: "Seine glühende Kampf-Aura steigt mit jeder absolvierten Liegestütze weiter an.", color: "linear-gradient(135deg, #ff6348, #8f1900)" },
-  { id: 11, name: "ULTRA-VEX", role: "GALAXIE-HÜTER", attack: "Kometen-Regen", focus: "Ganzkörper", bio: "Nutzt kosmische Energie aus fernen Galaxien für maximale Sprungkraft.", color: "linear-gradient(135deg, #a29bfe, #352d8c)" },
-  { id: 12, name: "SOLAR-KAI", role: "SONNEN-MEISTER", attack: "Helios-Welle", focus: "Ausdauer & Kern", bio: "Zieht seine Kraft direkt aus dem Licht der Sonne und gibt niemals auf.", color: "linear-gradient(135deg, #ffa502, #945500)" },
-  { id: 13, name: "DARK-ORION", role: "NACHT-KRIEGER", attack: "Eclipse-Schlag", focus: "Arme & Rücken", bio: "Ein geheimnisvoller Einzelgänger mit gewaltiger Schlagkraft.", color: "linear-gradient(135deg, #57606f, #272c38)" },
-  { id: 14, name: "AERO-DASH", role: "WIND-LÄUFER", attack: "Wirbelsturm-Kick", focus: "Beine & Agilität", bio: "Beherrscht den Himmel und bewegt sich schneller als das Auge folgen kann.", color: "linear-gradient(135deg, #1dd1a1, #09634b)" },
-  { id: 15, name: "OMEGA-GOD", role: "LEGENDE", attack: "Omega-Urknall", focus: "Alle Körperteile", bio: "Der ultimative Meister-Krieger, der alle Kampftechniken in sich vereint.", color: "linear-gradient(135deg, #ff6b81, #801526)" }
+  { id: 1, name: "SON-BLITZ", attack: "SONNEN-KAMEHA", focus: "GANZKÖRPER", bio: "Ein furchtloser Saiyajin-Krieger mit unbändigem Trainingswillen. Mit jedem Workout explodiert seine goldene Kampf-Aura.", color: "#ff8c00" },
+  { id: 2, name: "PRINZ-KI", attack: "FINALER BLITZ", focus: "ARME & BRUST", bio: "Stolz, zielstrebig und immer auf der Suche nach der nächsten Transformation. Meister der schweren Schwerkraft.", color: "#38b6ff" },
+  { id: 3, name: "STURM-GREEN", attack: "OMEGA-STURM", focus: "BEINE & KRAFT", bio: "Entfesselt gewaltige smaragdgrüne Natur-Energie und hält selbst den härtesten Ausdauer-Prüfungen stand.", color: "#27ae60" },
+  { id: 4, name: "CYBER-RED", attack: "FLAMMEN-HIEB", focus: "REAKTION & KERN", bio: "Ausgestattet mit einer High-Tech-Kampfrüstung und blitzschnellen Reflexen.", color: "#eb4d4b" },
+  { id: 5, name: "SHADOW-X", attack: "PHANTOM-SALVE", focus: "BAUCH & BALANCE", bio: "Bewegt sich lautlos wie der Wind und überrascht seine Gegner mit schnellen Schüben.", color: "#9b59b6" },
+  { id: 6, name: "NOVA-GOLD", attack: "SUPERNOVA", focus: "GANZKÖRPER", bio: "Seine goldene Energie erhellt die gesamte Arena und verleiht enorme Ausdauer.", color: "#f1c40f" },
+  { id: 7, name: "TITAN-FORCE", attack: "TITANEN-WALL", focus: "ARME & CORE", bio: "Ein unerschütterlicher Verteidiger, dessen Ki-Schild keinen Angriff durchlässt.", color: "#00cec9" },
+  { id: 8, name: "BLITZ-KID", attack: "DONNER-SPRINT", focus: "BEINE & SPEED", bio: "Jung, extrem wendig und immer bereit für das nächste Schnellkraft-Training.", color: "#ff793f" },
+  { id: 9, name: "FROST-ZEN", attack: "GLETSCHER-STRAHL", focus: "KI-KERN", bio: "Bleibt selbst unter höchstem Druck eiskalt und kontrolliert jeden Atemzug.", color: "#70a1ff" },
+  { id: 10, name: "FLAME-REX", attack: "MAGMA-FAUST", focus: "BRUST & SCHULTERN", bio: "Seine glühende Kampf-Aura steigt mit jeder absolvierten Liegestütze weiter an.", color: "#ff5252" },
+  { id: 11, name: "ULTRA-VEX", attack: "KOMETEN-REGEN", focus: "GANZKÖRPER", bio: "Nutzt kosmische Energie aus fernen Galaxien für maximale Sprungkraft.", color: "#a29bfe" },
+  { id: 12, name: "SOLAR-KAI", attack: "HELIOS-WELLE", focus: "AUSDAUER", bio: "Zieht seine Kraft direkt aus dem Licht der Sonne und gibt niemals auf.", color: "#ffa502" },
+  { id: 13, name: "DARK-ORION", attack: "ECLIPSE-SCHLAG", focus: "ARME & RÜCKEN", bio: "Ein geheimnisvoller Einzelgänger mit gewaltiger Schlagkraft.", color: "#57606f" },
+  { id: 14, name: "AERO-DASH", attack: "WIRBELSTURM", focus: "BEINE & AGILITÄT", bio: "Beherrscht den Himmel und bewegt sich schneller als das Auge folgen kann.", color: "#1dd1a1" },
+  { id: 15, name: "OMEGA-GOD", attack: "OMEGA-URKNALL", focus: "ALLE BEREICHE", bio: "Der ultimative Meister-Krieger, der alle Kampftechniken in sich vereint.", color: "#ff6b81" }
 ];
 
 const STAGE_RULES = [
-  { stage: 1, minLevel: 1, label: "BASIS" },
-  { stage: 2, minLevel: 2, label: "SUPER 1" },
-  { stage: 3, minLevel: 4, label: "BLAU-KI" },
-  { stage: 4, minLevel: 6, label: "SILBER" },
-  { stage: 5, minLevel: 8, label: "ROT-GOTT" }
+  { stage: 1, minLevel: 1 },
+  { stage: 2, minLevel: 2 },
+  { stage: 3, minLevel: 4 },
+  { stage: 4, minLevel: 6 },
+  { stage: 5, minLevel: 8 }
 ];
 
 const BODY_WORKOUTS = {
@@ -71,14 +71,14 @@ const BODY_WORKOUTS = {
     ]
   }
 };
-let state = JSON.parse(localStorage.getItem("zwarriors_full_v1")) || {
-  level: 1, xp: 0, powerLevel: 1000, selectedChar: 1, previewChar: 1,
+let state = JSON.parse(localStorage.getItem("zwarriors_poster_v2")) || {
+  level: 1, xp: 0, powerLevel: 1000, carouselIndex: 0, selectedChar: 1,
   selectedStage: 1, selectedPart: "arms", difficulty: "easy", partXP: { arms: 0, core: 0, legs: 0 }
 };
 
-function showScreen(screenId) {
-  ["intro-screen", "select-screen", "detail-screen", "arena-screen"].forEach(id => {
-    document.getElementById(id).classList.toggle("hidden", id !== screenId);
+function showScreen(id) {
+  ["intro-screen", "select-screen", "detail-screen", "arena-screen"].forEach(s => {
+    document.getElementById(s).classList.toggle("hidden", s !== id);
   });
 }
 
@@ -100,8 +100,12 @@ function playSound(isLevelUp = false) {
 }
 
 function loadSmartImage(imgEl, baseName, onFail) {
+  imgEl.style.display = "block";
   imgEl.onerror = () => {
-    imgEl.onerror = onFail;
+    imgEl.onerror = () => {
+      imgEl.style.display = "none";
+      if (onFail) onFail();
+    };
     imgEl.src = `${baseName}.jpg`;
   };
   imgEl.src = `${baseName}.png`;
@@ -113,52 +117,68 @@ function getMaxUnlockedStage(lvl) {
   return max;
 }
 
-// Karussell bauen & Klick auf Karte -> Steckbrief öffnen
-function buildVerticalCarousel() {
-  const carousel = document.getElementById("vertical-carousel");
-  carousel.innerHTML = "";
-  const maxStage = getMaxUnlockedStage(state.level);
+function updateStaggeredCarousel() {
+  const total = CHARACTERS.length;
+  const idxCurr = (state.carouselIndex + total) % total;
+  const idxPrev = (idxCurr - 1 + total) % total;
+  const idxNext = (idxCurr + 1) % total;
+
+  const cPrev = CHARACTERS[idxPrev];
+  const cCurr = CHARACTERS[idxCurr];
+  const cNext = CHARACTERS[idxNext];
+
   document.getElementById("select-power").textContent = state.powerLevel.toLocaleString("de-DE");
+  document.getElementById("card-prev").style.background = cPrev.color;
+  document.getElementById("card-curr").style.background = cCurr.color;
+  document.getElementById("card-next").style.background = cNext.color;
 
-  CHARACTERS.forEach(c => {
-    const card = document.createElement("div");
-    card.className = `v-card ${c.id === state.selectedChar ? "is-center" : ""}`;
-    card.style.background = c.color;
-    card.dataset.id = c.id;
+  document.getElementById("name-curr").textContent = cCurr.name;
+  document.getElementById("lvl-curr").textContent = `LVL ${state.level}`;
+  document.getElementById("evo-curr").textContent = `STUFE · ${getMaxUnlockedStage(state.level)}`;
 
-    card.innerHTML = `
-      <div class="v-card-fallback">#${String(c.id).padStart(2, "0")}</div>
-      <img class="v-card-img" alt="${c.name}" />
-      <div class="v-card-info">
-        <div class="v-card-name">${c.name}</div>
-        <div class="v-card-badges">
-          <span class="v-pill">${c.role}</span>
-          <span class="v-pill">Stufe ${maxStage}/5</span>
-        </div>
-      </div>
-    `;
+  document.getElementById("fb-prev").textContent = `#${String(cPrev.id).padStart(2, "0")}`;
+  document.getElementById("fb-curr").textContent = `#${String(cCurr.id).padStart(2, "0")}`;
+  document.getElementById("fb-next").textContent = `#${String(cNext.id).padStart(2, "0")}`;
 
-    const imgEl = card.querySelector(".v-card-img");
-    loadSmartImage(imgEl, `c${c.id}_s1`, () => { imgEl.style.display = "none"; });
-
-    card.addEventListener("click", () => {
-      playSound(false);
-      openCharacterDetails(c.id);
-    });
-
-    carousel.appendChild(card);
+  ["prev", "curr", "next"].forEach((pos, i) => {
+    const charObj = [cPrev, cCurr, cNext][i];
+    const fb = document.getElementById(`fb-${pos}`);
+    const im = document.getElementById(`img-${pos}`);
+    fb.style.display = "grid";
+    loadSmartImage(im, `c${charObj.id}_s1`, () => {});
+    im.onload = () => { fb.style.display = "none"; };
   });
+
+  const progress = (idxCurr / (total - 1)) * 34;
+  document.getElementById("scroll-thumb").style.transform = `translateY(${progress}px)`;
 }
 
-// Screen 3: Kämpfer-Steckbrief füllen
-function openCharacterDetails(charId) {
-  state.previewChar = charId;
-  const c = CHARACTERS.find(item => item.id === charId) || CHARACTERS;
+function stepCarousel(dir) {
+  state.carouselIndex = (state.carouselIndex + dir + CHARACTERS.length) % CHARACTERS.length;
+  playSound(false);
+  updateStaggeredCarousel();
+}
 
-  document.getElementById("detail-bg-glow").style.background = c.color;
-  document.getElementById("detail-num").textContent = `#${String(c.id).padStart(3, "0")}`;
-  document.getElementById("detail-watermark").textContent = c.name;
-  document.getElementById("detail-class").textContent = c.role;
+let touchStartY = 0;
+const carouselEl = document.getElementById("staggered-carousel");
+carouselEl.addEventListener("touchstart", e => { touchStartY = e.touches[0].clientY; }, { passive: true });
+carouselEl.addEventListener("touchend", e => {
+  const diff = touchStartY - e.changedTouches[0].clientY;
+  if (Math.abs(diff) > 30) stepCarousel(diff > 0 ? 1 : -1);
+});
+
+document.getElementById("card-prev").addEventListener("click", () => stepCarousel(-1));
+document.getElementById("card-next").addEventListener("click", () => stepCarousel(1));
+document.getElementById("card-curr").addEventListener("click", () => {
+  playSound(false);
+  openCharacterDetails(CHARACTERS[state.carouselIndex].id);
+});
+
+function openCharacterDetails(charId) {
+  const c = CHARACTERS.find(item => item.id === charId) || CHARACTERS[0];
+  state.selectedChar = c.id;
+
+  document.getElementById("detail-num").textContent = String(c.id).padStart(3, "0");
   document.getElementById("detail-name").textContent = c.name;
   document.getElementById("detail-bio").textContent = c.bio;
   document.getElementById("detail-attack").textContent = c.attack;
@@ -167,11 +187,9 @@ function openCharacterDetails(charId) {
   const imgEl = document.getElementById("detail-img");
   const phEl = document.getElementById("detail-placeholder");
   document.getElementById("detail-placeholder-code").textContent = `c${c.id}_s1.png`;
-  imgEl.classList.remove("hidden");
   phEl.classList.add("hidden");
 
   loadSmartImage(imgEl, `c${c.id}_s1`, () => {
-    imgEl.classList.add("hidden");
     phEl.classList.remove("hidden");
   });
 
@@ -211,7 +229,7 @@ function completeExercise(gainedXP, gainedPower) {
       state.selectedStage = newMax;
       playSound(true);
       document.getElementById("levelup-badge").textContent = "NEUE STUFE FREIGESCHALTET";
-      document.getElementById("levelup-title").textContent = `STUFE ${newMax} ERREICHT!`;
+      document.getElementById("levelup-title").textContent = `STUFE ${newMax}`;
       document.getElementById("levelup-desc").textContent = `Dein Krieger kann jetzt Stufe ${newMax} entfesseln!`;
     } else {
       playSound(false);
@@ -231,7 +249,7 @@ function updateUI() {
   const maxUnlocked = getMaxUnlockedStage(state.level);
   if (state.selectedStage > maxUnlocked) state.selectedStage = maxUnlocked;
 
-  const charObj = CHARACTERS.find(c => c.id === state.selectedChar) || CHARACTERS;
+  const charObj = CHARACTERS.find(c => c.id === state.selectedChar) || CHARACTERS[0];
   const baseFile = `c${state.selectedChar}_s${state.selectedStage}`;
 
   document.getElementById("power-level").textContent = state.powerLevel.toLocaleString("de-DE");
@@ -246,14 +264,14 @@ function updateUI() {
   document.getElementById("stat-core").textContent = `LVL ${1 + Math.floor((state.partXP.core || 0) / 60)}`;
   document.getElementById("stat-legs").textContent = `LVL ${1 + Math.floor((state.partXP.legs || 0) / 60)}`;
 
+  loadSmartImage(document.getElementById("header-avatar-img"), `c${state.selectedChar}_s1`, () => {});
+
   const imgEl = document.getElementById("fighter-img");
   const placeholderEl = document.getElementById("placeholder-box");
   document.getElementById("placeholder-code").textContent = `${baseFile}.png`;
-  imgEl.classList.remove("hidden");
   placeholderEl.classList.add("hidden");
 
   loadSmartImage(imgEl, baseFile, () => {
-    imgEl.classList.add("hidden");
     placeholderEl.classList.remove("hidden");
   });
 
@@ -263,7 +281,7 @@ function updateUI() {
     const unlocked = s.stage <= maxUnlocked;
     const btn = document.createElement("button");
     btn.className = `stage-pill ${s.stage === state.selectedStage ? "active" : ""} ${!unlocked ? "locked" : ""}`;
-    btn.textContent = unlocked ? `S${s.stage} ${s.label}` : `🔒 S${s.stage}`;
+    btn.textContent = unlocked ? `STUFE ${s.stage}` : `🔒 ${s.stage}`;
     if (unlocked) {
       btn.addEventListener("click", () => {
         state.selectedStage = s.stage;
@@ -274,24 +292,22 @@ function updateUI() {
     pillsContainer.appendChild(btn);
   });
 
-  localStorage.setItem("zwarriors_full_v1", JSON.stringify(state));
+  localStorage.setItem("zwarriors_poster_v2", JSON.stringify(state));
 }
 
-// Screen-Buttons verknüpfen
 document.getElementById("enter-app-btn").addEventListener("click", () => {
   playSound(false);
-  buildVerticalCarousel();
+  updateStaggeredCarousel();
   showScreen("select-screen");
 });
 
 document.getElementById("back-to-intro").addEventListener("click", () => showScreen("intro-screen"));
 document.getElementById("back-to-carousel").addEventListener("click", () => {
-  buildVerticalCarousel();
+  updateStaggeredCarousel();
   showScreen("select-screen");
 });
 
 document.getElementById("confirm-fighter-btn").addEventListener("click", () => {
-  state.selectedChar = state.previewChar;
   playSound(true);
   updateUI();
   renderWorkouts();
@@ -299,7 +315,7 @@ document.getElementById("confirm-fighter-btn").addEventListener("click", () => {
 });
 
 document.getElementById("arena-back-btn").addEventListener("click", () => {
-  buildVerticalCarousel();
+  updateStaggeredCarousel();
   showScreen("select-screen");
 });
 
@@ -324,14 +340,15 @@ document.getElementById("close-levelup").addEventListener("click", () => {
 
 document.getElementById("reset-btn").addEventListener("click", () => {
   if (confirm("Wirklich bei Level 1 neu starten?")) {
-    state = { level: 1, xp: 0, powerLevel: 1000, selectedChar: 1, previewChar: 1, selectedStage: 1, selectedPart: "arms", difficulty: "easy", partXP: { arms: 0, core: 0, legs: 0 } };
+    state = { level: 1, xp: 0, powerLevel: 1000, carouselIndex: 0, selectedChar: 1, selectedStage: 1, selectedPart: "arms", difficulty: "easy", partXP: { arms: 0, core: 0, legs: 0 } };
     updateUI();
     renderWorkouts();
     showScreen("intro-screen");
   }
 });
 
-// Intro-Bild & Startzustand laden
 loadSmartImage(document.getElementById("intro-hero-img"), "c1_s1", () => {});
+loadSmartImage(document.getElementById("intro-banner-img"), "c1_s2", () => {});
+updateStaggeredCarousel();
 updateUI();
 renderWorkouts();
