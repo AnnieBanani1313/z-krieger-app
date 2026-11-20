@@ -141,7 +141,7 @@ const BODY_WORKOUTS = {
     ]
   }
 };
-const CHARACTER_WORKOUTS = {
+        const CHARACTER_WORKOUTS = {
   1: {
     arms: {
       easy: [{ title: "10x Knie-Liegestütze", sub: "Einfach · Kamehameha-Basis", xp: 25, power: 400, pose: "pushup", tip: "Knie auf den Boden, Rücken gerade halten und Brust tief absenken." }, { title: "20 Sek. Ki-Schattenboxen", sub: "Einfach · Schnelle Fäuste", xp: 20, power: 350, pose: "punch", sec: 20, tip: "Schnelle Kombos nach vorn schlagen und dein Ki in den Fäusten bündeln!" }],
@@ -262,62 +262,94 @@ function playSound(mode = "click") {
     osc.stop(now + 0.19);
   } catch (e) {}
 }
-
 function getComicSVG(pose) {
+  const bg = `<defs>
+    <radialGradient id="kiAura" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#ff9900" stop-opacity="0.45"/>
+      <stop offset="100%" stop-color="#ff9900" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="giGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffb703"/>
+      <stop offset="100%" stop-color="#e85d04"/>
+    </linearGradient>
+  </defs>
+  <ellipse cx="130" cy="70" rx="95" ry="48" fill="url(#kiAura)"/>
+  <g stroke="#ff9900" stroke-opacity="0.22" stroke-width="1.5">
+    <line x1="10" y1="22" x2="75" y2="22"/><line x1="185" y1="18" x2="250" y2="18"/>
+    <line x1="5" y1="102" x2="65" y2="102"/><line x1="195" y1="98" x2="255" y2="98"/>
+  </g>
+  <line x1="20" y1="112" x2="240" y2="112" stroke="#3a3a48" stroke-width="3" stroke-linecap="round"/>`;
+
+  const hair = (x, y, rot = 0) => `<g transform="translate(${x},${y}) rotate(${rot})">
+    <polygon points="-10,-6 -22,-18 -6,-13 -12,-28 0,-16 6,-30 10,-15 22,-22 12,-8 20,-2 8,2" fill="#141418" stroke="#ffb703" stroke-width="1.2"/>
+    <circle cx="2" cy="2" r="9" fill="#f4c095" stroke="#141418" stroke-width="1.5"/>
+    <path d="M2,1 L8,3" stroke="#141418" stroke-width="2" stroke-linecap="round"/>
+  </g>`;
+
   const svgs = {
-    pushup: `<svg viewBox="0 0 220 120" width="200" height="115">
-      <line x1="15" y1="98" x2="205" y2="98" stroke="#444" stroke-width="3" stroke-linecap="round"/>
-      <circle cx="155" cy="48" r="11" fill="#ff9900"/>
-      <line x1="145" y1="54" x2="72" y2="86" stroke="#fff" stroke-width="7" stroke-linecap="round"/>
-      <line x1="72" y1="86" x2="35" y2="95" stroke="#fff" stroke-width="6" stroke-linecap="round"/>
-      <polyline points="140,56 142,78 148,96" fill="none" stroke="#ffb703" stroke-width="6" stroke-linecap="round"/>
-      <path d="M175,45 L175,78 M169,70 L175,79 L181,70" stroke="#ff9900" stroke-width="3" fill="none" stroke-linecap="round"/>
+    pushup: `<svg viewBox="0 0 260 125" width="235" height="120">${bg}
+      <g opacity="0.28" transform="translate(0,-14)">
+        <path d="M55,95 L115,72 L168,54" stroke="#ffb703" stroke-width="12" stroke-linecap="round" fill="none"/>
+      </g>
+      <path d="M48,106 L108,88 L164,66" stroke="#1d3557" stroke-width="13" stroke-linecap="round" fill="none"/>
+      <path d="M108,88 L166,65" stroke="url(#giGrad)" stroke-width="16" stroke-linecap="round" fill="none"/>
+      <path d="M162,68 L156,90 L164,108" stroke="#f4c095" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+      <rect x="155" y="103" width="16" height="7" rx="3" fill="#ff9900"/>
+      ${hair(182, 58, 18)}
+      <path d="M214,48 L214,88 M206,79 L214,90 L222,79" stroke="#ffb703" stroke-width="3.5" fill="none" stroke-linecap="round"/>
     </svg>`,
-    plank: `<svg viewBox="0 0 220 120" width="200" height="115">
-      <line x1="15" y1="98" x2="205" y2="98" stroke="#444" stroke-width="3" stroke-linecap="round"/>
-      <circle cx="165" cy="66" r="11" fill="#ff9900"/>
-      <line x1="154" y1="70" x2="40" y2="94" stroke="#fff" stroke-width="7" stroke-linecap="round"/>
-      <polyline points="150,72 150,94 166,94" fill="none" stroke="#ffb703" stroke-width="6" stroke-linecap="round"/>
-      <path d="M95,52 L115,52" stroke="#ff9900" stroke-width="3" stroke-dasharray="4 4"/>
+
+    plank: `<svg viewBox="0 0 260 125" width="235" height="120">${bg}
+      <path d="M45,104 L112,88 L174,74" stroke="#1d3557" stroke-width="13" stroke-linecap="round" fill="none"/>
+      <path d="M112,88 L176,73" stroke="url(#giGrad)" stroke-width="16" stroke-linecap="round" fill="none"/>
+      <polyline points="172,76 168,104 190,104" stroke="#f4c095" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+      <rect x="166" y="99" width="14" height="7" rx="3" fill="#ff9900"/>
+      ${hair(194, 68, 12)}
+      <path d="M95,62 Q135,50 175,60" stroke="#ffb703" stroke-width="2.5" stroke-dasharray="5 4" fill="none"/>
     </svg>`,
-    squat: `<svg viewBox="0 0 220 120" width="200" height="115">
-      <line x1="40" y1="106" x2="180" y2="106" stroke="#444" stroke-width="3" stroke-linecap="round"/>
-      <circle cx="112" cy="28" r="11" fill="#ff9900"/>
-      <line x1="110" y1="40" x2="96" y2="70" stroke="#fff" stroke-width="7" stroke-linecap="round"/>
-      <polyline points="96,70 124,78 112,104" fill="none" stroke="#fff" stroke-width="6" stroke-linecap="round"/>
-      <polyline points="108,46 138,52" fill="none" stroke="#ffb703" stroke-width="5" stroke-linecap="round"/>
-      <path d="M72,54 L72,82 M66,75 L72,83 L78,75" stroke="#ff9900" stroke-width="3" fill="none" stroke-linecap="round"/>
+
+    squat: `<svg viewBox="0 0 260 125" width="235" height="120">${bg}
+      <g opacity="0.25" transform="translate(0,-16)">
+        <line x1="130" y1="36" x2="130" y2="75" stroke="#ffb703" stroke-width="14" stroke-linecap="round"/>
+      </g>
+      <polyline points="122,76 154,84 134,108" stroke="#1d3557" stroke-width="13" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+      <path d="M128,42 L120,76" stroke="url(#giGrad)" stroke-width="17" stroke-linecap="round"/>
+      <polyline points="128,46 164,54 182,48" stroke="#f4c095" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+      ${hair(130, 26, 0)}
+      <path d="M84,48 L84,88 M76,79 L84,90 L92,79" stroke="#ffb703" stroke-width="3.5" fill="none" stroke-linecap="round"/>
     </svg>`,
-    situp: `<svg viewBox="0 0 220 120" width="200" height="115">
-      <line x1="15" y1="98" x2="205" y2="98" stroke="#444" stroke-width="3" stroke-linecap="round"/>
-      <circle cx="92" cy="40" r="11" fill="#ff9900"/>
-      <line x1="95" y1="52" x2="112" y2="94" stroke="#fff" stroke-width="7" stroke-linecap="round"/>
-      <polyline points="112,94 146,66 172,95" fill="none" stroke="#fff" stroke-width="6" stroke-linecap="round"/>
-      <polyline points="96,56 122,52" fill="none" stroke="#ffb703" stroke-width="5" stroke-linecap="round"/>
-      <path d="M64,74 Q66,48 80,42" stroke="#ff9900" stroke-width="3" fill="none" stroke-linecap="round"/>
+
+    situp: `<svg viewBox="0 0 260 125" width="235" height="120">${bg}
+      <polyline points="126,104 162,74 188,106" stroke="#1d3557" stroke-width="13" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+      <path d="M126,104 L104,58" stroke="url(#giGrad)" stroke-width="17" stroke-linecap="round"/>
+      <polyline points="106,62 134,56 146,66" stroke="#f4c095" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+      ${hair(98, 42, -18)}
+      <path d="M68,88 Q68,54 88,42 M80,38 L91,41 L85,50" stroke="#ffb703" stroke-width="3.5" fill="none" stroke-linecap="round"/>
     </svg>`,
-    punch: `<svg viewBox="0 0 220 120" width="200" height="115">
-      <circle cx="88" cy="30" r="11" fill="#ff9900"/>
-      <line x1="88" y1="42" x2="88" y2="80" stroke="#fff" stroke-width="7" stroke-linecap="round"/>
-      <polyline points="88,80 72,108" fill="none" stroke="#fff" stroke-width="6" stroke-linecap="round"/>
-      <polyline points="88,80 108,108" fill="none" stroke="#fff" stroke-width="6" stroke-linecap="round"/>
-      <line x1="88" y1="50" x2="148" y2="48" stroke="#ffb703" stroke-width="6" stroke-linecap="round"/>
-      <polygon points="154,48 168,42 164,54" fill="#ff9900"/>
+
+    punch: `<svg viewBox="0 0 260 125" width="235" height="120">${bg}
+      <polyline points="104,76 86,108" stroke="#1d3557" stroke-width="13" stroke-linecap="round"/>
+      <polyline points="108,76 130,108" stroke="#1d3557" stroke-width="13" stroke-linecap="round"/>
+      <path d="M106,40 L106,76" stroke="url(#giGrad)" stroke-width="18" stroke-linecap="round"/>
+      <line x1="108" y1="48" x2="174" y2="46" stroke="#f4c095" stroke-width="9" stroke-linecap="round"/>
+      <circle cx="178" cy="46" r="7" fill="#ffb703"/>
+      <polygon points="188,46 218,36 208,46 218,56" fill="#ff9900"/>
+      ${hair(106, 24, 0)}
     </svg>`,
-    jump: `<svg viewBox="0 0 220 120" width="200" height="115">
-      <line x1="50" y1="108" x2="170" y2="108" stroke="#444" stroke-width="3" stroke-linecap="round"/>
-      <circle cx="110" cy="24" r="11" fill="#ff9900"/>
-      <line x1="110" y1="36" x2="110" y2="70" stroke="#fff" stroke-width="7" stroke-linecap="round"/>
-      <polyline points="110,42 82,20" fill="none" stroke="#ffb703" stroke-width="5" stroke-linecap="round"/>
-      <polyline points="110,42 138,20" fill="none" stroke="#ffb703" stroke-width="5" stroke-linecap="round"/>
-      <polyline points="110,70 90,94" fill="none" stroke="#fff" stroke-width="6" stroke-linecap="round"/>
-      <polyline points="110,70 130,94" fill="none" stroke="#fff" stroke-width="6" stroke-linecap="round"/>
-      <path d="M110,104 L110,86" stroke="#ff9900" stroke-width="3" stroke-dasharray="3 3"/>
+
+    jump: `<svg viewBox="0 0 260 125" width="235" height="120">${bg}
+      <polyline points="128,68 108,94" stroke="#1d3557" stroke-width="12" stroke-linecap="round"/>
+      <polyline points="132,68 152,94" stroke="#1d3557" stroke-width="12" stroke-linecap="round"/>
+      <path d="M130,34 L130,68" stroke="url(#giGrad)" stroke-width="17" stroke-linecap="round"/>
+      <polyline points="128,40 100,18" stroke="#f4c095" stroke-width="8" stroke-linecap="round"/>
+      <polyline points="132,40 160,18" stroke="#f4c095" stroke-width="8" stroke-linecap="round"/>
+      ${hair(130, 19, 0)}
+      <path d="M84,96 L84,54 M76,63 L84,52 L92,63" stroke="#ffb703" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+      <path d="M176,96 L176,54 M168,63 L176,52 L184,63" stroke="#ffb703" stroke-width="3.5" fill="none" stroke-linecap="round"/>
     </svg>`
   };
   return svgs[pose] || svgs.punch;
 }
-
 function loadSmartImage(imgEl, baseName, onFail, onSuccess) {
   imgEl.style.display = "none";
   imgEl.onload = () => {
@@ -340,6 +372,7 @@ function getMaxUnlockedStage(lvl) {
   STAGE_RULES.forEach(s => { if (lvl >= s.minLevel) max = s.stage; });
   return max;
 }
+
 function updateStaggeredCarousel() {
   const total = CHARACTERS.length;
   const idxCurr = (state.carouselIndex + total) % total;
@@ -415,7 +448,6 @@ document.getElementById("card-curr").addEventListener("click", () => {
   playSound("click");
   openCharacterDetails(CHARACTERS[state.carouselIndex].id);
 });
-
 function openCharacterDetails(charId) {
   const c = CHARACTERS.find(item => item.id === charId) || CHARACTERS.at(0);
   state.selectedChar = c.id;
@@ -435,6 +467,7 @@ function openCharacterDetails(charId) {
   loadSmartImage(imgEl, `c${c.id}_s1`, () => { phEl.classList.remove("hidden"); });
   showScreen("detail-screen");
 }
+
 function openExerciseModal(ex) {
   activeExercise = ex;
   clearInterval(timerInterval);
