@@ -1,19 +1,19 @@
 const CHARACTERS = [
-  { id: 1, name: "SON-BLITZ", attack: "SONNEN-KAMEHA", focus: "GANZKÖRPER", bio: "Ein furchtloser Saiyajin-Krieger mit unbändigem Trainingswillen. Mit jedem Workout explodiert seine goldene Kampf-Aura.", color: "#ffb703" },
-  { id: 2, name: "PRINZ-KI", attack: "FINALER BLITZ", focus: "ARME & BRUST", bio: "Stolz, zielstrebig und immer auf der Suche nach der nächsten Transformation. Meister der schweren Schwerkraft.", color: "#5ce1e6" },
-  { id: 3, name: "CYBER-RED", attack: "FLAMMEN-HIEB", focus: "REAKTION & KERN", bio: "Ausgestattet mit einer High-Tech-Kampfrüstung und blitzschnellen Reflexen.", color: "#ff5c77" },
-  { id: 4, name: "SHADOW-X", attack: "PHANTOM-SALVE", focus: "BAUCH & BALANCE", bio: "Bewegt sich lautlos wie der Wind und überrascht seine Gegner mit schnellen Schüben.", color: "#c77dff" },
-  { id: 5, name: "NOVA-GOLD", attack: "SUPERNOVA", focus: "GANZKÖRPER", bio: "Seine goldene Energie erhellt die gesamte Arena und verleiht enorme Ausdauer.", color: "#ffe66d" },
-  { id: 6, name: "TITAN-FORCE", attack: "TITANEN-WALL", focus: "ARME & CORE", bio: "Ein unerschütterlicher Verteidiger, dessen Ki-Schild keinen Angriff durchlässt.", color: "#48cae4" },
-  { id: 7, name: "BLITZ-KID", attack: "DONNER-SPRINT", focus: "BEINE & SPEED", bio: "Jung, extrem wendig und immer bereit für das nächste Schnellkraft-Training.", color: "#ff9e5e" },
-  { id: 8, name: "FROST-ZEN", attack: "GLETSCHER-STRAHL", focus: "KI-KERN", bio: "Bleibt selbst unter höchstem Druck eiskalt und kontrolliert jeden Atemzug.", color: "#72efdd" },
-  { id: 9, name: "FLAME-REX", attack: "MAGMA-FAUST", focus: "BRUST & SCHULTERN", bio: "Seine glühende Kampf-Aura steigt mit jeder absolvierten Liegestütze weiter an.", color: "#ff6b6b" },
-  { id: 10, name: "ULTRA-VEX", attack: "KOMETEN-REGEN", focus: "GANZKÖRPER", bio: "Nutzt kosmische Energie aus fernen Galaxien für maximale Sprungkraft.", color: "#b8c0ff" },
-  { id: 11, name: "SOLAR-KAI", attack: "HELIOS-WELLE", focus: "AUSDAUER", bio: "Zieht seine Kraft direkt aus dem Licht der Sonne und gibt niemals auf.", color: "#ffd166" },
-  { id: 12, name: "DARK-ORION", attack: "ECLIPSE-SCHLAG", focus: "ARME & RÜCKEN", bio: "Ein geheimnisvoller Einzelgänger mit gewaltiger Schlagkraft.", color: "#80ffdb" },
-  { id: 13, name: "AERO-DASH", attack: "WIRBELSTURM", focus: "BEINE & AGILITÄT", bio: "Beherrscht den Himmel und bewegt sich schneller als das Auge folgen kann.", color: "#64dfdf" },
-  { id: 14, name: "OMEGA-GOD", attack: "OMEGA-URKNALL", focus: "ALLE BEREICHE", bio: "Der ultimative Meister-Krieger, der alle Kampftechniken in sich vereint.", color: "#ff758f" },
-  { id: 15, name: "STURM-GREEN", attack: "OMEGA-STURM", focus: "BEINE & KRAFT", bio: "Entfesselt gewaltige smaragdgrüne Natur-Energie und hält selbst den härtesten Ausdauer-Prüfungen stand.", color: "#52e588" }
+  { id: 1, name: "SON-BLITZ", attack: "SONNEN-KAMEHA", focus: "GANZKÖRPER", bio: "Ein furchtloser Saiyajin-Krieger mit unbändigem Trainingswillen.", color: "#ffb703" },
+  { id: 2, name: "PRINZ-KI", attack: "FINALER BLITZ", focus: "ARME & BRUST", bio: "Stolz, zielstrebig und Meister der schweren Schwerkraft.", color: "#5ce1e6" },
+  { id: 3, name: "CYBER-RED", attack: "FLAMMEN-HIEB", focus: "REAKTION & KERN", bio: "High-Tech-Kampfrüstung und blitzschnelle Reflexe.", color: "#ff5c77" },
+  { id: 4, name: "SHADOW-X", attack: "PHANTOM-SALVE", focus: "BAUCH & BALANCE", bio: "Bewegt sich lautlos wie der Wind.", color: "#c77dff" },
+  { id: 5, name: "NOVA-GOLD", attack: "SUPERNOVA", focus: "GANZKÖRPER", bio: "Seine goldene Energie erhellt die gesamte Arena.", color: "#ffe66d" },
+  { id: 6, name: "TITAN-FORCE", attack: "TITANEN-WALL", focus: "ARME & CORE", bio: "Ein unerschütterlicher Verteidiger mit starkem Ki-Schild.", color: "#48cae4" },
+  { id: 7, name: "BLITZ-KID", attack: "DONNER-SPRINT", focus: "BEINE & SPEED", bio: "Jung, extrem wendig und voller Schnellkraft.", color: "#ff9e5e" },
+  { id: 8, name: "FROST-ZEN", attack: "GLETSCHER-STRAHL", focus: "KI-KERN", bio: "Bleibt selbst unter höchstem Druck eiskalt.", color: "#72efdd" },
+  { id: 9, name: "FLAME-REX", attack: "MAGMA-FAUST", focus: "BRUST & SCHULTERN", bio: "Seine glühende Kampf-Aura steigt mit jedem Training.", color: "#ff6b6b" },
+  { id: 10, name: "ULTRA-VEX", attack: "KOMETEN-REGEN", focus: "GANZKÖRPER", bio: "Nutzt kosmische Energie für maximale Sprungkraft.", color: "#b8c0ff" },
+  { id: 11, name: "SOLAR-KAI", attack: "HELIOS-WELLE", focus: "AUSDAUER", bio: "Zieht seine Kraft direkt aus dem Licht der Sonne.", color: "#ffd166" },
+  { id: 12, name: "DARK-ORION", attack: "ECLIPSE-SCHLAG", focus: "ARME & RÜCKEN", bio: "Geheimnisvoller Einzelgänger mit gewaltiger Schlagkraft.", color: "#80ffdb" },
+  { id: 13, name: "AERO-DASH", attack: "WIRBELSTURM", focus: "BEINE & AGILITÄT", bio: "Beherrscht den Himmel und bewegt sich blitzschnell.", color: "#64dfdf" },
+  { id: 14, name: "OMEGA-GOD", attack: "OMEGA-URKNALL", focus: "ALLE BEREICHE", bio: "Der ultimative Meister-Krieger aller Techniken.", color: "#ff758f" },
+  { id: 15, name: "STURM-GREEN", attack: "OMEGA-STURM", focus: "BEINE & KRAFT", bio: "Entfesselt gewaltige smaragdgrüne Natur-Energie.", color: "#52e588" }
 ];
 
 const STAGE_RULES = [
@@ -28,50 +28,50 @@ const BODY_WORKOUTS = {
   arms: {
     label: "TRAINING: ARME & BRUST",
     easy: [
-      { title: "10x Knie- oder Wand-Liegestütze", sub: "Einfach · Schlagkraft-Basis", xp: 25, power: 400 },
-      { title: "20 Sek. schnelles Schattenboxen", sub: "Einfach · Ki-Fäuste", xp: 20, power: 350 }
+      { title: "10x Knie-Liegestütze", sub: "Einfach · Basis", xp: 25, power: 400 },
+      { title: "20 Sek. Schattenboxen", sub: "Einfach · Ki-Fäuste", xp: 20, power: 350 }
     ],
     advanced: [
-      { title: "12x Echte Liegestütze", sub: "Profi · Kamehameha-Druck", xp: 45, power: 900 },
-      { title: "10x Dips am Stuhl", sub: "Profi · Trizeps-Aufladung", xp: 45, power: 950 }
+      { title: "12x Echte Liegestütze", sub: "Profi · Kamehameha", xp: 45, power: 900 },
+      { title: "10x Dips am Stuhl", sub: "Profi · Trizeps", xp: 45, power: 950 }
     ],
     master: [
-      { title: "22x Tiefe Liegestütze", sub: "Meister · 100x Schwerkraft", xp: 80, power: 2000 },
-      { title: "10x Diamant-Liegestütze", sub: "Meister · Finaler Energie-Stoß", xp: 90, power: 2400 }
+      { title: "22x Tiefe Liegestütze", sub: "Meister · 100x G", xp: 80, power: 2000 },
+      { title: "10x Diamant-Liegestütze", sub: "Meister · Final-Ki", xp: 90, power: 2400 }
     ]
   },
   core: {
     label: "TRAINING: BAUCH & KI-KERN",
     easy: [
-      { title: "20 Sek. Unterarmstütz (Plank)", sub: "Einfach · Ki-Schild aktivieren", xp: 25, power: 450 },
-      { title: "10x Crunches (Bauchpressen)", sub: "Einfach · Körpermitte stärken", xp: 25, power: 400 }
+      { title: "20 Sek. Plank", sub: "Einfach · Ki-Schild", xp: 25, power: 450 },
+      { title: "10x Crunches", sub: "Einfach · Körpermitte", xp: 25, power: 400 }
     ],
     advanced: [
-      { title: "40 Sek. Unterarmstütz (Plank)", sub: "Profi · Goldene Aura halten", xp: 45, power: 950 },
+      { title: "40 Sek. Plank", sub: "Profi · Goldene Aura", xp: 45, power: 950 },
       { title: "18x Sit-Ups", sub: "Profi · Saiyajin-Rumpf", xp: 45, power: 900 }
     ],
     master: [
-      { title: "70 Sek. Unterarmstütz (Plank)", sub: "Meister · Unzerstörbare Abwehr", xp: 85, power: 2200 },
-      { title: "25x Beinheben im Liegen", sub: "Meister · Göttlicher Kern", xp: 80, power: 2100 }
+      { title: "70 Sek. Plank", sub: "Meister · Abwehr", xp: 85, power: 2200 },
+      { title: "25x Beinheben", sub: "Meister · Göttlicher Kern", xp: 80, power: 2100 }
     ]
   },
   legs: {
     label: "TRAINING: BEINE & SPRUNGKRAFT",
     easy: [
-      { title: "15x Kniebeugen (Squats)", sub: "Einfach · Fester Stand", xp: 25, power: 450 },
-      { title: "25 Sek. Hampelmänner", sub: "Einfach · Schnelle Schritte", xp: 20, power: 350 }
+      { title: "15x Kniebeugen", sub: "Einfach · Fester Stand", xp: 25, power: 450 },
+      { title: "25 Sek. Hampelmänner", sub: "Einfach · Speed", xp: 20, power: 350 }
     ],
     advanced: [
-      { title: "25x Kniebeugen", sub: "Profi · 10-fache Schwerkraft", xp: 45, power: 950 },
-      { title: "14x Ausfallschritte (Lunges)", sub: "Profi · Kampf-Ausweichen", xp: 45, power: 900 }
+      { title: "25x Kniebeugen", sub: "Profi · 10x Schwerkraft", xp: 45, power: 950 },
+      { title: "14x Ausfallschritte", sub: "Profi · Ausweichen", xp: 45, power: 900 }
     ],
     master: [
-      { title: "15x Sprung-Kniebeugen", sub: "Meister · Raketen-Abflug", xp: 85, power: 2300 },
-      { title: "45 Sek. Wandsitzen", sub: "Meister · 100x Schwerkraftkammer", xp: 80, power: 2100 }
+      { title: "15x Sprung-Kniebeugen", sub: "Meister · Raketen-Start", xp: 85, power: 2300 },
+      { title: "45 Sek. Wandsitzen", sub: "Meister · 100x G", xp: 80, power: 2100 }
     ]
   }
 };
-let state = JSON.parse(localStorage.getItem("zwarriors_neon_v2")) || {
+let state = JSON.parse(localStorage.getItem("zwarriors_neon_v6")) || {
   level: 1, xp: 0, powerLevel: 1000, carouselIndex: 0, selectedChar: 1,
   selectedStage: 1, selectedPart: "arms", difficulty: "easy", partXP: { arms: 0, core: 0, legs: 0 }
 };
@@ -84,7 +84,8 @@ function showScreen(id) {
 
 function playSound(isLevelUp = false) {
   try {
-    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    const ctx = new AudioCtx();
     const osc = ctx.createOscillator();
     const gain = ctx.createGain();
     osc.type = isLevelUp ? "sawtooth" : "triangle";
@@ -164,7 +165,7 @@ let isSwiping = false;
 const carouselEl = document.getElementById("staggered-carousel");
 
 carouselEl.addEventListener("touchstart", e => {
-  if (e.touches.length > 0) {
+  if (e.touches && e.touches.length > 0) {
     touchStartY = e.touches[0].clientY;
     isSwiping = true;
   }
@@ -175,7 +176,7 @@ carouselEl.addEventListener("touchmove", e => {
 }, { passive: false });
 
 carouselEl.addEventListener("touchend", e => {
-  if (!isSwiping || e.changedTouches.length === 0) return;
+  if (!isSwiping || !e.changedTouches || e.changedTouches.length === 0) return;
   isSwiping = false;
   const diff = touchStartY - e.changedTouches[0].clientY;
   if (Math.abs(diff) > 25) {
@@ -217,7 +218,8 @@ function renderWorkouts() {
   const list = document.getElementById("workout-list");
   list.innerHTML = "";
 
-  (partData[state.difficulty] || partData.easy).forEach(ex => {
+  const exercises = partData[state.difficulty] || partData.easy;
+  exercises.forEach(ex => {
     const btn = document.createElement("button");
     btn.className = "workout-card";
     btn.innerHTML = `<div><div class="workout-title">${ex.title}</div><div class="workout-sub">${ex.sub}</div></div><span class="xp-tag">+${ex.xp} XP</span>`;
@@ -244,9 +246,9 @@ function completeExercise(gainedXP, gainedPower) {
     if (newMax > oldMax) {
       state.selectedStage = newMax;
       playSound(true);
-      document.getElementById("levelup-badge").textContent = "NEUE STUFE FREIGESCHALTET";
+      document.getElementById("levelup-badge").textContent = "NEUE STUFE";
       document.getElementById("levelup-title").textContent = `STUFE ${newMax}`;
-      document.getElementById("levelup-desc").textContent = `Dein Krieger kann jetzt Stufe ${newMax} entfesseln!`;
+      document.getElementById("levelup-desc").textContent = `Stufe ${newMax} ist jetzt freigeschaltet!`;
     } else {
       playSound(false);
       document.getElementById("levelup-badge").textContent = "LEVEL UP";
@@ -308,7 +310,7 @@ function updateUI() {
     pillsContainer.appendChild(btn);
   });
 
-  localStorage.setItem("zwarriors_neon_v2", JSON.stringify(state));
+  localStorage.setItem("zwarriors_neon_v6", JSON.stringify(state));
 }
 
 document.getElementById("enter-app-btn").addEventListener("click", () => {
