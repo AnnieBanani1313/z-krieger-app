@@ -11,7 +11,7 @@
 </head>
 <body>
 
-  <!-- SCREEN 1: AUFGERÄUMTER STARTBILDSCHIRM MIT DICKER SCHRIFT -->
+  <!-- SCREEN 1: AUFGERÄUMTER STARTBILDSCHIRM -->
   <section id="intro-screen" class="poster-screen">
     <div class="poster-hero-top">
       <h1 class="tall-orange-title">SAIYANS<br>NEVER<br>DIE</h1>
@@ -34,7 +34,7 @@
     </div>
   </section>
 
-  <!-- SCREEN 2: LÜCKENLOSES NEON-KARUSSELL -->
+  <!-- SCREEN 2: KÄMPFERAUSWAHL (BÜNDIG AM RECHTEN RAND & INFOS AUF DER KARTE) -->
   <section id="select-screen" class="poster-screen select-layout hidden">
     <svg class="dragon-svg" viewBox="0 0 200 320" fill="none">
       <path d="M40 30 C115 10, 165 65, 120 115 C75 165, 175 185, 130 245 C95 290, 25 265, 48 215 C70 165, 10 140, 40 90 Z" stroke="#ffffff" stroke-width="20" stroke-linecap="round"/>
@@ -65,14 +65,7 @@
           <div id="scroll-thumb" class="scroll-thumb"></div>
         </div>
 
-        <div class="selected-info-left">
-          <div id="name-curr" class="left-fighter-name">SON-BLITZ</div>
-          <div class="left-pills">
-            <span id="lvl-curr" class="orange-mini-pill">LVL 1</span>
-            <span id="evo-curr" class="dark-mini-pill">STUFE 1/5</span>
-          </div>
-          <p class="orange-bottom-caption">UND STARTE DEIN<br>TRAINING...</p>
-        </div>
+        <p class="orange-bottom-caption">UND STARTE DEIN<br>TRAINING...</p>
       </div>
 
       <div id="staggered-carousel" class="staggered-carousel">
@@ -83,6 +76,13 @@
 
           <div id="card-curr" class="s-card card-center">
             <div id="fb-curr" class="s-fallback">#01</div>
+            <div class="center-card-footer">
+              <div id="name-curr" class="center-name">SON-BLITZ</div>
+              <div class="center-pills">
+                <span id="lvl-curr" class="dark-pill">LVL 1</span>
+                <span id="evo-curr" class="dark-pill">STUFE · 1</span>
+              </div>
+            </div>
           </div>
 
           <div id="card-next" class="s-card card-bottom">
