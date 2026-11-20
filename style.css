@@ -211,13 +211,12 @@ body {
 .char-bottom { bottom: -6px; right: 12px; width: 135px; height: 145px; z-index: 4; }
 .s-fallback { position: absolute; inset: 0; display: grid; place-items: center; font-family: 'Anton', sans-serif; font-size: 2.3rem; color: rgba(0, 0, 0, 0.25); }
 
-/* Cyber-Red (id 3) vergrößern & hochsetzen, damit die Haare oben herausragen */
-.char-center.is-c3 { transform: translateY(-70%) scale(1.48) !important; }
+/* Cyber-Red (id 3) proportional vergrößern & hochsetzen */
+.char-center.is-c3 { transform: translateY(-76%) scale(1.68) !important; }
 .char-top.is-c3,
-.char-bottom.is-c3 { transform: translateY(-10px) scale(1.42) !important; }
+.char-bottom.is-c3 { transform: translateY(-14px) scale(1.65) !important; }
 .fighters-center-char.is-c3,
-.arena-char-img.is-c3 { transform: scale(1.42) !important; }
-
+.arena-char-img.is-c3 { transform: scale(1.65) !important; }
 /* SCREEN 3 & 4 */
 .orange-num-tag { font-family: 'Anton', sans-serif; font-size: 1.5rem; color: var(--orange); letter-spacing: 1px; }
 .fighters-backdrop-area { position: relative; height: 290px; display: grid; place-items: center; }
