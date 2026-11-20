@@ -1,38 +1,33 @@
 (function loadAppFonts() {
   const host =
-    ["fonts", "googleapis", "com"].join(".");
+    ["fonts", "googleapis", "com"]
+      .join(".");
   const link =
     document.createElement("link");
   link.rel = "stylesheet";
   link.href =
     `https://${host}/css2?family=Anton` +
-    `&family=Rajdhani:wght@600;700&display=swap`;
+    `&family=Rajdhani:wght@600;700` +
+    `&display=swap`;
   document.head.appendChild(link);
 })();
 
-(function injectEffectsAndModal() {
+(function injectGameUI() {
   const style =
     document.createElement("style");
   style.textContent = `
     @keyframes kiShake {
       0%, 100% {
-        transform: translate(0, 0) rotate(0deg);
+        transform: translate(0, 0);
       }
-      20% {
-        transform: translate(-6px, 4px)
-          rotate(-1deg);
+      25% {
+        transform: translate(-6px, 4px);
       }
-      40% {
-        transform: translate(6px, -4px)
-          rotate(1deg);
+      50% {
+        transform: translate(6px, -4px);
       }
-      60% {
-        transform: translate(-4px, -2px)
-          rotate(-0.5deg);
-      }
-      80% {
-        transform: translate(4px, 3px)
-          rotate(0.5deg);
+      75% {
+        transform: translate(-4px, -2px);
       }
     }
     @keyframes auraPulse {
@@ -48,55 +43,100 @@
       }
     }
     .shake-active {
-      animation: kiShake 0.45s ease-in-out;
+      animation: kiShake 0.45s ease;
     }
     .aura-active {
-      animation: auraPulse 1.8s infinite
-        ease-in-out;
+      animation: auraPulse 1.8s infinite;
     }
-        .comic-stage {
+    .comic-stage {
       background: #101015;
       border: 2px solid #ff9900;
       border-radius: 12px; padding: 12px;
-      position: relative; overflow: hidden;
-      background-image: radial-gradient(
-        #262632 1px, transparent 1px
-      );
-      background-size: 10px 10px;
+      position: relative;
+      overflow: hidden;
     }
     .comic-badge {
-      position: absolute; top: 8px; left: 8px;
-      background: #ff9900; color: #0b0b0d;
+      position: absolute;
+      top: 8px; left: 8px;
+      background: #ff9900;
+      color: #0b0b0d;
       font-family: 'Anton', sans-serif;
-      font-size: 0.78rem; padding: 2px 8px;
-      border-radius: 5px; letter-spacing: 0.6px;
+      font-size: 0.78rem;
+      padding: 2px 8px;
+      border-radius: 5px;
     }
     .timer-box {
       font-family: 'Anton', sans-serif;
-      font-size: 2.2rem; color: #ffb703;
-      letter-spacing: 2px; margin: 4px 0;
+      font-size: 2.2rem;
+      color: #ffb703;
+      letter-spacing: 2px;
+      margin: 4px 0;
     }
     .timer-btn {
       background: #1c1c24;
       border: 1.5px solid #ff9900;
       color: #ff9900;
       font-family: 'Anton', sans-serif;
-      font-size: 1rem; padding: 6px 14px;
-      border-radius: 8px; cursor: pointer;
-      letter-spacing: 0.8px;
+      font-size: 1rem;
+      padding: 6px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    .hud-strip {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-bottom: 10px;
+    }
+    .hud-chip {
+      background: #16161c;
+      border: 1px solid #2e2e3a;
+      color: #fff;
+      font-family: 'Anton', sans-serif;
+      font-size: 0.85rem;
+      padding: 4px 9px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    .hud-chip.senzu-ready {
+      border-color: #52e588;
+      color: #52e588;
+    }
+    .hud-chip.senzu-on {
+      background: #52e588;
+      color: #0b0b0d;
+    }
+    .trophy-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      text-align: left;
+    }
+    .trophy-item {
+      background: #101015;
+      border: 1px solid #2c2c38;
+      border-radius: 8px;
+      padding: 8px;
+      opacity: 0.4;
+    }
+    .trophy-item.unlocked {
+      border-color: #ffb703;
+      opacity: 1;
     }
   `;
   document.head.appendChild(style);
 
-  const modal = document.createElement("div");
+   const modal =
+    document.createElement("div");
   modal.id = "exercise-modal";
-  modal.className = "levelup-overlay hidden";
+  modal.className =
+    "levelup-overlay hidden";
   modal.innerHTML = `
     <div class="levelup-card"
       style="max-width: 360px;">
       <span id="ex-modal-tag"
         class="orange-tag">
-        COMIC-ANLEITUNG
+        TECHNIK-GUIDE
       </span>
       <h2 id="ex-modal-title"
         class="tall-orange-title small">
@@ -104,20 +144,22 @@
       </h2>
       <div class="comic-stage">
         <span class="comic-badge">
-          TECHNIK-GUIDE
+          COMIC-VORSCHAU
         </span>
         <img id="ex-comic-img"
-          style="width:100%;height:140px;
-          object-fit:contain;display:none;"
-          alt="" />
+          style="width:100%;height:135px;
+          object-fit:contain;
+          display:none;" alt="" />
         <div id="ex-comic-svg"
-          style="height:140px;display:grid;
+          style="height:135px;
+          display:grid;
           place-items:center;"></div>
       </div>
       <p id="ex-modal-tip"
         class="poster-copy center"
         style="color:#fff;"></p>
-      <div id="ex-timer-area" class="hidden">
+      <div id="ex-timer-area"
+        class="hidden">
         <div id="ex-timer-display"
           class="timer-box">00:20</div>
         <button id="ex-timer-start"
@@ -130,11 +172,67 @@
         GESCHAFFT (+25 XP)
       </button>
       <button id="ex-close-btn"
-        class="reset-link">Abbrechen</button>
+        class="reset-link">
+        Abbrechen
+      </button>
     </div>
   `;
   document.body.appendChild(modal);
+
+  const trophyModal =
+    document.createElement("div");
+  trophyModal.id = "trophy-modal";
+  trophyModal.className =
+    "levelup-overlay hidden";
+  trophyModal.innerHTML = `
+    <div class="levelup-card"
+      style="max-width: 360px;">
+      <span class="orange-tag">
+        RUHMESHALLE
+      </span>
+      <h2
+        class="tall-orange-title small">
+        TROPHÄEN
+      </h2>
+      <div id="trophy-list"
+        class="trophy-grid"></div>
+      <button id="close-trophy"
+        class="tall-orange-btn">
+        SCHLIESSEN
+      </button>
+    </div>
+  `;
+  document.body.appendChild(trophyModal);
+
+  const stage = document.querySelector(
+    ".arena-poster-stage"
+  );
+  if (stage) {
+    const hud =
+      document.createElement("div");
+    hud.className = "hud-strip";
+    hud.innerHTML = `
+      <span id="streak-chip"
+        class="hud-chip">
+        🔥 0 TAGE
+      </span>
+      <button id="senzu-btn"
+        class="hud-chip senzu-ready">
+        🌱 SENZU (2x KI)
+      </button>
+      <button id="boss-btn"
+        class="hud-chip">
+        👹 BOSS-KAMPF
+      </button>
+      <button id="trophy-btn"
+        class="hud-chip">
+        🏆 TROPHÄEN
+      </button>
+    `;
+    stage.prepend(hud);
+  }
 })();
+
 const CHARACTERS = [
   {
     id: 1, name: "SON-BLITZ",
@@ -147,107 +245,168 @@ const CHARACTERS = [
     id: 2, name: "PRINZ-KI",
     attack: "FINALER BLITZ",
     focus: "ARME & BRUST",
-    bio: "Meister der schweren Schwerkraft.",
+    bio: "Meister der Schwerkraft.",
     color: "#5ce1e6"
   },
   {
     id: 3, name: "CYBER-RED",
     attack: "FLAMMEN-HIEB",
-    focus: "REAKTION & KERN",
-    bio: "High-Tech-Rüstung und Reflexe.",
+    focus: "REAKTION & BAUCH",
+    bio: "High-Tech-Rüstung & Reflexe.",
     color: "#ff5c77"
   },
   {
     id: 4, name: "SHADOW-X",
     attack: "PHANTOM-SALVE",
     focus: "BAUCH & BALANCE",
-    bio: "Bewegt sich lautlos wie der Wind.",
+    bio: "Lautlos wie der Wind.",
     color: "#c77dff"
   },
   {
     id: 5, name: "NOVA-GOLD",
     attack: "SUPERNOVA",
     focus: "GANZKÖRPER",
-    bio: "Seine goldene Energie erhellt alles.",
+    bio: "Seine goldene Energie strahlt.",
     color: "#ffe66d"
   },
   {
     id: 6, name: "TITAN-FORCE",
     attack: "TITANEN-WALL",
-    focus: "ARME & CORE",
-    bio: "Verteidiger mit starkem Ki-Schild.",
+    focus: "ARME & BAUCH",
+    bio: "Verteidiger mit Ki-Schild.",
     color: "#48cae4"
   },
   {
     id: 7, name: "BLITZ-KID",
     attack: "DONNER-SPRINT",
     focus: "BEINE & SPEED",
-    bio: "Extrem wendig und voller Schnellkraft.",
+    bio: "Extrem wendig & schnell.",
     color: "#ff9e5e"
   },
   {
     id: 8, name: "FROST-ZEN",
     attack: "GLETSCHER-STRAHL",
-    focus: "KI-KERN",
-    bio: "Bleibt unter höchstem Druck eiskalt.",
+    focus: "BAUCH-KRAFT",
+    bio: "Bleibt unter Druck eiskalt.",
     color: "#72efdd"
   },
   {
     id: 9, name: "FLAME-REX",
     attack: "MAGMA-FAUST",
     focus: "BRUST & SCHULTERN",
-    bio: "Seine Aura steigt mit jedem Training.",
+    bio: "Glühende Kampf-Aura.",
     color: "#ff6b6b"
   },
   {
     id: 10, name: "ULTRA-VEX",
     attack: "KOMETEN-REGEN",
     focus: "GANZKÖRPER",
-    bio: "Nutzt kosmische Sprungkraft.",
+    bio: "Kosmische Sprungkraft.",
     color: "#b8c0ff"
   },
   {
     id: 11, name: "SOLAR-KAI",
     attack: "HELIOS-WELLE",
     focus: "AUSDAUER",
-    bio: "Zieht Kraft aus dem Sonnenlicht.",
+    bio: "Zieht Kraft aus der Sonne.",
     color: "#ffd166"
   },
   {
     id: 12, name: "DARK-ORION",
     attack: "ECLIPSE-SCHLAG",
     focus: "ARME & RÜCKEN",
-    bio: "Einzelgänger mit gewaltiger Kraft.",
+    bio: "Einzelgänger mit Wucht.",
     color: "#80ffdb"
   },
   {
     id: 13, name: "AERO-DASH",
     attack: "WIRBELSTURM",
     focus: "BEINE & AGILITÄT",
-    bio: "Beherrscht den Himmel blitzschnell.",
+    bio: "Beherrscht den Himmel.",
     color: "#64dfdf"
   },
   {
     id: 14, name: "OMEGA-GOD",
     attack: "OMEGA-URKNALL",
     focus: "ALLE BEREICHE",
-    bio: "Meister-Krieger aller Techniken.",
+    bio: "Meister aller Techniken.",
     color: "#ff758f"
   },
   {
     id: 15, name: "STURM-GREEN",
     attack: "OMEGA-STURM",
     focus: "BEINE & KRAFT",
-    bio: "Entfesselt smaragdgrüne Energie.",
+    bio: "Smaragdgrüne Natur-Energie.",
     color: "#52e588"
   }
 ];
+
 const STAGE_RULES = [
   { stage: 1, minLevel: 1 },
   { stage: 2, minLevel: 2 },
   { stage: 3, minLevel: 4 },
   { stage: 4, minLevel: 6 },
   { stage: 5, minLevel: 8 }
+];
+
+const BOSS_CHALLENGES = [
+  {
+    title: "BOSS: SCHWERKRAFT 50x G",
+    sub: "Kombi-Prüfung · Doppel-XP",
+    xp: 120, power: 3000,
+    pose: "plank", sec: 30,
+    isBoss: true,
+    tip: "10 Kniebeugen + 30 Sek. Plank!"
+  },
+  {
+    title: "BOSS: MEISTER-PRÜFUNG",
+    sub: "Endboss · Doppel-XP",
+    xp: 140, power: 3500,
+    pose: "pushup", sec: 25,
+    isBoss: true,
+    tip: "10 Liegestütze + 25 Sek. Boxen!"
+  },
+  {
+    title: "BOSS: GALAXIE-TURNIER",
+    sub: "Finale · Doppel-XP",
+    xp: 160, power: 4000,
+    pose: "jump", sec: 30,
+    isBoss: true,
+    tip: "15 Ausfallschritte + 30s Sprünge!"
+  }
+];
+
+const TROPHIES = [
+  {
+    id: "t1", icon: "⚡",
+    name: "ERWACHEN",
+    desc: "Stufe 2 erreicht"
+  },
+  {
+    id: "t2", icon: "🔥",
+    name: "10.000 KI",
+    desc: "10.000 Ki gesammelt"
+  },
+  {
+    id: "t3", icon: "👹",
+    name: "BOSS-JÄGER",
+    desc: "Ersten Boss besiegt"
+  },
+  {
+    id: "t4", icon: "📅",
+    name: "DISZIPLIN",
+    desc: "3 Tage Streak"
+  },
+  {
+    id: "t5", icon: "💪",
+    name: "BAUCH-STAHL",
+    desc: "Bauch Level 3"
+  },
+  {
+    id: "t6", icon: "👑",
+    name: "TEAM-LEADER",
+    desc: "5 Krieger trainiert"
+  }
 ];
 
 const BODY_WORKOUTS = {
@@ -259,14 +418,14 @@ const BODY_WORKOUTS = {
         sub: "Einfach · Basis",
         xp: 25, power: 400,
         pose: "kneepushup",
-        tip: "Knie auf den Boden, Rücken gerade."
+        tip: "Knie auf Boden, Rücken gerade."
       },
       {
         title: "20 Sek. Schattenboxen",
         sub: "Einfach · Ki-Fäuste",
         xp: 20, power: 350,
         pose: "punch", sec: 20,
-        tip: "Schnelle gerade Schläge nach vorn!"
+        tip: "Schnelle Schläge nach vorn!"
       }
     ],
     advanced: [
@@ -291,7 +450,7 @@ const BODY_WORKOUTS = {
         sub: "Meister · 100x G",
         xp: 80, power: 2000,
         pose: "pushup",
-        tip: "Kurz vor dem Boden abstoppen."
+        tip: "Kurz vor Boden abstoppen."
       },
       {
         title: "10x Diamant-Liegestütze",
@@ -303,11 +462,11 @@ const BODY_WORKOUTS = {
     ]
   },
   core: {
-    label: "TRAINING: BAUCH & KI-KERN",
+    label: "TRAINING: BAUCH & RUMPF",
     easy: [
       {
         title: "20 Sek. Plank",
-        sub: "Einfach · Ki-Schild",
+        sub: "Einfach · Bauch-Schild",
         xp: 25, power: 450,
         pose: "plank", sec: 20,
         tip: "Bauch und Po fest anspannen!"
@@ -317,7 +476,7 @@ const BODY_WORKOUTS = {
         sub: "Einfach · Körpermitte",
         xp: 25, power: 400,
         pose: "situp",
-        tip: "Schultern kontrolliert einrollen."
+        tip: "Schultern kontrolliert rollen."
       }
     ],
     advanced: [
@@ -326,11 +485,11 @@ const BODY_WORKOUTS = {
         sub: "Profi · Goldene Aura",
         xp: 45, power: 950,
         pose: "plank", sec: 40,
-        tip: "Ruhig weiteratmen und halten."
+        tip: "Ruhig weiteratmen & halten."
       },
       {
         title: "18x Sit-Ups",
-        sub: "Profi · Saiyajin-Rumpf",
+        sub: "Profi · Saiyajin-Bauch",
         xp: 45, power: 900,
         pose: "situp",
         tip: "Nicht am Nacken ziehen."
@@ -342,11 +501,11 @@ const BODY_WORKOUTS = {
         sub: "Meister · Abwehr",
         xp: 85, power: 2200,
         pose: "plank", sec: 70,
-        tip: "Unzerstörbarer Ki-Schild!"
+        tip: "Unzerstörbare Bauch-Spannung!"
       },
       {
         title: "25x Beinheben",
-        sub: "Meister · Göttlicher Kern",
+        sub: "Meister · Götter-Bauch",
         xp: 80, power: 2100,
         pose: "legraise",
         tip: "Beine gestreckt langsam heben."
@@ -368,7 +527,7 @@ const BODY_WORKOUTS = {
         sub: "Einfach · Speed",
         xp: 20, power: 350,
         pose: "jump", sec: 25,
-        tip: "Leichtfüßig auf den Fußballen."
+        tip: "Leichtfüßig auf Fußballen."
       }
     ],
     advanced: [
@@ -400,24 +559,25 @@ const BODY_WORKOUTS = {
         sub: "Meister · 100x G",
         xp: 80, power: 2100,
         pose: "wallsit", sec: 45,
-        tip: "Knie im 90-Grad-Winkel halten."
+        tip: "Knie im 90-Grad-Winkel."
       }
     ]
   }
 };
+
 const CHARACTER_WORKOUTS = {
   1: {
     arms: {
       easy: [
         {
           title: "10x Knie-Liegestütze",
-          sub: "Einfach · Kamehameha-Basis",
+          sub: "Einfach · Kameha-Basis",
           xp: 25, power: 400,
           pose: "kneepushup",
           tip: "Rücken gerade, Brust tief."
         },
         {
-          title: "20 Sek. Ki-Schattenboxen",
+          title: "20 Sek. Ki-Boxen",
           sub: "Einfach · Schnelle Fäuste",
           xp: 20, power: 350,
           pose: "punch", sec: 20,
@@ -430,14 +590,14 @@ const CHARACTER_WORKOUTS = {
           sub: "Profi · Kaioken x2",
           xp: 45, power: 900,
           pose: "pushup",
-          tip: "Volle Körperspannung halten."
+          tip: "Volle Körperspannung."
         },
         {
           title: "12x Stuhl-Dips",
           sub: "Profi · Arm-Power",
           xp: 45, power: 950,
           pose: "dips",
-          tip: "Trizeps voll durchstrecken."
+          tip: "Trizeps durchstrecken."
         }
       ],
       master: [
@@ -449,11 +609,11 @@ const CHARACTER_WORKOUTS = {
           tip: "Maximale Tiefe!"
         },
         {
-          title: "12x Diamant-Liegestütze",
+          title: "12x Diamant-Pushups",
           sub: "Meister · Super-Kameha",
           xp: 90, power: 2400,
           pose: "pushup",
-          tip: "Hände eng unter der Brust."
+          tip: "Hände eng unter Brust."
         }
       ]
     },
@@ -464,11 +624,11 @@ const CHARACTER_WORKOUTS = {
           sub: "Einfach · Stabile Aura",
           xp: 25, power: 450,
           pose: "plank", sec: 20,
-          tip: "Körper gerade wie ein Pfeil."
+          tip: "Gerade wie ein Pfeil."
         },
         {
           title: "12x Crunches",
-          sub: "Einfach · Körpermitte",
+          sub: "Einfach · Bauch-Fokus",
           xp: 25, power: 400,
           pose: "situp",
           tip: "Oben kurz halten."
@@ -477,14 +637,14 @@ const CHARACTER_WORKOUTS = {
       advanced: [
         {
           title: "45 Sek. Plank",
-          sub: "Profi · Schwerkraft-Kern",
+          sub: "Profi · Bauch-Kraft",
           xp: 45, power: 950,
           pose: "plank", sec: 45,
-          tip: "Stabil bleiben und atmen."
+          tip: "Stabil bleiben & atmen."
         },
         {
           title: "20x Sit-Ups",
-          sub: "Profi · Saiyajin-Rumpf",
+          sub: "Profi · Saiyajin-Bauch",
           xp: 45, power: 900,
           pose: "situp",
           tip: "Langsam abrollen."
@@ -500,7 +660,7 @@ const CHARACTER_WORKOUTS = {
         },
         {
           title: "25x Beinheben",
-          sub: "Meister · Volle Kontrolle",
+          sub: "Meister · Bauch-Stahl",
           xp: 80, power: 2100,
           pose: "legraise",
           tip: "Kontrolliert absenken."
@@ -514,7 +674,7 @@ const CHARACTER_WORKOUTS = {
           sub: "Einfach · Fester Stand",
           xp: 25, power: 450,
           pose: "squat",
-          tip: "Sauber in die Hocke gehen."
+          tip: "Sauber in die Hocke."
         },
         {
           title: "25 Sek. Hampelmänner",
@@ -530,14 +690,14 @@ const CHARACTER_WORKOUTS = {
           sub: "Profi · 10x Schwerkraft",
           xp: 45, power: 950,
           pose: "squat",
-          tip: "Tief runter und hochdrücken."
+          tip: "Tief runter & hoch."
         },
         {
           title: "16x Ausfallschritte",
-          sub: "Profi · Blitz-Ausweichen",
+          sub: "Profi · Blitz-Schritt",
           xp: 45, power: 900,
           pose: "lunge",
-          tip: "Weite Schritte im Wechsel."
+          tip: "Weite Schritte wechseln."
         }
       ],
       master: [
@@ -558,7 +718,7 @@ const CHARACTER_WORKOUTS = {
       ]
     }
   },
-    2: {
+  2: {
     arms: {
       easy: [
         {
@@ -566,7 +726,7 @@ const CHARACTER_WORKOUTS = {
           sub: "Einfach · Prinzen-Stolz",
           xp: 25, power: 400,
           pose: "wallpushup",
-          tip: "Hände an die Wand stützen."
+          tip: "Hände an Wand stützen."
         },
         {
           title: "25 Sek. Armkreisen",
@@ -578,14 +738,14 @@ const CHARACTER_WORKOUTS = {
       ],
       advanced: [
         {
-          title: "15x Breite Liegestütze",
+          title: "15x Breite Pushups",
           sub: "Profi · Galick-Strahl",
           xp: 45, power: 950,
           pose: "pushup",
-          tip: "Hände weiter als schulterbreit."
+          tip: "Hände breiter setzen."
         },
         {
-          title: "12x Schulter-Drücken (Pike)",
+          title: "12x Pike-Liegestütze",
           sub: "Profi · 300x G",
           xp: 50, power: 1000,
           pose: "pushup",
@@ -594,14 +754,14 @@ const CHARACTER_WORKOUTS = {
       ],
       master: [
         {
-          title: "20x Explosiv-Liegestütze",
+          title: "20x Explosiv-Pushups",
           sub: "Meister · Finaler Blitz",
           xp: 85, power: 2200,
           pose: "pushup",
           tip: "Schnell hochdrücken!"
         },
         {
-          title: "15x Diamant-Liegestütze",
+          title: "15x Diamant-Pushups",
           sub: "Meister · Royal Blue",
           xp: 90, power: 2500,
           pose: "pushup",
@@ -616,19 +776,19 @@ const CHARACTER_WORKOUTS = {
           sub: "Einfach · Eiserner Wille",
           xp: 25, power: 450,
           pose: "plank", sec: 25,
-          tip: "Körper eisern gerade halten."
+          tip: "Eisern gerade halten."
         },
         {
           title: "12x Käfer-Crunches",
           sub: "Einfach · Balance",
           xp: 25, power: 400,
           pose: "situp",
-          tip: "Ellbogen und Knie zusammen."
+          tip: "Ellbogen & Knie zusammen."
         }
       ],
       advanced: [
         {
-          title: "45 Sek. Seitlicher Plank",
+          title: "45 Sek. Seit-Plank",
           sub: "Profi · Ki-Rüstung",
           xp: 45, power: 950,
           pose: "plank", sec: 45,
@@ -639,7 +799,7 @@ const CHARACTER_WORKOUTS = {
           sub: "Profi · Dreh-Impuls",
           xp: 45, power: 900,
           pose: "situp",
-          tip: "Von Seite zu Seite drehen."
+          tip: "Von Seite zu Seite."
         }
       ],
       master: [
@@ -652,10 +812,10 @@ const CHARACTER_WORKOUTS = {
         },
         {
           title: "20x V-Ups (Klappmesser)",
-          sub: "Meister · Stolz des Prinzen",
+          sub: "Meister · Prinzen-Stolz",
           xp: 90, power: 2400,
           pose: "legraise",
-          tip: "Arme und Beine hoch."
+          tip: "Arme & Beine hoch."
         }
       ]
     },
@@ -678,7 +838,7 @@ const CHARACTER_WORKOUTS = {
       ],
       advanced: [
         {
-          title: "20x Ausfallschritte rückwärts",
+          title: "20x Ausfallschritte",
           sub: "Profi · Konter-Schritt",
           xp: 45, power: 950,
           pose: "lunge",
@@ -694,22 +854,23 @@ const CHARACTER_WORKOUTS = {
       ],
       master: [
         {
-          title: "12x Bulgarische Kniebeugen",
-          sub: "Meister · Einzelbein-Kraft",
+          title: "12x Bulgarische Squats",
+          sub: "Meister · Einzelbein",
           xp: 85, power: 2300,
           pose: "lunge",
           tip: "Hinteren Fuß auf Stuhl."
         },
         {
-          title: "20x Ausfallschritt-Sprünge",
+          title: "20x Sprung-Ausfallschritt",
           sub: "Meister · Überschall",
           xp: 90, power: 2400,
           pose: "jump",
-          tip: "Beine in der Luft wechseln!"
+          tip: "Beine in Luft wechseln!"
         }
       ]
     }
   },
+
     3: {
     arms: {
       easy: [
@@ -721,7 +882,7 @@ const CHARACTER_WORKOUTS = {
           tip: "Maximale Schlagfrequenz!"
         },
         {
-          title: "10x Schulter-Tippen im Plank",
+          title: "10x Schulter-Tippen",
           sub: "Einfach · Reflexe",
           xp: 25, power: 450,
           pose: "shouldertap",
@@ -737,7 +898,7 @@ const CHARACTER_WORKOUTS = {
           tip: "Ellbogen eng am Körper."
         },
         {
-          title: "30 Sek. Oberkörper-Boxen",
+          title: "30 Sek. Cyber-Boxen",
           sub: "Profi · Overdrive",
           xp: 45, power: 900,
           pose: "punch", sec: 30,
@@ -746,15 +907,15 @@ const CHARACTER_WORKOUTS = {
       ],
       master: [
         {
-          title: "20x Wechsel-Liegestütze",
+          title: "20x Wechsel-Pushups",
           sub: "Meister · Flammen-Hieb",
           xp: 85, power: 2200,
           pose: "pushup",
           tip: "Hand versetzen."
         },
         {
-          title: "40 Sek. Bergsteiger (Speed)",
-          sub: "Meister · System-Maximum",
+          title: "40 Sek. Bergsteiger",
+          sub: "Meister · Maximum",
           xp: 90, power: 2400,
           pose: "climber", sec: 40,
           tip: "Knie im Sprint vorziehen."
@@ -772,10 +933,10 @@ const CHARACTER_WORKOUTS = {
         },
         {
           title: "20 Sek. Hollow Hold",
-          sub: "Einfach · Panzer-Kern",
+          sub: "Einfach · Panzer-Bauch",
           xp: 25, power: 400,
           pose: "legraise", sec: 20,
-          tip: "Unteren Rücken auf Boden."
+          tip: "Rücken fest auf Boden."
         }
       ],
       advanced: [
@@ -787,8 +948,8 @@ const CHARACTER_WORKOUTS = {
           tip: "Ellbogen zu Knie."
         },
         {
-          title: "45 Sek. Plank mit Kniezug",
-          sub: "Profi · Reaktor-Stabilität",
+          title: "45 Sek. Kniezug-Plank",
+          sub: "Profi · Reaktor-Bauch",
           xp: 50, power: 1000,
           pose: "climber", sec: 45,
           tip: "Knie seitlich vorziehen."
@@ -797,17 +958,17 @@ const CHARACTER_WORKOUTS = {
       master: [
         {
           title: "50x Fahrrad-Crunches",
-          sub: "Meister · Hyper-Kern",
+          sub: "Meister · Hyper-Bauch",
           xp: 85, power: 2300,
           pose: "situp",
           tip: "Sauber durchziehen!"
         },
         {
-          title: "60 Sek. Hollow Body Hold",
+          title: "60 Sek. Hollow Hold",
           sub: "Meister · Titan-Schild",
           xp: 90, power: 2400,
           pose: "legraise", sec: 60,
-          tip: "Volle Rumpfspannung!"
+          tip: "Volle Bauch-Spannung!"
         }
       ]
     },
@@ -818,11 +979,11 @@ const CHARACTER_WORKOUTS = {
           sub: "Einfach · Sprint-Modul",
           xp: 25, power: 450,
           pose: "jump", sec: 25,
-          tip: "Knie auf Hüfthöhe ziehen."
+          tip: "Knie hoch ziehen."
         },
         {
           title: "15x Skater-Sprünge",
-          sub: "Einfach · Ausweich-Sensor",
+          sub: "Einfach · Ausweichen",
           xp: 25, power: 400,
           pose: "lunge",
           tip: "Seitlich springen."
@@ -837,8 +998,8 @@ const CHARACTER_WORKOUTS = {
           tip: "Höchstgeschwindigkeit!"
         },
         {
-          title: "18x Seitliche Ausfallschritte",
-          sub: "Profi · Ausweich-Manöver",
+          title: "18x Seit-Ausfallschritt",
+          sub: "Profi · Ausweich-Modus",
           xp: 45, power: 900,
           pose: "lunge",
           tip: "Weit zur Seite steigen."
@@ -853,32 +1014,31 @@ const CHARACTER_WORKOUTS = {
           tip: "Liegestütz + Strecksprung!"
         },
         {
-          title: "20x Skater-Sprünge weit",
-          sub: "Meister · Lichtgeschwindigkeit",
+          title: "20x Skater-Sprünge",
+          sub: "Meister · Licht-Speed",
           xp: 85, power: 2200,
           pose: "lunge",
           tip: "Maximale Sprungweite."
         }
       ]
     }
-  }
-    ,
+  },
   4: {
     arms: {
       easy: [
         {
-          title: "12x Schatten-Liegestütze",
+          title: "12x Schatten-Pushups",
           sub: "Einfach · Lautlos",
           xp: 25, power: 400,
           pose: "kneepushup",
-          tip: "Langsam und leise absenken."
+          tip: "Langsam & leise absenken."
         },
         {
-          title: "25 Sek. Phantom-Schläge",
+          title: "25 Sek. Phantom-Schlag",
           sub: "Einfach · Wind-Speed",
           xp: 20, power: 350,
           pose: "punch", sec: 25,
-          tip: "Blitzschnell vor und zurück!"
+          tip: "Blitzschnell vor & zurück!"
         }
       ],
       advanced: [
@@ -903,7 +1063,7 @@ const CHARACTER_WORKOUTS = {
           sub: "Meister · Phantom-Salve",
           xp: 85, power: 2200,
           pose: "pushup",
-          tip: "Volle Tiefe und Spannung."
+          tip: "Volle Tiefe & Spannung."
         },
         {
           title: "15x Stuhl-Dips",
@@ -921,20 +1081,20 @@ const CHARACTER_WORKOUTS = {
           sub: "Einfach · Wind-Stille",
           xp: 25, power: 450,
           pose: "plank", sec: 25,
-          tip: "Körper ruhig wie ein Schatten."
+          tip: "Ruhig wie ein Schatten."
         },
         {
-          title: "15x Langsame Crunches",
-          sub: "Einfach · Rumpf-Fokus",
+          title: "15x Langsam-Crunches",
+          sub: "Einfach · Bauch-Fokus",
           xp: 25, power: 400,
           pose: "situp",
-          tip: "3 Sekunden hoch, 3 runter."
+          tip: "3 Sek. hoch, 3 runter."
         }
       ],
       advanced: [
         {
           title: "45 Sek. Plank",
-          sub: "Profi · Phantom-Kern",
+          sub: "Profi · Phantom-Bauch",
           xp: 45, power: 950,
           pose: "plank", sec: 45,
           tip: "Bauch fest anspannen."
@@ -949,7 +1109,7 @@ const CHARACTER_WORKOUTS = {
       ],
       master: [
         {
-          title: "70 Sek. Schwebender Plank",
+          title: "70 Sek. Schwebe-Plank",
           sub: "Meister · Unsichtbar",
           xp: 90, power: 2400,
           pose: "plank", sec: 70,
@@ -957,7 +1117,7 @@ const CHARACTER_WORKOUTS = {
         },
         {
           title: "30x Sit-Ups",
-          sub: "Meister · Schatten-Meister",
+          sub: "Meister · Schatten-Bauch",
           xp: 85, power: 2200,
           pose: "situp",
           tip: "Gleichmäßiges Tempo."
@@ -978,7 +1138,7 @@ const CHARACTER_WORKOUTS = {
           sub: "Einfach · Gleitschritt",
           xp: 25, power: 400,
           pose: "lunge",
-          tip: "Oberkörper aufrecht lassen."
+          tip: "Oberkörper aufrecht."
         }
       ],
       advanced: [
@@ -994,7 +1154,7 @@ const CHARACTER_WORKOUTS = {
           sub: "Profi · Wind-Schritt",
           xp: 45, power: 900,
           pose: "lunge",
-          tip: "Große Schritte im Wechsel."
+          tip: "Große Schritte wechseln."
         }
       ],
       master: [
@@ -1010,13 +1170,13 @@ const CHARACTER_WORKOUTS = {
           sub: "Meister · Eiserne Beine",
           xp: 85, power: 2200,
           pose: "wallsit", sec: 60,
-          tip: "Durchhalten bis zum Ende!"
+          tip: "Durchhalten bis Ende!"
         }
       ]
     }
-  }
-  ,
-  5: {
+  },
+
+    5: {
     arms: {
       easy: [
         {
@@ -1031,7 +1191,7 @@ const CHARACTER_WORKOUTS = {
           sub: "Einfach · Licht-Stoß",
           xp: 25, power: 400,
           pose: "wallpushup",
-          tip: "Kraftvoll von der Wand weg."
+          tip: "Kraftvoll von der Wand."
         }
       ],
       advanced: [
@@ -1056,7 +1216,7 @@ const CHARACTER_WORKOUTS = {
           sub: "Meister · Volle Aura",
           xp: 90, power: 2500,
           pose: "pushup",
-          tip: "Explosiv nach oben drücken!"
+          tip: "Explosiv nach oben!"
         },
         {
           title: "45 Sek. Speed-Punches",
@@ -1074,11 +1234,11 @@ const CHARACTER_WORKOUTS = {
           sub: "Einfach · Licht-Schild",
           xp: 25, power: 450,
           pose: "plank", sec: 25,
-          tip: "Körper gerade wie ein Strahl."
+          tip: "Gerade wie ein Strahl."
         },
         {
           title: "14x Crunches",
-          sub: "Einfach · Nova-Kern",
+          sub: "Einfach · Nova-Bauch",
           xp: 25, power: 400,
           pose: "situp",
           tip: "Sauber einrollen."
@@ -1087,7 +1247,7 @@ const CHARACTER_WORKOUTS = {
       advanced: [
         {
           title: "22x Sit-Ups",
-          sub: "Profi · Sonnen-Rumpf",
+          sub: "Profi · Sonnen-Bauch",
           xp: 45, power: 950,
           pose: "situp",
           tip: "Kraftvoll aufrichten."
@@ -1102,15 +1262,15 @@ const CHARACTER_WORKOUTS = {
       ],
       master: [
         {
-          title: "75 Sek. Supernova-Plank",
+          title: "75 Sek. Nova-Plank",
           sub: "Meister · Unbesiegbar",
           xp: 90, power: 2400,
           pose: "plank", sec: 75,
-          tip: "Atmen und Spannung halten!"
+          tip: "Atmen & Spannung halten!"
         },
         {
           title: "30x Beinheben",
-          sub: "Meister · Goldener Kern",
+          sub: "Meister · Goldener Bauch",
           xp: 85, power: 2200,
           pose: "legraise",
           tip: "Kein Hohlkreuz machen."
@@ -1140,7 +1300,7 @@ const CHARACTER_WORKOUTS = {
           sub: "Profi · Nova-Beine",
           xp: 45, power: 950,
           pose: "squat",
-          tip: "Tief runter und hoch."
+          tip: "Tief runter & hoch."
         },
         {
           title: "18x Ausfallschritte",
@@ -1153,7 +1313,7 @@ const CHARACTER_WORKOUTS = {
       master: [
         {
           title: "22x Sprung-Kniebeugen",
-          sub: "Meister · Supernova-Start",
+          sub: "Meister · Nova-Start",
           xp: 90, power: 2500,
           pose: "jump",
           tip: "So hoch du kannst!"
@@ -1163,13 +1323,11 @@ const CHARACTER_WORKOUTS = {
           sub: "Meister · Gold-Säule",
           xp: 85, power: 2200,
           pose: "wallsit", sec: 55,
-          tip: "Rücken fest an die Wand."
+          tip: "Rücken fest an Wand."
         }
       ]
     }
-  }
-
-    ,
+  },
   6: {
     arms: {
       easy: [
@@ -1178,14 +1336,14 @@ const CHARACTER_WORKOUTS = {
           sub: "Einfach · Schild-Basis",
           xp: 25, power: 450,
           pose: "kneepushup",
-          tip: "Stabil und kontrolliert."
+          tip: "Stabil & kontrolliert."
         },
         {
           title: "12x Schulter-Tippen",
           sub: "Einfach · Titan-Stütz",
           xp: 25, power: 400,
           pose: "shouldertap",
-          tip: "Fest wie ein Fels stehen."
+          tip: "Fest wie ein Fels."
         }
       ],
       advanced: [
@@ -1210,14 +1368,14 @@ const CHARACTER_WORKOUTS = {
           sub: "Meister · Festung",
           xp: 90, power: 2500,
           pose: "pushup",
-          tip: "Unten 1 Sekunde halten!"
+          tip: "Unten 1 Sek. halten!"
         },
         {
           title: "24x Schulter-Tippen",
           sub: "Meister · Eiserner Wall",
           xp: 85, power: 2200,
           pose: "shouldertap",
-          tip: "Null Wackeln im Rumpf!"
+          tip: "Null Wackeln im Bauch!"
         }
       ]
     },
@@ -1225,14 +1383,14 @@ const CHARACTER_WORKOUTS = {
       easy: [
         {
           title: "30 Sek. Fels-Plank",
-          sub: "Einfach · Ki-Schild",
+          sub: "Einfach · Bauch-Schild",
           xp: 25, power: 450,
           pose: "plank", sec: 30,
           tip: "Nichts bewegt dich!"
         },
         {
           title: "12x Crunches",
-          sub: "Einfach · Rumpf-Panzer",
+          sub: "Einfach · Bauch-Panzer",
           xp: 25, power: 400,
           pose: "situp",
           tip: "Bauch fest anspannen."
@@ -1241,10 +1399,10 @@ const CHARACTER_WORKOUTS = {
       advanced: [
         {
           title: "50 Sek. Titan-Plank",
-          sub: "Profi · Stahl-Kern",
+          sub: "Profi · Stahl-Bauch",
           xp: 50, power: 1000,
           pose: "plank", sec: 50,
-          tip: "Ruhig atmen und halten."
+          tip: "Ruhig atmen & halten."
         },
         {
           title: "22x Sit-Ups",
@@ -1264,7 +1422,7 @@ const CHARACTER_WORKOUTS = {
         },
         {
           title: "28x Beinheben",
-          sub: "Meister · Eisen-Rumpf",
+          sub: "Meister · Eisen-Bauch",
           xp: 85, power: 2200,
           pose: "legraise",
           tip: "Langsam absenken."
@@ -1294,7 +1452,7 @@ const CHARACTER_WORKOUTS = {
           sub: "Profi · Titan-Säule",
           xp: 50, power: 1000,
           pose: "wallsit", sec: 45,
-          tip: "90 Grad im Knie halten!"
+          tip: "90 Grad im Knie!"
         },
         {
           title: "28x Kniebeugen",
@@ -1321,10 +1479,9 @@ const CHARACTER_WORKOUTS = {
         }
       ]
     }
-  }
+  },
 
-    ,
-  7: {
+    7: {
     arms: {
       easy: [
         {
@@ -1379,7 +1536,7 @@ const CHARACTER_WORKOUTS = {
       easy: [
         {
           title: "15x Mountain Climbers",
-          sub: "Einfach · Sprint-Kern",
+          sub: "Einfach · Sprint-Bauch",
           xp: 25, power: 450,
           pose: "climber",
           tip: "Knie schnell vorziehen."
@@ -1394,7 +1551,7 @@ const CHARACTER_WORKOUTS = {
       ],
       advanced: [
         {
-          title: "30 Sek. Mountain Climbers",
+          title: "30 Sek. Climbers",
           sub: "Profi · Turbo-Antrieb",
           xp: 45, power: 950,
           pose: "climber", sec: 30,
@@ -1402,7 +1559,7 @@ const CHARACTER_WORKOUTS = {
         },
         {
           title: "20x Sit-Ups",
-          sub: "Profi · Schnell-Rumpf",
+          sub: "Profi · Schnell-Bauch",
           xp: 45, power: 900,
           pose: "situp",
           tip: "Zügig aufrichten."
@@ -1418,7 +1575,7 @@ const CHARACTER_WORKOUTS = {
         },
         {
           title: "26x Beinheben",
-          sub: "Meister · Blitz-Kern",
+          sub: "Meister · Blitz-Bauch",
           xp: 85, power: 2200,
           pose: "legraise",
           tip: "Beine gestreckt!"
@@ -1432,7 +1589,7 @@ const CHARACTER_WORKOUTS = {
           sub: "Einfach · Warm-Up",
           xp: 20, power: 350,
           pose: "jump", sec: 30,
-          tip: "Leicht und schnell springen."
+          tip: "Leicht und schnell."
         },
         {
           title: "15x Kniebeugen",
@@ -1448,14 +1605,14 @@ const CHARACTER_WORKOUTS = {
           sub: "Profi · Donner-Sprung",
           xp: 50, power: 1000,
           pose: "jump",
-          tip: "Weich auf Fußballen landen."
+          tip: "Weich landen."
         },
         {
           title: "18x Ausfallschritte",
           sub: "Profi · Blitz-Schritt",
           xp: 45, power: 950,
           pose: "lunge",
-          tip: "Schneller Beinwechsel."
+          tip: "Schneller Wechsel."
         }
       ],
       master: [
@@ -1467,26 +1624,24 @@ const CHARACTER_WORKOUTS = {
           tip: "Explosiv nach oben!"
         },
         {
-          title: "45 Sek. Speed-Hampelmänner",
-          sub: "Meister · Ausdauer-Blitz",
+          title: "45 Sek. Hampelmänner",
+          sub: "Meister · Ausdauer",
           xp: 85, power: 2200,
           pose: "jump", sec: 45,
-          tip: "Tempo bis zum Schluss halten."
+          tip: "Tempo halten!"
         }
       ]
     }
-  }
-
-    ,
+  },
   8: {
     arms: {
       easy: [
         {
           title: "12x Wand-Liegestütze",
-          sub: "Einfach · Gletscher-Ruhe",
+          sub: "Einfach · Eis-Ruhe",
           xp: 25, power: 400,
           pose: "wallpushup",
-          tip: "Ganz ruhig und sauber."
+          tip: "Ganz ruhig & sauber."
         },
         {
           title: "10x Schulter-Tippen",
@@ -1502,7 +1657,7 @@ const CHARACTER_WORKOUTS = {
           sub: "Profi · Frost-Stoß",
           xp: 45, power: 950,
           pose: "pushup",
-          tip: "2 Sekunden unten halten."
+          tip: "2 Sek. unten halten."
         },
         {
           title: "12x Stuhl-Dips",
@@ -1515,7 +1670,7 @@ const CHARACTER_WORKOUTS = {
       master: [
         {
           title: "22x Tiefe Liegestütze",
-          sub: "Meister · Gletscher-Strahl",
+          sub: "Meister · Eis-Strahl",
           xp: 85, power: 2200,
           pose: "pushup",
           tip: "Eiskalte Präzision!"
@@ -1536,11 +1691,11 @@ const CHARACTER_WORKOUTS = {
           sub: "Einfach · Kühle Ruhe",
           xp: 25, power: 450,
           pose: "plank", sec: 25,
-          tip: "Ruhig ein- und ausatmen."
+          tip: "Ruhig ein- & ausatmen."
         },
         {
           title: "12x Crunches",
-          sub: "Einfach · Zen-Mitte",
+          sub: "Einfach · Zen-Bauch",
           xp: 25, power: 400,
           pose: "situp",
           tip: "Kein Schwung holen."
@@ -1564,18 +1719,18 @@ const CHARACTER_WORKOUTS = {
       ],
       master: [
         {
-          title: "80 Sek. Absoluter Nullpunkt",
-          sub: "Meister · Eis-Kern",
+          title: "80 Sek. Nullpunkt-Plank",
+          sub: "Meister · Eis-Bauch",
           xp: 95, power: 2600,
           pose: "plank", sec: 80,
           tip: "Eiskalt durchhalten!"
         },
         {
           title: "28x Beinheben",
-          sub: "Meister · Frost-Disziplin",
+          sub: "Meister · Frost-Fokus",
           xp: 85, power: 2200,
           pose: "legraise",
-          tip: "Volle Rumpfspannung."
+          tip: "Volle Bauch-Spannung."
         }
       ]
     },
@@ -1586,7 +1741,7 @@ const CHARACTER_WORKOUTS = {
           sub: "Einfach · Eis-Säule",
           xp: 25, power: 450,
           pose: "wallsit", sec: 25,
-          tip: "Rücken flach an die Wand."
+          tip: "Rücken flach an Wand."
         },
         {
           title: "15x Kniebeugen",
@@ -1618,21 +1773,20 @@ const CHARACTER_WORKOUTS = {
           sub: "Meister · Eis-Thron",
           xp: 90, power: 2500,
           pose: "wallsit", sec: 65,
-          tip: "Nichts bringt dich ins Wanken."
+          tip: "Nichts bewegt dich."
         },
         {
           title: "32x Kniebeugen",
           sub: "Meister · Frost-Beine",
           xp: 85, power: 2200,
           pose: "squat",
-          tip: "Gleichmäßiger Rhythmus."
+          tip: "Gleichmäßiger Takt."
         }
       ]
     }
-  }
+  },
 
-    ,
-  9: {
+    9: {
     arms: {
       easy: [
         {
@@ -1640,7 +1794,7 @@ const CHARACTER_WORKOUTS = {
           sub: "Einfach · Feuer-Fäuste",
           xp: 25, power: 400,
           pose: "punch", sec: 25,
-          tip: "Kraftvolle Schläge nach vorn!"
+          tip: "Kraftvolle Schläge!"
         },
         {
           title: "12x Knie-Liegestütze",
@@ -1663,23 +1817,23 @@ const CHARACTER_WORKOUTS = {
           sub: "Profi · Lava-Trizeps",
           xp: 45, power: 900,
           pose: "dips",
-          tip: "Voller Bewegungsradius."
+          tip: "Voller Radius."
         }
       ],
       master: [
         {
-          title: "25x Magma-Liegestütze",
+          title: "25x Magma-Pushups",
           sub: "Meister · Vulkan-Kraft",
           xp: 90, power: 2500,
           pose: "pushup",
-          tip: "Spüre die Hitze in den Armen!"
+          tip: "Spüre die Hitze!"
         },
         {
           title: "45 Sek. Feuer-Boxen",
           sub: "Meister · Magma-Salve",
           xp: 85, power: 2200,
           pose: "punch", sec: 45,
-          tip: "Mit voller Wucht schlagen!"
+          tip: "Mit voller Wucht!"
         }
       ]
     },
@@ -1690,11 +1844,11 @@ const CHARACTER_WORKOUTS = {
           sub: "Einfach · Feuer-Antrieb",
           xp: 25, power: 450,
           pose: "climber",
-          tip: "Zügig die Knie vorziehen."
+          tip: "Zügig Knie vorziehen."
         },
         {
           title: "14x Crunches",
-          sub: "Einfach · Glut-Kern",
+          sub: "Einfach · Glut-Bauch",
           xp: 25, power: 400,
           pose: "situp",
           tip: "Bauch fest anspannen."
@@ -1702,15 +1856,15 @@ const CHARACTER_WORKOUTS = {
       ],
       advanced: [
         {
-          title: "35 Sek. Mountain Climbers",
+          title: "35 Sek. Climbers",
           sub: "Profi · Lava-Sprint",
           xp: 45, power: 950,
           pose: "climber", sec: 35,
-          tip: "Rumpf stabil halten!"
+          tip: "Bauch stabil halten!"
         },
         {
           title: "22x Sit-Ups",
-          sub: "Profi · Flammen-Rumpf",
+          sub: "Profi · Flammen-Bauch",
           xp: 45, power: 900,
           pose: "situp",
           tip: "Kraftvoll hochkommen."
@@ -1718,11 +1872,11 @@ const CHARACTER_WORKOUTS = {
       ],
       master: [
         {
-          title: "50 Sek. Inferno-Climbers",
-          sub: "Meister · Vulkan-Kern",
+          title: "50 Sek. Lava-Climbers",
+          sub: "Meister · Vulkan-Bauch",
           xp: 90, power: 2500,
           pose: "climber", sec: 50,
-          tip: "Maximales Tempo halten!"
+          tip: "Maximales Tempo!"
         },
         {
           title: "70 Sek. Magma-Plank",
@@ -1747,7 +1901,7 @@ const CHARACTER_WORKOUTS = {
           sub: "Einfach · Funken-Sprung",
           xp: 20, power: 350,
           pose: "jump", sec: 25,
-          tip: "Schnell auf den Fußballen."
+          tip: "Schnell auf Fußballen."
         }
       ],
       advanced: [
@@ -1763,29 +1917,27 @@ const CHARACTER_WORKOUTS = {
           sub: "Profi · Lava-Schritt",
           xp: 45, power: 950,
           pose: "lunge",
-          tip: "Tiefe Schritte im Wechsel."
+          tip: "Tiefe Schritte wechseln."
         }
       ],
       master: [
         {
           title: "22x Vulkan-Sprünge",
-          sub: "Meister · Magma-Explosion",
+          sub: "Meister · Explosion",
           xp: 95, power: 2600,
           pose: "jump",
           tip: "So hoch wie möglich!"
         },
         {
           title: "55 Sek. Wandsitzen",
-          sub: "Meister · Glühende Beine",
+          sub: "Meister · Glühend",
           xp: 85, power: 2200,
           pose: "wallsit", sec: 55,
-          tip: "Halte bis zum letzten Ton!"
+          tip: "Halte bis zum Ton!"
         }
       ]
     }
-  }
-
-    ,
+  },
   10: {
     arms: {
       easy: [
@@ -1794,14 +1946,14 @@ const CHARACTER_WORKOUTS = {
           sub: "Einfach · Kosmos-Basis",
           xp: 25, power: 400,
           pose: "kneepushup",
-          tip: "Rücken gerade und sauber."
+          tip: "Rücken gerade & sauber."
         },
         {
-          title: "25 Sek. Kometen-Schläge",
+          title: "25 Sek. Komet-Punches",
           sub: "Einfach · Sternen-Faust",
           xp: 20, power: 350,
           pose: "punch", sec: 25,
-          tip: "Schnelle Kombos nach vorn!"
+          tip: "Schnelle Kombos!"
         }
       ],
       advanced: [
@@ -1817,7 +1969,7 @@ const CHARACTER_WORKOUTS = {
           sub: "Profi · Orbit-Trizeps",
           xp: 45, power: 900,
           pose: "dips",
-          tip: "Arme ganz durchstrecken."
+          tip: "Arme ganz strecken."
         }
       ],
       master: [
@@ -1826,14 +1978,14 @@ const CHARACTER_WORKOUTS = {
           sub: "Meister · Schwerelos",
           xp: 90, power: 2400,
           pose: "pushup",
-          tip: "Volle Tiefe und Kraft!"
+          tip: "Volle Tiefe & Kraft!"
         },
         {
           title: "24x Schulter-Tippen",
-          sub: "Meister · Kosmos-Balance",
+          sub: "Meister · Balance",
           xp: 85, power: 2200,
           pose: "shouldertap",
-          tip: "Rumpf ruhig halten."
+          tip: "Bauch ruhig halten."
         }
       ]
     },
@@ -1848,10 +2000,10 @@ const CHARACTER_WORKOUTS = {
         },
         {
           title: "14x Crunches",
-          sub: "Einfach · Sternen-Mitte",
+          sub: "Einfach · Sternen-Bauch",
           xp: 25, power: 400,
           pose: "situp",
-          tip: "Kontrolliert einrollen."
+          tip: "Kontrolliert rollen."
         }
       ],
       advanced: [
@@ -1873,7 +2025,7 @@ const CHARACTER_WORKOUTS = {
       master: [
         {
           title: "30x Beinheben",
-          sub: "Meister · Galaxie-Kern",
+          sub: "Meister · Galaxie-Bauch",
           xp: 90, power: 2400,
           pose: "legraise",
           tip: "Langsam absenken!"
@@ -1883,7 +2035,7 @@ const CHARACTER_WORKOUTS = {
           sub: "Meister · Sternen-Wall",
           xp: 85, power: 2200,
           pose: "plank", sec: 75,
-          tip: "Ruhig atmen und halten."
+          tip: "Ruhig atmen & halten."
         }
       ]
     },
@@ -1891,10 +2043,10 @@ const CHARACTER_WORKOUTS = {
       easy: [
         {
           title: "30 Sek. Hampelmänner",
-          sub: "Einfach · Sternen-Sprung",
+          sub: "Einfach · Stern-Sprung",
           xp: 20, power: 350,
           pose: "jump", sec: 30,
-          tip: "Leichtfüßig abspringen."
+          tip: "Leicht abspringen."
         },
         {
           title: "16x Kniebeugen",
@@ -1917,7 +2069,7 @@ const CHARACTER_WORKOUTS = {
           sub: "Profi · Orbit-Schritt",
           xp: 45, power: 950,
           pose: "lunge",
-          tip: "Große Schritte machen."
+          tip: "Große Schritte."
         }
       ],
       master: [
@@ -1937,10 +2089,9 @@ const CHARACTER_WORKOUTS = {
         }
       ]
     }
-  }
+  },
 
-    ,
-  11: {
+    11: {
     arms: {
       easy: [
         {
@@ -1971,7 +2122,7 @@ const CHARACTER_WORKOUTS = {
           sub: "Profi · Solar-Push",
           xp: 45, power: 900,
           pose: "pushup",
-          tip: "Saubere Wiederholungen."
+          tip: "Saubere Wiederholung."
         }
       ],
       master: [
@@ -1980,7 +2131,7 @@ const CHARACTER_WORKOUTS = {
           sub: "Meister · Endlos-Ki",
           xp: 90, power: 2400,
           pose: "punch", sec: 60,
-          tip: "Volle Minute durchziehen!"
+          tip: "Volle Minute!"
         },
         {
           title: "24x Liegestütze",
@@ -1995,14 +2146,14 @@ const CHARACTER_WORKOUTS = {
       easy: [
         {
           title: "25 Sek. Solar-Plank",
-          sub: "Einfach · Licht-Kern",
+          sub: "Einfach · Licht-Bauch",
           xp: 25, power: 450,
           pose: "plank", sec: 25,
-          tip: "Körper gerade wie ein Strahl."
+          tip: "Gerade wie ein Strahl."
         },
         {
           title: "15x Crunches",
-          sub: "Einfach · Ausdauer-Mitte",
+          sub: "Einfach · Ausdauer-Bauch",
           xp: 25, power: 400,
           pose: "situp",
           tip: "Schöner Rhythmus."
@@ -2010,7 +2161,7 @@ const CHARACTER_WORKOUTS = {
       ],
       advanced: [
         {
-          title: "40 Sek. Mountain Climbers",
+          title: "40 Sek. Climbers",
           sub: "Profi · Sonnen-Motor",
           xp: 50, power: 1000,
           pose: "climber", sec: 40,
@@ -2018,26 +2169,26 @@ const CHARACTER_WORKOUTS = {
         },
         {
           title: "24x Sit-Ups",
-          sub: "Profi · Helios-Rumpf",
+          sub: "Profi · Helios-Bauch",
           xp: 45, power: 950,
           pose: "situp",
-          tip: "Sauber hoch und runter."
+          tip: "Sauber hoch & runter."
         }
       ],
       master: [
         {
-          title: "60 Sek. Mountain Climbers",
+          title: "60 Sek. Solar-Climbers",
           sub: "Meister · Solar-Sturm",
           xp: 95, power: 2500,
           pose: "climber", sec: 60,
-          tip: "Gib alles bis zum Ende!"
+          tip: "Gib alles bis Ende!"
         },
         {
           title: "80 Sek. Helios-Plank",
           sub: "Meister · Unerschöpflich",
           xp: 85, power: 2200,
           pose: "plank", sec: 80,
-          tip: "Du hast endlose Ausdauer!"
+          tip: "Endlose Ausdauer!"
         }
       ]
     },
@@ -2076,7 +2227,7 @@ const CHARACTER_WORKOUTS = {
       ],
       master: [
         {
-          title: "70 Sek. Speed-Hampelmänner",
+          title: "70 Sek. Hampelmänner",
           sub: "Meister · Marathon-Ki",
           xp: 90, power: 2400,
           pose: "jump", sec: 70,
@@ -2091,9 +2242,7 @@ const CHARACTER_WORKOUTS = {
         }
       ]
     }
-  }
-
-    ,
+  },
   12: {
     arms: {
       easy: [
@@ -2109,7 +2258,7 @@ const CHARACTER_WORKOUTS = {
           sub: "Einfach · Orion-Stütz",
           xp: 25, power: 400,
           pose: "shouldertap",
-          tip: "Rumpf fest anspannen."
+          tip: "Bauch fest anspannen."
         }
       ],
       advanced: [
@@ -2134,7 +2283,7 @@ const CHARACTER_WORKOUTS = {
           sub: "Meister · Eclipse-Schlag",
           xp: 95, power: 2600,
           pose: "pushup",
-          tip: "Maximale Oberkörper-Power!"
+          tip: "Maximale Power!"
         },
         {
           title: "22x Stuhl-Dips",
@@ -2156,7 +2305,7 @@ const CHARACTER_WORKOUTS = {
         },
         {
           title: "14x Crunches",
-          sub: "Einfach · Orion-Mitte",
+          sub: "Einfach · Orion-Bauch",
           xp: 25, power: 400,
           pose: "situp",
           tip: "Fest zusammenziehen."
@@ -2172,7 +2321,7 @@ const CHARACTER_WORKOUTS = {
         },
         {
           title: "22x Sit-Ups",
-          sub: "Profi · Dunkel-Rumpf",
+          sub: "Profi · Dunkel-Bauch",
           xp: 45, power: 950,
           pose: "situp",
           tip: "Kraftvoll aufrichten."
@@ -2188,10 +2337,10 @@ const CHARACTER_WORKOUTS = {
         },
         {
           title: "30x Beinheben",
-          sub: "Meister · Orion-Kern",
+          sub: "Meister · Orion-Bauch",
           xp: 85, power: 2200,
           pose: "legraise",
-          tip: "Beine gestreckt lassen."
+          tip: "Beine gestreckt."
         }
       ]
     },
@@ -2209,7 +2358,7 @@ const CHARACTER_WORKOUTS = {
           sub: "Einfach · Orion-Schritt",
           xp: 25, power: 400,
           pose: "lunge",
-          tip: "Kontrolliert tief gehen."
+          tip: "Kontrolliert tief."
         }
       ],
       advanced: [
@@ -2218,7 +2367,7 @@ const CHARACTER_WORKOUTS = {
           sub: "Profi · Kraft-Hocke",
           xp: 45, power: 950,
           pose: "squat",
-          tip: "Über die Fersen hoch."
+          tip: "Über Fersen hoch."
         },
         {
           title: "45 Sek. Wandsitzen",
@@ -2231,24 +2380,23 @@ const CHARACTER_WORKOUTS = {
       master: [
         {
           title: "24x Ausfallschritte",
-          sub: "Meister · Eclipse-Marsch",
+          sub: "Meister · Eclipse-Lauf",
           xp: 90, power: 2400,
           pose: "lunge",
-          tip: "Tiefe, kraftvolle Schritte."
+          tip: "Tiefe Schritte."
         },
         {
           title: "65 Sek. Wandsitzen",
           sub: "Meister · Dunkel-Säule",
           xp: 85, power: 2200,
           pose: "wallsit", sec: 65,
-          tip: "Halte bis zum Schluss!"
+          tip: "Halte bis Schluss!"
         }
       ]
     }
-  }
+  },
 
-    ,
-  13: {
+    13: {
     arms: {
       easy: [
         {
@@ -2318,7 +2466,7 @@ const CHARACTER_WORKOUTS = {
       ],
       advanced: [
         {
-          title: "35 Sek. Mountain Climbers",
+          title: "35 Sek. Climbers",
           sub: "Profi · Sturm-Antrieb",
           xp: 50, power: 1000,
           pose: "climber", sec: 35,
@@ -2326,7 +2474,7 @@ const CHARACTER_WORKOUTS = {
         },
         {
           title: "22x Sit-Ups",
-          sub: "Profi · Aero-Kern",
+          sub: "Profi · Aero-Bauch",
           xp: 45, power: 950,
           pose: "situp",
           tip: "Flüssig aufrollen."
@@ -2334,7 +2482,7 @@ const CHARACTER_WORKOUTS = {
       ],
       master: [
         {
-          title: "55 Sek. Tornado-Climbers",
+          title: "55 Sek. Orkan-Climbers",
           sub: "Meister · Wirbel-Motor",
           xp: 95, power: 2500,
           pose: "climber", sec: 55,
@@ -2342,7 +2490,7 @@ const CHARACTER_WORKOUTS = {
         },
         {
           title: "28x Beinheben",
-          sub: "Meister · Himmels-Kern",
+          sub: "Meister · Himmels-Bauch",
           xp: 85, power: 2200,
           pose: "legraise",
           tip: "Kontrolliert bewegen."
@@ -2391,7 +2539,7 @@ const CHARACTER_WORKOUTS = {
           tip: "Ab in die Lüfte!"
         },
         {
-          title: "55 Sek. Speed-Hampelmänner",
+          title: "55 Sek. Hampelmänner",
           sub: "Meister · Wirbel-Beine",
           xp: 85, power: 2200,
           pose: "jump", sec: 55,
@@ -2399,9 +2547,7 @@ const CHARACTER_WORKOUTS = {
         }
       ]
     }
-  }
-
-    ,
+  },
   14: {
     arms: {
       easy: [
@@ -2438,7 +2584,7 @@ const CHARACTER_WORKOUTS = {
       ],
       master: [
         {
-          title: "30x Omega-Liegestütze",
+          title: "30x Omega-Pushups",
           sub: "Meister · Urknall-Power",
           xp: 100, power: 2800,
           pose: "pushup",
@@ -2460,11 +2606,11 @@ const CHARACTER_WORKOUTS = {
           sub: "Einfach · Omega-Aura",
           xp: 25, power: 450,
           pose: "plank", sec: 30,
-          tip: "Absolute Körperspannung."
+          tip: "Volle Bauch-Spannung."
         },
         {
           title: "16x Crunches",
-          sub: "Einfach · Meister-Mitte",
+          sub: "Einfach · Meister-Bauch",
           xp: 25, power: 450,
           pose: "situp",
           tip: "Sauber einrollen."
@@ -2476,11 +2622,11 @@ const CHARACTER_WORKOUTS = {
           sub: "Profi · Götter-Schild",
           xp: 50, power: 1000,
           pose: "plank", sec: 55,
-          tip: "Ruhig atmen und halten."
+          tip: "Ruhig atmen & halten."
         },
         {
           title: "24x Beinheben",
-          sub: "Profi · Kosmos-Kern",
+          sub: "Profi · Kosmos-Bauch",
           xp: 50, power: 1000,
           pose: "legraise",
           tip: "Beine gestreckt lassen."
@@ -2492,11 +2638,11 @@ const CHARACTER_WORKOUTS = {
           sub: "Meister · Unsterblich",
           xp: 100, power: 2800,
           pose: "plank", sec: 90,
-          tip: "90 Sekunden Götter-Fokus!"
+          tip: "90 Sek. Götter-Fokus!"
         },
         {
           title: "35x Sit-Ups",
-          sub: "Meister · Urknall-Rumpf",
+          sub: "Meister · Urknall-Bauch",
           xp: 90, power: 2400,
           pose: "situp",
           tip: "Volle Kraft voraus!"
@@ -2549,14 +2695,13 @@ const CHARACTER_WORKOUTS = {
           sub: "Meister · Götter-Thron",
           xp: 90, power: 2400,
           pose: "wallsit", sec: 75,
-          tip: "Nichts erschüttert dich!"
+          tip: "Nichts bewegt dich!"
         }
       ]
     }
-  }
+  },
 
-    ,
-  15: {
+    15: {
     arms: {
       easy: [
         {
@@ -2592,11 +2737,11 @@ const CHARACTER_WORKOUTS = {
       ],
       master: [
         {
-          title: "25x Sturm-Liegestütze",
+          title: "25x Sturm-Pushups",
           sub: "Meister · Natur-Gewalt",
           xp: 90, power: 2500,
           pose: "pushup",
-          tip: "Volle Power in den Armen!"
+          tip: "Volle Power in Armen!"
         },
         {
           title: "45 Sek. Smaragd-Boxen",
@@ -2618,7 +2763,7 @@ const CHARACTER_WORKOUTS = {
         },
         {
           title: "14x Crunches",
-          sub: "Einfach · Sturm-Mitte",
+          sub: "Einfach · Sturm-Bauch",
           xp: 25, power: 400,
           pose: "situp",
           tip: "Bauch anspannen."
@@ -2630,11 +2775,11 @@ const CHARACTER_WORKOUTS = {
           sub: "Profi · Natur-Schild",
           xp: 45, power: 950,
           pose: "plank", sec: 45,
-          tip: "Ruhig atmen und halten."
+          tip: "Ruhig atmen & halten."
         },
         {
           title: "22x Sit-Ups",
-          sub: "Profi · Smaragd-Rumpf",
+          sub: "Profi · Smaragd-Bauch",
           xp: 45, power: 900,
           pose: "situp",
           tip: "Gleichmäßig arbeiten."
@@ -2646,11 +2791,11 @@ const CHARACTER_WORKOUTS = {
           sub: "Meister · Unerschütterlich",
           xp: 90, power: 2400,
           pose: "plank", sec: 75,
-          tip: "Tief verwurzelt bleiben!"
+          tip: "Tief verwurzelt!"
         },
         {
           title: "28x Beinheben",
-          sub: "Meister · Sturm-Kern",
+          sub: "Meister · Sturm-Bauch",
           xp: 85, power: 2200,
           pose: "legraise",
           tip: "Kontrolliert absenken."
@@ -2664,7 +2809,7 @@ const CHARACTER_WORKOUTS = {
           sub: "Einfach · Starke Wurzeln",
           xp: 25, power: 450,
           pose: "squat",
-          tip: "Tief in die Hocke gehen."
+          tip: "Tief in die Hocke."
         },
         {
           title: "12x Ausfallschritte",
@@ -2696,7 +2841,7 @@ const CHARACTER_WORKOUTS = {
           sub: "Meister · Erdbeben",
           xp: 95, power: 2600,
           pose: "jump",
-          tip: "Mit voller Beinkraft hoch!"
+          tip: "Volle Beinkraft hoch!"
         },
         {
           title: "65 Sek. Wandsitzen",
@@ -2708,20 +2853,30 @@ const CHARACTER_WORKOUTS = {
       ]
     }
   }
-  
 };
 let state = JSON.parse(
-  localStorage.getItem("zwarriors_neon_v8")
+  localStorage.getItem("zwarriors_neon_v10")
 ) || {
   level: 1, xp: 0, powerLevel: 0,
   carouselIndex: 0, selectedChar: 1,
   selectedStage: 1, selectedPart: "arms",
   difficulty: "easy",
-  partXP: { arms: 0, core: 0, legs: 0 }
+  partXP: { arms: 0, core: 0, legs: 0 },
+  streak: 0,
+  lastTrainDate: "",
+  senzuDate: "",
+  senzuActive: false,
+  bossCounter: 0,
+  bossWins: 0,
+  testedChars: []
 };
 
 let activeExercise = null;
 let timerInterval = null;
+
+function getTodayKey() {
+  return new Date().toISOString().slice(0, 10);
+}
 
 function showScreen(id) {
   [
@@ -2816,19 +2971,30 @@ function playSound(mode = "click") {
     osc.stop(now + 0.19);
   } catch (e) {}
 }
+
 function getComicSVG(pose) {
+  const cObj =
+    CHARACTERS.find(
+      c => c.id === state.selectedChar
+    ) || CHARACTERS.at(0);
+  const auraCol = cObj.color || "#ff9900";
+
   const bg = `<defs>
     <radialGradient id="kiAura"
       cx="50%" cy="50%" r="50%">
-      <stop offset="0%" stop-color="#ff9900"
-        stop-opacity="0.45"/>
-      <stop offset="100%" stop-color="#ff9900"
+      <stop offset="0%"
+        stop-color="${auraCol}"
+        stop-opacity="0.5"/>
+      <stop offset="100%"
+        stop-color="${auraCol}"
         stop-opacity="0"/>
     </radialGradient>
     <linearGradient id="giGrad"
       x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#ffb703"/>
-      <stop offset="100%" stop-color="#e85d04"/>
+      <stop offset="0%"
+        stop-color="${auraCol}"/>
+      <stop offset="100%"
+        stop-color="#e85d04"/>
     </linearGradient>
   </defs>
   <ellipse cx="130" cy="70" rx="95" ry="48"
@@ -2843,7 +3009,8 @@ function getComicSVG(pose) {
       <polygon points="-10,-6 -22,-18 -6,-13
         -12,-28 0,-16 6,-30 10,-15 22,-22
         12,-8 20,-2 8,2"
-        fill="#141418" stroke="#ffb703"
+        fill="#141418"
+        stroke="${auraCol}"
         stroke-width="1.2"/>
       <circle cx="2" cy="2" r="9"
         fill="#f4c095" stroke="#141418"
@@ -2866,7 +3033,7 @@ function getComicSVG(pose) {
         ${hair(182, 58, 18)}
         <path d="M214,48 L214,88
           M206,79 L214,90 L222,79"
-          stroke="#ffb703" stroke-width="3.5"
+          stroke="${auraCol}" stroke-width="3.5"
           fill="none"/>
       </svg>`,
 
@@ -2885,7 +3052,7 @@ function getComicSVG(pose) {
         ${hair(188, 54, 18)}
         <path d="M214,48 L214,88
           M206,79 L214,90 L222,79"
-          stroke="#ffb703" stroke-width="3.5"
+          stroke="${auraCol}" stroke-width="3.5"
           fill="none"/>
       </svg>`,
 
@@ -2893,7 +3060,7 @@ function getComicSVG(pose) {
       `<svg viewBox="0 0 260 125"
         width="235" height="120">${bg}
         <line x1="196" y1="12" x2="196" y2="112"
-          stroke="#ffb703" stroke-width="5"
+          stroke="${auraCol}" stroke-width="5"
           stroke-linecap="round"/>
         <path d="M108,108 L130,68"
           stroke="#1d3557" stroke-width="13"
@@ -2907,7 +3074,7 @@ function getComicSVG(pose) {
         ${hair(156, 20, 22)}
         <path d="M164,62 L186,62
           M179,56 L188,62 L179,68"
-          stroke="#ffb703" stroke-width="3"
+          stroke="${auraCol}" stroke-width="3"
           fill="none"/>
       </svg>`,
 
@@ -2927,10 +3094,10 @@ function getComicSVG(pose) {
           stroke="#f4c095" stroke-width="8"
           stroke-linecap="round"/>
         <circle cx="68" cy="46" r="14"
-          stroke="#ffb703" stroke-width="2.5"
+          stroke="${auraCol}" stroke-width="2.5"
           stroke-dasharray="5 3" fill="none"/>
         <circle cx="192" cy="46" r="14"
-          stroke="#ffb703" stroke-width="2.5"
+          stroke="${auraCol}" stroke-width="2.5"
           stroke-dasharray="5 3" fill="none"/>
         ${hair(130, 23, 0)}
       </svg>`,
@@ -2948,10 +3115,11 @@ function getComicSVG(pose) {
           stroke="#f4c095" stroke-width="9"
           stroke-linecap="round"/>
         <polyline points="164,58 148,68 158,52"
-          stroke="#ffb703" stroke-width="7"
+          stroke="${auraCol}" stroke-width="7"
           stroke-linecap="round" fill="none"/>
         ${hair(184, 46, 15)}
       </svg>`,
+
         dips:
       `<svg viewBox="0 0 260 125"
         width="235" height="120">${bg}
@@ -3071,7 +3239,7 @@ function getComicSVG(pose) {
       `<svg viewBox="0 0 260 125"
         width="235" height="120">${bg}
         <line x1="94" y1="14" x2="94" y2="112"
-          stroke="#ffb703" stroke-width="5"
+          stroke="${auraCol}" stroke-width="5"
           stroke-linecap="round"/>
         <polyline
           points="104,76 146,76 146,108"
@@ -3081,7 +3249,8 @@ function getComicSVG(pose) {
           stroke="url(#giGrad)" stroke-width="17"
           stroke-linecap="round"/>
         ${hair(106, 22, 0)}
-        <text x="164" y="82" fill="#ffb703"
+        <text x="164" y="82"
+          fill="${auraCol}"
           font-family="Anton, sans-serif"
           font-size="16">90°</text>
       </svg>`,
@@ -3103,7 +3272,7 @@ function getComicSVG(pose) {
           stroke-linecap="round"/>
         <polygon
           points="188,46 218,36 208,46 218,56"
-          fill="#ff9900"/>
+          fill="${auraCol}"/>
         ${hair(106, 24, 0)}
       </svg>`,
 
@@ -3130,6 +3299,8 @@ function getComicSVG(pose) {
   };
   return svgs[pose] || svgs.punch;
 }
+
+
 function loadSmartImage(
   imgEl, baseName, onFail, onSuccess
 ) {
@@ -3224,6 +3395,7 @@ function updateStaggeredCarousel() {
     .style.transform =
       `translateY(${progress}px)`;
 }
+
 function stepCarousel(dir) {
   state.carouselIndex =
     (state.carouselIndex + dir +
@@ -3327,10 +3499,18 @@ function openCharacterDetails(charId) {
   });
   showScreen("detail-screen");
 }
+
 function openExerciseModal(ex) {
   activeExercise = ex;
   clearInterval(timerInterval);
   playSound("click");
+
+  const mult = state.senzuActive ? 2 : 1;
+  const tagEl =
+    document.getElementById("ex-modal-tag");
+  tagEl.textContent = ex.isBoss
+    ? "👹 BOSS-HERAUSFORDERUNG"
+    : "TECHNIK-GUIDE";
 
   document.getElementById("ex-modal-title")
     .textContent = ex.title;
@@ -3339,7 +3519,7 @@ function openExerciseModal(ex) {
       ex.tip || "Volle Körperspannung!";
   document.getElementById("ex-complete-btn")
     .textContent =
-      `GESCHAFFT (+${ex.xp} XP)`;
+      `GESCHAFFT (+${ex.xp * mult} XP)`;
 
   const imgEl =
     document.getElementById("ex-comic-img");
@@ -3457,14 +3637,86 @@ function renderWorkouts() {
       );
     });
 }
+
+function renderTrophies() {
+  const coreLvl =
+    1 + Math.floor((state.partXP.core || 0) / 60);
+  const unlockedMap = {
+    t1: state.level >= 2,
+    t2: state.powerLevel >= 10000,
+    t3: (state.bossWins || 0) >= 1,
+    t4: (state.streak || 0) >= 3,
+    t5: coreLvl >= 3,
+    t6: (state.testedChars || []).length >= 5
+  };
+
+  const grid =
+    document.getElementById("trophy-list");
+  if (!grid) return;
+  grid.innerHTML = "";
+  TROPHIES.forEach(t => {
+    const ok = !!unlockedMap[t.id];
+    const div = document.createElement("div");
+    div.className =
+      `trophy-item ${ok ? "unlocked" : ""}`;
+    div.innerHTML =
+      `<div style="font-size:1.3rem;">` +
+      `${ok ? t.icon : "🔒"} ${t.name}</div>` +
+      `<div style="font-size:0.75rem;` +
+      `color:#aaa;">${t.desc}</div>`;
+    grid.appendChild(div);
+  });
+}
+
 function completeExercise(gainedXP, gainedPower) {
   const oldMax =
     getMaxUnlockedStage(state.level);
-  state.xp += gainedXP;
-  state.powerLevel += gainedPower;
+  const mult = state.senzuActive ? 2 : 1;
+  const finalXP = gainedXP * mult;
+  const finalPower = gainedPower * mult;
+
+  if (state.senzuActive) {
+    state.senzuActive = false;
+  }
+
+  const today = getTodayKey();
+  if (state.lastTrainDate !== today) {
+    const yest = new Date(
+      Date.now() - 86400000
+    ).toISOString().slice(0, 10);
+    state.streak =
+      state.lastTrainDate === yest
+        ? (state.streak || 0) + 1
+        : 1;
+    state.lastTrainDate = today;
+  }
+
+  if (!Array.isArray(state.testedChars)) {
+    state.testedChars = [];
+  }
+  if (
+    !state.testedChars.includes(
+      state.selectedChar
+    )
+  ) {
+    state.testedChars.push(
+      state.selectedChar
+    );
+  }
+
+  state.xp += finalXP;
+  state.powerLevel += finalPower;
   state.partXP[state.selectedPart] =
     (state.partXP[state.selectedPart] || 0) +
-    gainedXP;
+    finalXP;
+
+  if (activeExercise && activeExercise.isBoss) {
+    state.bossWins = (state.bossWins || 0) + 1;
+    state.bossCounter = 0;
+  } else {
+    state.bossCounter =
+      (state.bossCounter || 0) + 1;
+  }
 
   const stageEl =
     document.querySelector(".arena-poster-stage");
@@ -3500,11 +3752,22 @@ function completeExercise(gainedXP, gainedPower) {
       titleEl.textContent =
         `LEVEL ${state.level}`;
       descEl.textContent =
-        `Neue Kampfkraft: ` +
+        `Kampfkraft: ` +
         `${state.powerLevel.toLocaleString("de-DE")}!`;
     }
     document.getElementById("levelup-overlay")
       .classList.remove("hidden");
+  } else if (state.bossCounter >= 4) {
+    state.bossCounter = 0;
+    playSound("stageup");
+    const boss =
+      BOSS_CHALLENGES[
+        (state.bossWins || 0) %
+          BOSS_CHALLENGES.length
+      ];
+    setTimeout(() => {
+      openExerciseModal(boss);
+    }, 350);
   } else {
     playSound("click");
   }
@@ -3556,7 +3819,34 @@ function updateUI() {
     .textContent = calcPartLvl(state.partXP.core);
   document.getElementById("stat-legs")
     .textContent = calcPartLvl(state.partXP.legs);
-    loadSmartImage(
+
+  const streakEl =
+    document.getElementById("streak-chip");
+  if (streakEl) {
+    streakEl.textContent =
+      `🔥 ${state.streak || 0} TAGE`;
+  }
+
+  const senzuBtn =
+    document.getElementById("senzu-btn");
+  if (senzuBtn) {
+    const usedToday =
+      state.senzuDate === getTodayKey();
+    senzuBtn.className = "hud-chip";
+    if (state.senzuActive) {
+      senzuBtn.classList.add("senzu-on");
+      senzuBtn.textContent = "🌱 2x AKTIV!";
+    } else if (usedToday) {
+      senzuBtn.style.opacity = "0.45";
+      senzuBtn.textContent = "🌱 LEER";
+    } else {
+      senzuBtn.style.opacity = "1";
+      senzuBtn.classList.add("senzu-ready");
+      senzuBtn.textContent = "🌱 SENZU (2x)";
+    }
+  }
+
+  loadSmartImage(
     document.getElementById("header-avatar-img"),
     `c${state.selectedChar}_s1`,
     () => {}
@@ -3608,8 +3898,61 @@ function updateUI() {
   });
 
   localStorage.setItem(
-    "zwarriors_neon_v8",
+    "zwarriors_neon_v10",
     JSON.stringify(state)
+  );
+}
+
+const senzuEl =
+  document.getElementById("senzu-btn");
+if (senzuEl) {
+  senzuEl.addEventListener("click", () => {
+    if (
+      state.senzuDate === getTodayKey() ||
+      state.senzuActive
+    ) {
+      return;
+    }
+    state.senzuDate = getTodayKey();
+    state.senzuActive = true;
+    playSound("levelup");
+    updateUI();
+  });
+}
+
+const bossEl =
+  document.getElementById("boss-btn");
+if (bossEl) {
+  bossEl.addEventListener("click", () => {
+    const boss =
+      BOSS_CHALLENGES[
+        (state.bossWins || 0) %
+          BOSS_CHALLENGES.length
+      ];
+    openExerciseModal(boss);
+  });
+}
+
+const trophyEl =
+  document.getElementById("trophy-btn");
+if (trophyEl) {
+  trophyEl.addEventListener("click", () => {
+    playSound("click");
+    renderTrophies();
+    document.getElementById("trophy-modal")
+      .classList.remove("hidden");
+  });
+}
+
+const closeTrophyEl =
+  document.getElementById("close-trophy");
+if (closeTrophyEl) {
+  closeTrophyEl.addEventListener(
+    "click",
+    () => {
+      document.getElementById("trophy-modal")
+        .classList.add("hidden");
+    }
   );
 }
 
@@ -3696,7 +4039,11 @@ document.getElementById("reset-btn")
         carouselIndex: 0, selectedChar: 1,
         selectedStage: 1, selectedPart: "arms",
         difficulty: "easy",
-        partXP: { arms: 0, core: 0, legs: 0 }
+        partXP: { arms: 0, core: 0, legs: 0 },
+        streak: 0, lastTrainDate: "",
+        senzuDate: "", senzuActive: false,
+        bossCounter: 0, bossWins: 0,
+        testedChars: []
       };
       updateUI();
       renderWorkouts();
