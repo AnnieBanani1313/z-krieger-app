@@ -79,8 +79,61 @@ const BODY_WORKOUTS = {
     ]
   }
 };
+const CHARACTER_WORKOUTS = {
+  1: {
+    arms: {
+      easy: [{ title: "10x Knie-Liegestütze", sub: "Einfach · Kamehameha-Basis", xp: 25, power: 400 }, { title: "20 Sek. Ki-Schattenboxen", sub: "Einfach · Schnelle Fäuste", xp: 20, power: 350 }],
+      advanced: [{ title: "15x Echte Liegestütze", sub: "Profi · Kaioken x2", xp: 45, power: 900 }, { title: "12x Stuhl-Dips", sub: "Profi · Arm-Power", xp: 45, power: 950 }],
+      master: [{ title: "25x Tiefe Liegestütze", sub: "Meister · Kaioken x10", xp: 80, power: 2000 }, { title: "12x Diamant-Liegestütze", sub: "Meister · Super-Kameha", xp: 90, power: 2400 }]
+    },
+    core: {
+      easy: [{ title: "20 Sek. Ki-Plank", sub: "Einfach · Stabile Aura", xp: 25, power: 450 }, { title: "12x Crunches", sub: "Einfach · Körpermitte", xp: 25, power: 400 }],
+      advanced: [{ title: "45 Sek. Plank", sub: "Profi · Schwerkraft-Kern", xp: 45, power: 950 }, { title: "20x Sit-Ups", sub: "Profi · Saiyajin-Rumpf", xp: 45, power: 900 }],
+      master: [{ title: "75 Sek. Plank", sub: "Meister · Ultra-Abwehr", xp: 85, power: 2200 }, { title: "25x Beinheben", sub: "Meister · Volle Kontrolle", xp: 80, power: 2100 }]
+    },
+    legs: {
+      easy: [{ title: "15x Kniebeugen", sub: "Einfach · Fester Stand", xp: 25, power: 450 }, { title: "25 Sek. Hampelmänner", sub: "Einfach · Aufwärmen", xp: 20, power: 350 }],
+      advanced: [{ title: "25x Kniebeugen", sub: "Profi · 10x Schwerkraft", xp: 45, power: 950 }, { title: "16x Ausfallschritte", sub: "Profi · Blitz-Ausweichen", xp: 45, power: 900 }],
+      master: [{ title: "18x Sprung-Kniebeugen", sub: "Meister · Wolken-Sprung", xp: 85, power: 2300 }, { title: "50 Sek. Wandsitzen", sub: "Meister · 100x G", xp: 80, power: 2100 }]
+    }
+  },
+  2: {
+    arms: {
+      easy: [{ title: "12x Wand-Liegestütze", sub: "Einfach · Prinzen-Stolz", xp: 25, power: 400 }, { title: "25 Sek. Armkreisen", sub: "Einfach · Schulter-Ki", xp: 20, power: 350 }],
+      advanced: [{ title: "15x Breite Liegestütze", sub: "Profi · Galick-Strahl", xp: 45, power: 950 }, { title: "12x Schulter-Drücken (Pike)", sub: "Profi · 300x G", xp: 50, power: 1000 }],
+      master: [{ title: "20x Explosiv-Liegestütze", sub: "Meister · Finaler Blitz", xp: 85, power: 2200 }, { title: "15x Diamant-Liegestütze", sub: "Meister · Royal Blue", xp: 90, power: 2500 }]
+    },
+    core: {
+      easy: [{ title: "25 Sek. Unterarm-Plank", sub: "Einfach · Eiserner Wille", xp: 25, power: 450 }, { title: "12x Käfer-Crunches", sub: "Einfach · Balance", xp: 25, power: 400 }],
+      advanced: [{ title: "45 Sek. Seitlicher Plank", sub: "Profi · Ki-Rüstung", xp: 45, power: 950 }, { title: "20x Russian Twists", sub: "Profi · Dreh-Impuls", xp: 45, power: 900 }],
+      master: [{ title: "60 Sek. Kommando-Plank", sub: "Meister · 400x G Raum", xp: 85, power: 2300 }, { title: "20x V-Ups (Klappmesser)", sub: "Meister · Stolz des Prinzen", xp: 90, power: 2400 }]
+    },
+    legs: {
+      easy: [{ title: "15x Sumo-Kniebeugen", sub: "Einfach · Tiefer Stand", xp: 25, power: 450 }, { title: "20x Wadenheben", sub: "Einfach · Sprungansatz", xp: 20, power: 350 }],
+      advanced: [{ title: "20x Ausfallschritte rückwärts", sub: "Profi · Konter-Schritt", xp: 45, power: 950 }, { title: "35 Sek. Wandsitzen", sub: "Profi · Schwerkraft", xp: 45, power: 900 }],
+      master: [{ title: "12x Bulgarische Kniebeugen", sub: "Meister · Einzelbein-Kraft", xp: 85, power: 2300 }, { title: "20x Ausfallschritt-Sprünge", sub: "Meister · Überschall", xp: 90, power: 2400 }]
+    }
+  },
+  3: {
+    arms: {
+      easy: [{ title: "25 Sek. Speed-Punches", sub: "Einfach · Turbo-Fäuste", xp: 25, power: 400 }, { title: "10x Schulter-Tippen im Plank", sub: "Einfach · Reflexe", xp: 25, power: 450 }],
+      advanced: [{ title: "14x Enge Liegestütze", sub: "Profi · Plasma-Stoß", xp: 45, power: 950 }, { title: "30 Sek. Oberkörper-Boxen", sub: "Profi · Overdrive", xp: 45, power: 900 }],
+      master: [{ title: "20x Wechsel-Liegestütze", sub: "Meister · Flammen-Hieb", xp: 85, power: 2200 }, { title: "40 Sek. Bergsteiger (Speed)", sub: "Meister · System-Maximum", xp: 90, power: 2400 }]
+    },
+    core: {
+      easy: [{ title: "15x Mountain Climbers", sub: "Einfach · Antrieb", xp: 25, power: 450 }, { title: "20 Sek. Hollow Hold", sub: "Einfach · Panzer-Kern", xp: 25, power: 400 }],
+      advanced: [{ title: "30x Fahrrad-Crunches", sub: "Profi · Cyber-Rotation", xp: 45, power: 950 }, { title: "45 Sek. Plank mit Kniezug", sub: "Profi · Reaktor-Stabilität", xp: 50, power: 1000 }],
+      master: [{ title: "50x Fahrrad-Crunches", sub: "Meister · Hyper-Kern", xp: 85, power: 2300 }, { title: "60 Sek. Hollow Body Hold", sub: "Meister · Titan-Schild", xp: 90, power: 2400 }]
+    },
+    legs: {
+      easy: [{ title: "25 Sek. Kniehebelauf", sub: "Einfach · Sprint-Modul", xp: 25, power: 450 }, { title: "15x Skater-Sprünge", sub: "Einfach · Ausweich-Sensor", xp: 25, power: 400 }],
+      advanced: [{ title: "40 Sek. High Knees", sub: "Profi · Nachbrenner", xp: 45, power: 950 }, { title: "18x Seitliche Ausfallschritte", sub: "Profi · Ausweich-Manöver", xp: 45, power: 900 }],
+      master: [{ title: "15x Burpees", sub: "Meister · Vollgas-Modus", xp: 90, power: 2500 }, { title: "20x Skater-Sprünge weit", sub: "Meister · Lichtgeschwindigkeit", xp: 85, power: 2200 }]
+    }
+  }
+};
 let state = JSON.parse(localStorage.getItem("zwarriors_neon_v7")) || {
-  level: 1, xp: 0, powerLevel: 1000, carouselIndex: 0, selectedChar: 1,
+  level: 1, xp: 0, powerLevel: 0, carouselIndex: 0, selectedChar: 1,
   selectedStage: 1, selectedPart: "arms", difficulty: "easy", partXP: { arms: 0, core: 0, legs: 0 }
 };
 
@@ -227,7 +280,11 @@ function openCharacterDetails(charId) {
 }
 
 function renderWorkouts() {
-  const partData = BODY_WORKOUTS[state.selectedPart] || BODY_WORKOUTS.arms;
+  const customCharWorkouts = CHARACTER_WORKOUTS[state.selectedChar];
+  const partData = (customCharWorkouts && customCharWorkouts[state.selectedPart])
+    ? { label: BODY_WORKOUTS[state.selectedPart].label, ...customCharWorkouts[state.selectedPart] }
+    : (BODY_WORKOUTS[state.selectedPart] || BODY_WORKOUTS.arms);
+
   document.getElementById("selected-part-title").textContent = partData.label;
   const list = document.getElementById("workout-list");
   list.innerHTML = "";
@@ -371,7 +428,7 @@ document.getElementById("close-levelup").addEventListener("click", () => {
 
 document.getElementById("reset-btn").addEventListener("click", () => {
   if (confirm("Wirklich bei Level 1 neu starten?")) {
-    state = { level: 1, xp: 0, powerLevel: 1000, carouselIndex: 0, selectedChar: 1, selectedStage: 1, selectedPart: "arms", difficulty: "easy", partXP: { arms: 0, core: 0, legs: 0 } };
+    state = { level: 1, xp: 0, powerLevel: 0, carouselIndex: 0, selectedChar: 1, selectedStage: 1, selectedPart: "arms", difficulty: "easy", partXP: { arms: 0, core: 0, legs: 0 } };
     updateUI();
     renderWorkouts();
     showScreen("intro-screen");
@@ -382,3 +439,4 @@ loadSmartImage(document.getElementById("intro-hero-img"), "c1_s1", () => {});
 updateStaggeredCarousel();
 updateUI();
 renderWorkouts();
+  
