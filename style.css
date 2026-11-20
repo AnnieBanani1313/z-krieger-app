@@ -1,3 +1,25 @@
+@font-face {
+  font-family: 'Anton';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(https://gstatic.com) format('truetype');
+}
+@font-face {
+  font-family: 'Rajdhani';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url(https://gstatic.com) format('truetype');
+}
+@font-face {
+  font-family: 'Rajdhani';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url(https://gstatic.com) format('truetype');
+}
+
 :root {
   --bg: #0b0b0d;
   --surface: #141418;
@@ -50,11 +72,7 @@ body {
   z-index: 1;
 }
 
-.tall-orange-title.select-big-word {
-  font-size: 3.7rem;
-  line-height: 0.9;
-  margin-top: 2px;
-}
+.tall-orange-title.select-big-word { font-size: 3.7rem; line-height: 0.9; margin-top: 2px; }
 
 .tall-orange-title.center-name-title {
   font-family: 'Anton', sans-serif;
@@ -212,9 +230,9 @@ body {
 .s-char-img:not([src]),
 .s-char-img[src=""] { opacity: 0 !important; visibility: hidden !important; }
 
-.char-top { top: 2%; right: 6px; width: 155px; height: 175px; z-index: 8; }
+.char-top { top: -6px; right: 12px; width: 135px; height: 145px; z-index: 4; }
 .char-center { top: 44%; right: 26px; width: 205px; height: 230px; transform: translateY(-58%); z-index: 15; }
-.char-bottom { bottom: 2%; right: 6px; width: 155px; height: 175px; z-index: 9; }
+.char-bottom { bottom: -6px; right: 12px; width: 135px; height: 145px; z-index: 4; }
 .s-fallback { position: absolute; inset: 0; display: grid; place-items: center; font-family: 'Anton', sans-serif; font-size: 2.3rem; color: rgba(0, 0, 0, 0.25); }
 
 /* SCREEN 3 & 4 */
