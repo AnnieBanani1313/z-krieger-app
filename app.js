@@ -862,6 +862,1853 @@ const CHARACTER_WORKOUTS = {
       ]
     }
   }
+    ,
+  4: {
+    arms: {
+      easy: [
+        {
+          title: "12x Schatten-Liegestütze",
+          sub: "Einfach · Lautlos",
+          xp: 25, power: 400,
+          pose: "kneepushup",
+          tip: "Langsam und leise absenken."
+        },
+        {
+          title: "25 Sek. Phantom-Schläge",
+          sub: "Einfach · Wind-Speed",
+          xp: 20, power: 350,
+          pose: "punch", sec: 25,
+          tip: "Blitzschnell vor und zurück!"
+        }
+      ],
+      advanced: [
+        {
+          title: "14x Enge Liegestütze",
+          sub: "Profi · Schatten-Stoß",
+          xp: 45, power: 900,
+          pose: "pushup",
+          tip: "Ellbogen eng am Körper."
+        },
+        {
+          title: "12x Schulter-Tippen",
+          sub: "Profi · Balance-Stütz",
+          xp: 45, power: 950,
+          pose: "shouldertap",
+          tip: "Hüfte ruhig halten!"
+        }
+      ],
+      master: [
+        {
+          title: "22x Tiefe Liegestütze",
+          sub: "Meister · Phantom-Salve",
+          xp: 85, power: 2200,
+          pose: "pushup",
+          tip: "Volle Tiefe und Spannung."
+        },
+        {
+          title: "15x Stuhl-Dips",
+          sub: "Meister · Schatten-Kraft",
+          xp: 85, power: 2100,
+          pose: "dips",
+          tip: "Sauber hochdrücken."
+        }
+      ]
+    },
+    core: {
+      easy: [
+        {
+          title: "25 Sek. Balance-Plank",
+          sub: "Einfach · Wind-Stille",
+          xp: 25, power: 450,
+          pose: "plank", sec: 25,
+          tip: "Körper ruhig wie ein Schatten."
+        },
+        {
+          title: "15x Langsame Crunches",
+          sub: "Einfach · Rumpf-Fokus",
+          xp: 25, power: 400,
+          pose: "situp",
+          tip: "3 Sekunden hoch, 3 runter."
+        }
+      ],
+      advanced: [
+        {
+          title: "45 Sek. Plank",
+          sub: "Profi · Phantom-Kern",
+          xp: 45, power: 950,
+          pose: "plank", sec: 45,
+          tip: "Bauch fest anspannen."
+        },
+        {
+          title: "20x Beinheben",
+          sub: "Profi · Schwebekraft",
+          xp: 50, power: 1000,
+          pose: "legraise",
+          tip: "Beine gestreckt halten."
+        }
+      ],
+      master: [
+        {
+          title: "70 Sek. Schwebender Plank",
+          sub: "Meister · Unsichtbar",
+          xp: 90, power: 2400,
+          pose: "plank", sec: 70,
+          tip: "Keine Bewegung zulassen!"
+        },
+        {
+          title: "30x Sit-Ups",
+          sub: "Meister · Schatten-Meister",
+          xp: 85, power: 2200,
+          pose: "situp",
+          tip: "Gleichmäßiges Tempo."
+        }
+      ]
+    },
+    legs: {
+      easy: [
+        {
+          title: "15x Leise Kniebeugen",
+          sub: "Einfach · Katzensprung",
+          xp: 25, power: 450,
+          pose: "squat",
+          tip: "Kontrolliert tief gehen."
+        },
+        {
+          title: "12x Ausfallschritte",
+          sub: "Einfach · Gleitschritt",
+          xp: 25, power: 400,
+          pose: "lunge",
+          tip: "Oberkörper aufrecht lassen."
+        }
+      ],
+      advanced: [
+        {
+          title: "40 Sek. Wandsitzen",
+          sub: "Profi · Lautlose Wand",
+          xp: 45, power: 950,
+          pose: "wallsit", sec: 40,
+          tip: "90-Grad-Winkel halten."
+        },
+        {
+          title: "20x Ausfallschritte",
+          sub: "Profi · Wind-Schritt",
+          xp: 45, power: 900,
+          pose: "lunge",
+          tip: "Große Schritte im Wechsel."
+        }
+      ],
+      master: [
+        {
+          title: "20x Sprung-Kniebeugen",
+          sub: "Meister · Phantom-Sprung",
+          xp: 90, power: 2400,
+          pose: "jump",
+          tip: "Federleicht landen!"
+        },
+        {
+          title: "60 Sek. Wandsitzen",
+          sub: "Meister · Eiserne Beine",
+          xp: 85, power: 2200,
+          pose: "wallsit", sec: 60,
+          tip: "Durchhalten bis zum Ende!"
+        }
+      ]
+    }
+  }
+  ,
+  5: {
+    arms: {
+      easy: [
+        {
+          title: "25 Sek. Sonnen-Kreisen",
+          sub: "Einfach · Gold-Aura",
+          xp: 20, power: 350,
+          pose: "armcircles", sec: 25,
+          tip: "Große, leuchtende Kreise!"
+        },
+        {
+          title: "12x Wand-Liegestütze",
+          sub: "Einfach · Licht-Stoß",
+          xp: 25, power: 400,
+          pose: "wallpushup",
+          tip: "Kraftvoll von der Wand weg."
+        }
+      ],
+      advanced: [
+        {
+          title: "16x Echte Liegestütze",
+          sub: "Profi · Nova-Strahl",
+          xp: 45, power: 950,
+          pose: "pushup",
+          tip: "Brust tief zum Boden."
+        },
+        {
+          title: "14x Stuhl-Dips",
+          sub: "Profi · Sonnen-Arme",
+          xp: 45, power: 900,
+          pose: "dips",
+          tip: "Arme ganz durchstrecken."
+        }
+      ],
+      master: [
+        {
+          title: "25x Supernova-Pushups",
+          sub: "Meister · Volle Aura",
+          xp: 90, power: 2500,
+          pose: "pushup",
+          tip: "Explosiv nach oben drücken!"
+        },
+        {
+          title: "45 Sek. Speed-Punches",
+          sub: "Meister · Licht-Salve",
+          xp: 85, power: 2200,
+          pose: "punch", sec: 45,
+          tip: "Maximales Tempo!"
+        }
+      ]
+    },
+    core: {
+      easy: [
+        {
+          title: "25 Sek. Gold-Plank",
+          sub: "Einfach · Licht-Schild",
+          xp: 25, power: 450,
+          pose: "plank", sec: 25,
+          tip: "Körper gerade wie ein Strahl."
+        },
+        {
+          title: "14x Crunches",
+          sub: "Einfach · Nova-Kern",
+          xp: 25, power: 400,
+          pose: "situp",
+          tip: "Sauber einrollen."
+        }
+      ],
+      advanced: [
+        {
+          title: "22x Sit-Ups",
+          sub: "Profi · Sonnen-Rumpf",
+          xp: 45, power: 950,
+          pose: "situp",
+          tip: "Kraftvoll aufrichten."
+        },
+        {
+          title: "18x Beinheben",
+          sub: "Profi · Sternen-Kraft",
+          xp: 45, power: 900,
+          pose: "legraise",
+          tip: "Beine gestreckt lassen."
+        }
+      ],
+      master: [
+        {
+          title: "75 Sek. Supernova-Plank",
+          sub: "Meister · Unbesiegbar",
+          xp: 90, power: 2400,
+          pose: "plank", sec: 75,
+          tip: "Atmen und Spannung halten!"
+        },
+        {
+          title: "30x Beinheben",
+          sub: "Meister · Goldener Kern",
+          xp: 85, power: 2200,
+          pose: "legraise",
+          tip: "Kein Hohlkreuz machen."
+        }
+      ]
+    },
+    legs: {
+      easy: [
+        {
+          title: "30 Sek. Hampelmänner",
+          sub: "Einfach · Licht-Sprung",
+          xp: 20, power: 350,
+          pose: "jump", sec: 30,
+          tip: "Arme weit über den Kopf."
+        },
+        {
+          title: "16x Kniebeugen",
+          sub: "Einfach · Fester Stand",
+          xp: 25, power: 450,
+          pose: "squat",
+          tip: "Po weit nach hinten."
+        }
+      ],
+      advanced: [
+        {
+          title: "28x Kniebeugen",
+          sub: "Profi · Nova-Beine",
+          xp: 45, power: 950,
+          pose: "squat",
+          tip: "Tief runter und hoch."
+        },
+        {
+          title: "18x Ausfallschritte",
+          sub: "Profi · Sonnen-Schritt",
+          xp: 45, power: 900,
+          pose: "lunge",
+          tip: "Knie knapp über Boden."
+        }
+      ],
+      master: [
+        {
+          title: "22x Sprung-Kniebeugen",
+          sub: "Meister · Supernova-Start",
+          xp: 90, power: 2500,
+          pose: "jump",
+          tip: "So hoch du kannst!"
+        },
+        {
+          title: "55 Sek. Wandsitzen",
+          sub: "Meister · Gold-Säule",
+          xp: 85, power: 2200,
+          pose: "wallsit", sec: 55,
+          tip: "Rücken fest an die Wand."
+        }
+      ]
+    }
+  }
+
+    ,
+  6: {
+    arms: {
+      easy: [
+        {
+          title: "12x Knie-Liegestütze",
+          sub: "Einfach · Schild-Basis",
+          xp: 25, power: 450,
+          pose: "kneepushup",
+          tip: "Stabil und kontrolliert."
+        },
+        {
+          title: "12x Schulter-Tippen",
+          sub: "Einfach · Titan-Stütz",
+          xp: 25, power: 400,
+          pose: "shouldertap",
+          tip: "Fest wie ein Fels stehen."
+        }
+      ],
+      advanced: [
+        {
+          title: "16x Echte Liegestütze",
+          sub: "Profi · Titanen-Wall",
+          xp: 50, power: 1000,
+          pose: "pushup",
+          tip: "Brust tief absenken."
+        },
+        {
+          title: "14x Stuhl-Dips",
+          sub: "Profi · Panzer-Arme",
+          xp: 45, power: 950,
+          pose: "dips",
+          tip: "Kraftvoll nach oben."
+        }
+      ],
+      master: [
+        {
+          title: "26x Tiefe Liegestütze",
+          sub: "Meister · Festung",
+          xp: 90, power: 2500,
+          pose: "pushup",
+          tip: "Unten 1 Sekunde halten!"
+        },
+        {
+          title: "24x Schulter-Tippen",
+          sub: "Meister · Eiserner Wall",
+          xp: 85, power: 2200,
+          pose: "shouldertap",
+          tip: "Null Wackeln im Rumpf!"
+        }
+      ]
+    },
+    core: {
+      easy: [
+        {
+          title: "30 Sek. Fels-Plank",
+          sub: "Einfach · Ki-Schild",
+          xp: 25, power: 450,
+          pose: "plank", sec: 30,
+          tip: "Nichts bewegt dich!"
+        },
+        {
+          title: "12x Crunches",
+          sub: "Einfach · Rumpf-Panzer",
+          xp: 25, power: 400,
+          pose: "situp",
+          tip: "Bauch fest anspannen."
+        }
+      ],
+      advanced: [
+        {
+          title: "50 Sek. Titan-Plank",
+          sub: "Profi · Stahl-Kern",
+          xp: 50, power: 1000,
+          pose: "plank", sec: 50,
+          tip: "Ruhig atmen und halten."
+        },
+        {
+          title: "22x Sit-Ups",
+          sub: "Profi · Schild-Mitte",
+          xp: 45, power: 950,
+          pose: "situp",
+          tip: "Saubere Ausführung."
+        }
+      ],
+      master: [
+        {
+          title: "80 Sek. Titanen-Wall",
+          sub: "Meister · Unzerstörbar",
+          xp: 95, power: 2600,
+          pose: "plank", sec: 80,
+          tip: "Maximale Willenskraft!"
+        },
+        {
+          title: "28x Beinheben",
+          sub: "Meister · Eisen-Rumpf",
+          xp: 85, power: 2200,
+          pose: "legraise",
+          tip: "Langsam absenken."
+        }
+      ]
+    },
+    legs: {
+      easy: [
+        {
+          title: "18x Kniebeugen",
+          sub: "Einfach · Fels-Stand",
+          xp: 25, power: 450,
+          pose: "squat",
+          tip: "Breiter, sicherer Stand."
+        },
+        {
+          title: "25 Sek. Wandsitzen",
+          sub: "Einfach · Mauer-Test",
+          xp: 25, power: 400,
+          pose: "wallsit", sec: 25,
+          tip: "Rücken an die Wand."
+        }
+      ],
+      advanced: [
+        {
+          title: "45 Sek. Wandsitzen",
+          sub: "Profi · Titan-Säule",
+          xp: 50, power: 1000,
+          pose: "wallsit", sec: 45,
+          tip: "90 Grad im Knie halten!"
+        },
+        {
+          title: "28x Kniebeugen",
+          sub: "Profi · Schwergewicht",
+          xp: 45, power: 950,
+          pose: "squat",
+          tip: "Tief runter!"
+        }
+      ],
+      master: [
+        {
+          title: "65 Sek. Wandsitzen",
+          sub: "Meister · Unbewegbar",
+          xp: 90, power: 2500,
+          pose: "wallsit", sec: 65,
+          tip: "Du bist die Mauer!"
+        },
+        {
+          title: "24x Ausfallschritte",
+          sub: "Meister · Titan-Schritt",
+          xp: 85, power: 2200,
+          pose: "lunge",
+          tip: "Volle Beinkraft!"
+        }
+      ]
+    }
+  }
+
+    ,
+  7: {
+    arms: {
+      easy: [
+        {
+          title: "25 Sek. Donner-Punches",
+          sub: "Einfach · Schnellkraft",
+          xp: 20, power: 350,
+          pose: "punch", sec: 25,
+          tip: "So schnell du kannst!"
+        },
+        {
+          title: "20 Sek. Armkreisen",
+          sub: "Einfach · Turbo-Schulter",
+          xp: 20, power: 350,
+          pose: "armcircles", sec: 20,
+          tip: "Kleine, schnelle Kreise."
+        }
+      ],
+      advanced: [
+        {
+          title: "35 Sek. Speed-Punches",
+          sub: "Profi · Blitz-Salve",
+          xp: 45, power: 950,
+          pose: "punch", sec: 35,
+          tip: "Keine Pause machen!"
+        },
+        {
+          title: "14x Echte Liegestütze",
+          sub: "Profi · Schnell-Push",
+          xp: 45, power: 900,
+          pose: "pushup",
+          tip: "Explosiv hochdrücken."
+        }
+      ],
+      master: [
+        {
+          title: "50 Sek. Donner-Boxen",
+          sub: "Meister · Überschall",
+          xp: 90, power: 2400,
+          pose: "punch", sec: 50,
+          tip: "Maximale Geschwindigkeit!"
+        },
+        {
+          title: "22x Liegestütze",
+          sub: "Meister · Blitz-Kraft",
+          xp: 85, power: 2200,
+          pose: "pushup",
+          tip: "Sauber und zügig."
+        }
+      ]
+    },
+    core: {
+      easy: [
+        {
+          title: "15x Mountain Climbers",
+          sub: "Einfach · Sprint-Kern",
+          xp: 25, power: 450,
+          pose: "climber",
+          tip: "Knie schnell vorziehen."
+        },
+        {
+          title: "20 Sek. Plank",
+          sub: "Einfach · Blitz-Haltung",
+          xp: 25, power: 400,
+          pose: "plank", sec: 20,
+          tip: "Körper gerade halten."
+        }
+      ],
+      advanced: [
+        {
+          title: "30 Sek. Mountain Climbers",
+          sub: "Profi · Turbo-Antrieb",
+          xp: 45, power: 950,
+          pose: "climber", sec: 30,
+          tip: "Volles Sprint-Tempo!"
+        },
+        {
+          title: "20x Sit-Ups",
+          sub: "Profi · Schnell-Rumpf",
+          xp: 45, power: 900,
+          pose: "situp",
+          tip: "Zügig aufrichten."
+        }
+      ],
+      master: [
+        {
+          title: "45 Sek. Speed-Climbers",
+          sub: "Meister · Donner-Motor",
+          xp: 90, power: 2400,
+          pose: "climber", sec: 45,
+          tip: "Gib alles bis zum Gong!"
+        },
+        {
+          title: "26x Beinheben",
+          sub: "Meister · Blitz-Kern",
+          xp: 85, power: 2200,
+          pose: "legraise",
+          tip: "Beine gestreckt!"
+        }
+      ]
+    },
+    legs: {
+      easy: [
+        {
+          title: "30 Sek. Hampelmänner",
+          sub: "Einfach · Warm-Up",
+          xp: 20, power: 350,
+          pose: "jump", sec: 30,
+          tip: "Leicht und schnell springen."
+        },
+        {
+          title: "15x Kniebeugen",
+          sub: "Einfach · Sprung-Basis",
+          xp: 25, power: 450,
+          pose: "squat",
+          tip: "Fester Stand."
+        }
+      ],
+      advanced: [
+        {
+          title: "14x Sprung-Kniebeugen",
+          sub: "Profi · Donner-Sprung",
+          xp: 50, power: 1000,
+          pose: "jump",
+          tip: "Weich auf Fußballen landen."
+        },
+        {
+          title: "18x Ausfallschritte",
+          sub: "Profi · Blitz-Schritt",
+          xp: 45, power: 950,
+          pose: "lunge",
+          tip: "Schneller Beinwechsel."
+        }
+      ],
+      master: [
+        {
+          title: "22x Sprung-Kniebeugen",
+          sub: "Meister · Raketen-Kid",
+          xp: 95, power: 2600,
+          pose: "jump",
+          tip: "Explosiv nach oben!"
+        },
+        {
+          title: "45 Sek. Speed-Hampelmänner",
+          sub: "Meister · Ausdauer-Blitz",
+          xp: 85, power: 2200,
+          pose: "jump", sec: 45,
+          tip: "Tempo bis zum Schluss halten."
+        }
+      ]
+    }
+  }
+
+    ,
+  8: {
+    arms: {
+      easy: [
+        {
+          title: "12x Wand-Liegestütze",
+          sub: "Einfach · Gletscher-Ruhe",
+          xp: 25, power: 400,
+          pose: "wallpushup",
+          tip: "Ganz ruhig und sauber."
+        },
+        {
+          title: "10x Schulter-Tippen",
+          sub: "Einfach · Eis-Fokus",
+          xp: 25, power: 450,
+          pose: "shouldertap",
+          tip: "Langsam antippen."
+        }
+      ],
+      advanced: [
+        {
+          title: "14x Echte Liegestütze",
+          sub: "Profi · Frost-Stoß",
+          xp: 45, power: 950,
+          pose: "pushup",
+          tip: "2 Sekunden unten halten."
+        },
+        {
+          title: "12x Stuhl-Dips",
+          sub: "Profi · Eis-Trizeps",
+          xp: 45, power: 900,
+          pose: "dips",
+          tip: "Kontrolliert absenken."
+        }
+      ],
+      master: [
+        {
+          title: "22x Tiefe Liegestütze",
+          sub: "Meister · Gletscher-Strahl",
+          xp: 85, power: 2200,
+          pose: "pushup",
+          tip: "Eiskalte Präzision!"
+        },
+        {
+          title: "20x Stuhl-Dips",
+          sub: "Meister · Frost-Meister",
+          xp: 85, power: 2200,
+          pose: "dips",
+          tip: "Sauber durchstrecken."
+        }
+      ]
+    },
+    core: {
+      easy: [
+        {
+          title: "25 Sek. Eis-Plank",
+          sub: "Einfach · Kühle Ruhe",
+          xp: 25, power: 450,
+          pose: "plank", sec: 25,
+          tip: "Ruhig ein- und ausatmen."
+        },
+        {
+          title: "12x Crunches",
+          sub: "Einfach · Zen-Mitte",
+          xp: 25, power: 400,
+          pose: "situp",
+          tip: "Kein Schwung holen."
+        }
+      ],
+      advanced: [
+        {
+          title: "50 Sek. Gletscher-Plank",
+          sub: "Profi · Eis-Rüstung",
+          xp: 50, power: 1000,
+          pose: "plank", sec: 50,
+          tip: "Bleib völlig ruhig!"
+        },
+        {
+          title: "18x Beinheben",
+          sub: "Profi · Zen-Kontrolle",
+          xp: 45, power: 950,
+          pose: "legraise",
+          tip: "Sehr langsam absenken."
+        }
+      ],
+      master: [
+        {
+          title: "80 Sek. Absoluter Nullpunkt",
+          sub: "Meister · Eis-Kern",
+          xp: 95, power: 2600,
+          pose: "plank", sec: 80,
+          tip: "Eiskalt durchhalten!"
+        },
+        {
+          title: "28x Beinheben",
+          sub: "Meister · Frost-Disziplin",
+          xp: 85, power: 2200,
+          pose: "legraise",
+          tip: "Volle Rumpfspannung."
+        }
+      ]
+    },
+    legs: {
+      easy: [
+        {
+          title: "25 Sek. Wandsitzen",
+          sub: "Einfach · Eis-Säule",
+          xp: 25, power: 450,
+          pose: "wallsit", sec: 25,
+          tip: "Rücken flach an die Wand."
+        },
+        {
+          title: "15x Kniebeugen",
+          sub: "Einfach · Zen-Stand",
+          xp: 25, power: 400,
+          pose: "squat",
+          tip: "Langsam tief gehen."
+        }
+      ],
+      advanced: [
+        {
+          title: "45 Sek. Wandsitzen",
+          sub: "Profi · Gletscher-Wand",
+          xp: 50, power: 1000,
+          pose: "wallsit", sec: 45,
+          tip: "Atmung ruhig halten."
+        },
+        {
+          title: "18x Ausfallschritte",
+          sub: "Profi · Eis-Schritt",
+          xp: 45, power: 950,
+          pose: "lunge",
+          tip: "Saubere Balance."
+        }
+      ],
+      master: [
+        {
+          title: "65 Sek. Wandsitzen",
+          sub: "Meister · Eis-Thron",
+          xp: 90, power: 2500,
+          pose: "wallsit", sec: 65,
+          tip: "Nichts bringt dich ins Wanken."
+        },
+        {
+          title: "32x Kniebeugen",
+          sub: "Meister · Frost-Beine",
+          xp: 85, power: 2200,
+          pose: "squat",
+          tip: "Gleichmäßiger Rhythmus."
+        }
+      ]
+    }
+  }
+
+    ,
+  9: {
+    arms: {
+      easy: [
+        {
+          title: "25 Sek. Magma-Punches",
+          sub: "Einfach · Feuer-Fäuste",
+          xp: 25, power: 400,
+          pose: "punch", sec: 25,
+          tip: "Kraftvolle Schläge nach vorn!"
+        },
+        {
+          title: "12x Knie-Liegestütze",
+          sub: "Einfach · Glut-Basis",
+          xp: 25, power: 450,
+          pose: "kneepushup",
+          tip: "Brust tief zum Boden."
+        }
+      ],
+      advanced: [
+        {
+          title: "16x Echte Liegestütze",
+          sub: "Profi · Flammen-Stoß",
+          xp: 45, power: 950,
+          pose: "pushup",
+          tip: "Explosiv hochdrücken!"
+        },
+        {
+          title: "14x Stuhl-Dips",
+          sub: "Profi · Lava-Trizeps",
+          xp: 45, power: 900,
+          pose: "dips",
+          tip: "Voller Bewegungsradius."
+        }
+      ],
+      master: [
+        {
+          title: "25x Magma-Liegestütze",
+          sub: "Meister · Vulkan-Kraft",
+          xp: 90, power: 2500,
+          pose: "pushup",
+          tip: "Spüre die Hitze in den Armen!"
+        },
+        {
+          title: "45 Sek. Feuer-Boxen",
+          sub: "Meister · Magma-Salve",
+          xp: 85, power: 2200,
+          pose: "punch", sec: 45,
+          tip: "Mit voller Wucht schlagen!"
+        }
+      ]
+    },
+    core: {
+      easy: [
+        {
+          title: "15x Mountain Climbers",
+          sub: "Einfach · Feuer-Antrieb",
+          xp: 25, power: 450,
+          pose: "climber",
+          tip: "Zügig die Knie vorziehen."
+        },
+        {
+          title: "14x Crunches",
+          sub: "Einfach · Glut-Kern",
+          xp: 25, power: 400,
+          pose: "situp",
+          tip: "Bauch fest anspannen."
+        }
+      ],
+      advanced: [
+        {
+          title: "35 Sek. Mountain Climbers",
+          sub: "Profi · Lava-Sprint",
+          xp: 45, power: 950,
+          pose: "climber", sec: 35,
+          tip: "Rumpf stabil halten!"
+        },
+        {
+          title: "22x Sit-Ups",
+          sub: "Profi · Flammen-Rumpf",
+          xp: 45, power: 900,
+          pose: "situp",
+          tip: "Kraftvoll hochkommen."
+        }
+      ],
+      master: [
+        {
+          title: "50 Sek. Inferno-Climbers",
+          sub: "Meister · Vulkan-Kern",
+          xp: 90, power: 2500,
+          pose: "climber", sec: 50,
+          tip: "Maximales Tempo halten!"
+        },
+        {
+          title: "70 Sek. Magma-Plank",
+          sub: "Meister · Feuer-Schild",
+          xp: 85, power: 2200,
+          pose: "plank", sec: 70,
+          tip: "Nicht nachgeben!"
+        }
+      ]
+    },
+    legs: {
+      easy: [
+        {
+          title: "16x Kniebeugen",
+          sub: "Einfach · Vulkan-Stand",
+          xp: 25, power: 450,
+          pose: "squat",
+          tip: "Tief in die Hocke."
+        },
+        {
+          title: "25 Sek. Hampelmänner",
+          sub: "Einfach · Funken-Sprung",
+          xp: 20, power: 350,
+          pose: "jump", sec: 25,
+          tip: "Schnell auf den Fußballen."
+        }
+      ],
+      advanced: [
+        {
+          title: "14x Sprung-Kniebeugen",
+          sub: "Profi · Eruption",
+          xp: 50, power: 1000,
+          pose: "jump",
+          tip: "Explosiv abspringen!"
+        },
+        {
+          title: "18x Ausfallschritte",
+          sub: "Profi · Lava-Schritt",
+          xp: 45, power: 950,
+          pose: "lunge",
+          tip: "Tiefe Schritte im Wechsel."
+        }
+      ],
+      master: [
+        {
+          title: "22x Vulkan-Sprünge",
+          sub: "Meister · Magma-Explosion",
+          xp: 95, power: 2600,
+          pose: "jump",
+          tip: "So hoch wie möglich!"
+        },
+        {
+          title: "55 Sek. Wandsitzen",
+          sub: "Meister · Glühende Beine",
+          xp: 85, power: 2200,
+          pose: "wallsit", sec: 55,
+          tip: "Halte bis zum letzten Ton!"
+        }
+      ]
+    }
+  }
+
+    ,
+  10: {
+    arms: {
+      easy: [
+        {
+          title: "12x Knie-Liegestütze",
+          sub: "Einfach · Kosmos-Basis",
+          xp: 25, power: 400,
+          pose: "kneepushup",
+          tip: "Rücken gerade und sauber."
+        },
+        {
+          title: "25 Sek. Kometen-Schläge",
+          sub: "Einfach · Sternen-Faust",
+          xp: 20, power: 350,
+          pose: "punch", sec: 25,
+          tip: "Schnelle Kombos nach vorn!"
+        }
+      ],
+      advanced: [
+        {
+          title: "16x Echte Liegestütze",
+          sub: "Profi · Meteor-Stoß",
+          xp: 45, power: 950,
+          pose: "pushup",
+          tip: "Explosiv hochdrücken."
+        },
+        {
+          title: "14x Stuhl-Dips",
+          sub: "Profi · Orbit-Trizeps",
+          xp: 45, power: 900,
+          pose: "dips",
+          tip: "Arme ganz durchstrecken."
+        }
+      ],
+      master: [
+        {
+          title: "24x Kometen-Pushups",
+          sub: "Meister · Schwerelos",
+          xp: 90, power: 2400,
+          pose: "pushup",
+          tip: "Volle Tiefe und Kraft!"
+        },
+        {
+          title: "24x Schulter-Tippen",
+          sub: "Meister · Kosmos-Balance",
+          xp: 85, power: 2200,
+          pose: "shouldertap",
+          tip: "Rumpf ruhig halten."
+        }
+      ]
+    },
+    core: {
+      easy: [
+        {
+          title: "25 Sek. Orbit-Plank",
+          sub: "Einfach · Schwerelos",
+          xp: 25, power: 450,
+          pose: "plank", sec: 25,
+          tip: "Körper gerade halten."
+        },
+        {
+          title: "14x Crunches",
+          sub: "Einfach · Sternen-Mitte",
+          xp: 25, power: 400,
+          pose: "situp",
+          tip: "Kontrolliert einrollen."
+        }
+      ],
+      advanced: [
+        {
+          title: "20x Beinheben",
+          sub: "Profi · Kosmos-Flug",
+          xp: 50, power: 1000,
+          pose: "legraise",
+          tip: "Beine gestreckt heben."
+        },
+        {
+          title: "45 Sek. Plank",
+          sub: "Profi · Vex-Schild",
+          xp: 45, power: 950,
+          pose: "plank", sec: 45,
+          tip: "Bauch fest anspannen."
+        }
+      ],
+      master: [
+        {
+          title: "30x Beinheben",
+          sub: "Meister · Galaxie-Kern",
+          xp: 90, power: 2400,
+          pose: "legraise",
+          tip: "Langsam absenken!"
+        },
+        {
+          title: "75 Sek. Kosmos-Plank",
+          sub: "Meister · Sternen-Wall",
+          xp: 85, power: 2200,
+          pose: "plank", sec: 75,
+          tip: "Ruhig atmen und halten."
+        }
+      ]
+    },
+    legs: {
+      easy: [
+        {
+          title: "30 Sek. Hampelmänner",
+          sub: "Einfach · Sternen-Sprung",
+          xp: 20, power: 350,
+          pose: "jump", sec: 30,
+          tip: "Leichtfüßig abspringen."
+        },
+        {
+          title: "16x Kniebeugen",
+          sub: "Einfach · Startrampe",
+          xp: 25, power: 450,
+          pose: "squat",
+          tip: "Po weit nach hinten."
+        }
+      ],
+      advanced: [
+        {
+          title: "16x Sprung-Kniebeugen",
+          sub: "Profi · Kometen-Sprung",
+          xp: 50, power: 1000,
+          pose: "jump",
+          tip: "Hoch in die Luft!"
+        },
+        {
+          title: "20x Ausfallschritte",
+          sub: "Profi · Orbit-Schritt",
+          xp: 45, power: 950,
+          pose: "lunge",
+          tip: "Große Schritte machen."
+        }
+      ],
+      master: [
+        {
+          title: "24x Sprung-Kniebeugen",
+          sub: "Meister · Kometen-Regen",
+          xp: 95, power: 2600,
+          pose: "jump",
+          tip: "Maximale Sprungkraft!"
+        },
+        {
+          title: "60 Sek. Wandsitzen",
+          sub: "Meister · Gravitation",
+          xp: 85, power: 2200,
+          pose: "wallsit", sec: 60,
+          tip: "90-Grad-Winkel halten."
+        }
+      ]
+    }
+  }
+
+    ,
+  11: {
+    arms: {
+      easy: [
+        {
+          title: "30 Sek. Sonnen-Kreisen",
+          sub: "Einfach · Helios-Aura",
+          xp: 20, power: 350,
+          pose: "armcircles", sec: 30,
+          tip: "Arme oben halten!"
+        },
+        {
+          title: "12x Wand-Liegestütze",
+          sub: "Einfach · Licht-Basis",
+          xp: 25, power: 400,
+          pose: "wallpushup",
+          tip: "Gleichmäßiges Tempo."
+        }
+      ],
+      advanced: [
+        {
+          title: "40 Sek. Sonnen-Boxen",
+          sub: "Profi · Ausdauer-Salve",
+          xp: 45, power: 950,
+          pose: "punch", sec: 40,
+          tip: "Nicht aufhören!"
+        },
+        {
+          title: "15x Echte Liegestütze",
+          sub: "Profi · Solar-Push",
+          xp: 45, power: 900,
+          pose: "pushup",
+          tip: "Saubere Wiederholungen."
+        }
+      ],
+      master: [
+        {
+          title: "60 Sek. Helios-Boxen",
+          sub: "Meister · Endlos-Ki",
+          xp: 90, power: 2400,
+          pose: "punch", sec: 60,
+          tip: "Volle Minute durchziehen!"
+        },
+        {
+          title: "24x Liegestütze",
+          sub: "Meister · Sonnen-Kraft",
+          xp: 85, power: 2200,
+          pose: "pushup",
+          tip: "Gleichmäßig atmen."
+        }
+      ]
+    },
+    core: {
+      easy: [
+        {
+          title: "25 Sek. Solar-Plank",
+          sub: "Einfach · Licht-Kern",
+          xp: 25, power: 450,
+          pose: "plank", sec: 25,
+          tip: "Körper gerade wie ein Strahl."
+        },
+        {
+          title: "15x Crunches",
+          sub: "Einfach · Ausdauer-Mitte",
+          xp: 25, power: 400,
+          pose: "situp",
+          tip: "Schöner Rhythmus."
+        }
+      ],
+      advanced: [
+        {
+          title: "40 Sek. Mountain Climbers",
+          sub: "Profi · Sonnen-Motor",
+          xp: 50, power: 1000,
+          pose: "climber", sec: 40,
+          tip: "Tempo hochhalten!"
+        },
+        {
+          title: "24x Sit-Ups",
+          sub: "Profi · Helios-Rumpf",
+          xp: 45, power: 950,
+          pose: "situp",
+          tip: "Sauber hoch und runter."
+        }
+      ],
+      master: [
+        {
+          title: "60 Sek. Mountain Climbers",
+          sub: "Meister · Solar-Sturm",
+          xp: 95, power: 2500,
+          pose: "climber", sec: 60,
+          tip: "Gib alles bis zum Ende!"
+        },
+        {
+          title: "80 Sek. Helios-Plank",
+          sub: "Meister · Unerschöpflich",
+          xp: 85, power: 2200,
+          pose: "plank", sec: 80,
+          tip: "Du hast endlose Ausdauer!"
+        }
+      ]
+    },
+    legs: {
+      easy: [
+        {
+          title: "35 Sek. Hampelmänner",
+          sub: "Einfach · Sonnen-Takt",
+          xp: 25, power: 400,
+          pose: "jump", sec: 35,
+          tip: "Locker weiterhüpfen."
+        },
+        {
+          title: "18x Kniebeugen",
+          sub: "Einfach · Solar-Stand",
+          xp: 25, power: 450,
+          pose: "squat",
+          tip: "Flüssige Bewegung."
+        }
+      ],
+      advanced: [
+        {
+          title: "50 Sek. Hampelmänner",
+          sub: "Profi · Ausdauer-Welle",
+          xp: 45, power: 950,
+          pose: "jump", sec: 50,
+          tip: "Atmung ruhig halten."
+        },
+        {
+          title: "22x Ausfallschritte",
+          sub: "Profi · Sonnen-Marsch",
+          xp: 45, power: 900,
+          pose: "lunge",
+          tip: "Schritt für Schritt!"
+        }
+      ],
+      master: [
+        {
+          title: "70 Sek. Speed-Hampelmänner",
+          sub: "Meister · Marathon-Ki",
+          xp: 90, power: 2400,
+          pose: "jump", sec: 70,
+          tip: "Keine Pause machen!"
+        },
+        {
+          title: "35x Kniebeugen",
+          sub: "Meister · Helios-Beine",
+          xp: 85, power: 2200,
+          pose: "squat",
+          tip: "Stark bis zur letzten!"
+        }
+      ]
+    }
+  }
+
+    ,
+  12: {
+    arms: {
+      easy: [
+        {
+          title: "12x Knie-Liegestütze",
+          sub: "Einfach · Schatten-Kraft",
+          xp: 25, power: 450,
+          pose: "kneepushup",
+          tip: "Tief und kraftvoll."
+        },
+        {
+          title: "10x Schulter-Tippen",
+          sub: "Einfach · Orion-Stütz",
+          xp: 25, power: 400,
+          pose: "shouldertap",
+          tip: "Rumpf fest anspannen."
+        }
+      ],
+      advanced: [
+        {
+          title: "18x Echte Liegestütze",
+          sub: "Profi · Eclipse-Stoß",
+          xp: 50, power: 1000,
+          pose: "pushup",
+          tip: "Volle Schlagkraft!"
+        },
+        {
+          title: "15x Stuhl-Dips",
+          sub: "Profi · Dunkel-Trizeps",
+          xp: 45, power: 950,
+          pose: "dips",
+          tip: "Tief absenken."
+        }
+      ],
+      master: [
+        {
+          title: "28x Tiefe Liegestütze",
+          sub: "Meister · Eclipse-Schlag",
+          xp: 95, power: 2600,
+          pose: "pushup",
+          tip: "Maximale Oberkörper-Power!"
+        },
+        {
+          title: "22x Stuhl-Dips",
+          sub: "Meister · Orion-Arme",
+          xp: 85, power: 2200,
+          pose: "dips",
+          tip: "Sauber hochdrücken."
+        }
+      ]
+    },
+    core: {
+      easy: [
+        {
+          title: "25 Sek. Eclipse-Plank",
+          sub: "Einfach · Dunkel-Aura",
+          xp: 25, power: 450,
+          pose: "plank", sec: 25,
+          tip: "Körper gerade halten."
+        },
+        {
+          title: "14x Crunches",
+          sub: "Einfach · Orion-Mitte",
+          xp: 25, power: 400,
+          pose: "situp",
+          tip: "Fest zusammenziehen."
+        }
+      ],
+      advanced: [
+        {
+          title: "50 Sek. Plank",
+          sub: "Profi · Schatten-Wall",
+          xp: 50, power: 1000,
+          pose: "plank", sec: 50,
+          tip: "Nicht durchhängen!"
+        },
+        {
+          title: "22x Sit-Ups",
+          sub: "Profi · Dunkel-Rumpf",
+          xp: 45, power: 950,
+          pose: "situp",
+          tip: "Kraftvoll aufrichten."
+        }
+      ],
+      master: [
+        {
+          title: "80 Sek. Eclipse-Plank",
+          sub: "Meister · Finsternis",
+          xp: 90, power: 2500,
+          pose: "plank", sec: 80,
+          tip: "Eiserne Spannung!"
+        },
+        {
+          title: "30x Beinheben",
+          sub: "Meister · Orion-Kern",
+          xp: 85, power: 2200,
+          pose: "legraise",
+          tip: "Beine gestreckt lassen."
+        }
+      ]
+    },
+    legs: {
+      easy: [
+        {
+          title: "16x Kniebeugen",
+          sub: "Einfach · Dunkel-Stand",
+          xp: 25, power: 450,
+          pose: "squat",
+          tip: "Sicherer Stand."
+        },
+        {
+          title: "12x Ausfallschritte",
+          sub: "Einfach · Orion-Schritt",
+          xp: 25, power: 400,
+          pose: "lunge",
+          tip: "Kontrolliert tief gehen."
+        }
+      ],
+      advanced: [
+        {
+          title: "28x Kniebeugen",
+          sub: "Profi · Kraft-Hocke",
+          xp: 45, power: 950,
+          pose: "squat",
+          tip: "Über die Fersen hoch."
+        },
+        {
+          title: "45 Sek. Wandsitzen",
+          sub: "Profi · Schatten-Wand",
+          xp: 45, power: 900,
+          pose: "wallsit", sec: 45,
+          tip: "90 Grad im Knie."
+        }
+      ],
+      master: [
+        {
+          title: "24x Ausfallschritte",
+          sub: "Meister · Eclipse-Marsch",
+          xp: 90, power: 2400,
+          pose: "lunge",
+          tip: "Tiefe, kraftvolle Schritte."
+        },
+        {
+          title: "65 Sek. Wandsitzen",
+          sub: "Meister · Dunkel-Säule",
+          xp: 85, power: 2200,
+          pose: "wallsit", sec: 65,
+          tip: "Halte bis zum Schluss!"
+        }
+      ]
+    }
+  }
+
+    ,
+  13: {
+    arms: {
+      easy: [
+        {
+          title: "25 Sek. Wind-Punches",
+          sub: "Einfach · Sturm-Fäuste",
+          xp: 20, power: 350,
+          pose: "punch", sec: 25,
+          tip: "Leicht und blitzschnell!"
+        },
+        {
+          title: "25 Sek. Armkreisen",
+          sub: "Einfach · Wirbel-Arme",
+          xp: 20, power: 350,
+          pose: "armcircles", sec: 25,
+          tip: "Schnelle Luftwirbel!"
+        }
+      ],
+      advanced: [
+        {
+          title: "40 Sek. Wirbel-Boxen",
+          sub: "Profi · Sturm-Kombos",
+          xp: 45, power: 950,
+          pose: "punch", sec: 40,
+          tip: "Maximale Geschwindigkeit!"
+        },
+        {
+          title: "14x Schulter-Tippen",
+          sub: "Profi · Luft-Balance",
+          xp: 45, power: 900,
+          pose: "shouldertap",
+          tip: "Schneller Handwechsel."
+        }
+      ],
+      master: [
+        {
+          title: "55 Sek. Orkan-Punches",
+          sub: "Meister · Wirbelsturm",
+          xp: 90, power: 2400,
+          pose: "punch", sec: 55,
+          tip: "Wie ein Tornado schlagen!"
+        },
+        {
+          title: "22x Liegestütze",
+          sub: "Meister · Aero-Power",
+          xp: 85, power: 2200,
+          pose: "pushup",
+          tip: "Explosiv nach oben."
+        }
+      ]
+    },
+    core: {
+      easy: [
+        {
+          title: "16x Mountain Climbers",
+          sub: "Einfach · Luft-Sprint",
+          xp: 25, power: 450,
+          pose: "climber",
+          tip: "Leichtfüßig vorziehen."
+        },
+        {
+          title: "25 Sek. Wind-Plank",
+          sub: "Einfach · Schweben",
+          xp: 25, power: 400,
+          pose: "plank", sec: 25,
+          tip: "Körper gerade halten."
+        }
+      ],
+      advanced: [
+        {
+          title: "35 Sek. Mountain Climbers",
+          sub: "Profi · Sturm-Antrieb",
+          xp: 50, power: 1000,
+          pose: "climber", sec: 35,
+          tip: "Volles Tempo!"
+        },
+        {
+          title: "22x Sit-Ups",
+          sub: "Profi · Aero-Kern",
+          xp: 45, power: 950,
+          pose: "situp",
+          tip: "Flüssig aufrollen."
+        }
+      ],
+      master: [
+        {
+          title: "55 Sek. Tornado-Climbers",
+          sub: "Meister · Wirbel-Motor",
+          xp: 95, power: 2500,
+          pose: "climber", sec: 55,
+          tip: "Schneller als der Wind!"
+        },
+        {
+          title: "28x Beinheben",
+          sub: "Meister · Himmels-Kern",
+          xp: 85, power: 2200,
+          pose: "legraise",
+          tip: "Kontrolliert bewegen."
+        }
+      ]
+    },
+    legs: {
+      easy: [
+        {
+          title: "30 Sek. Hampelmänner",
+          sub: "Einfach · Wind-Hüpfer",
+          xp: 20, power: 350,
+          pose: "jump", sec: 30,
+          tip: "Federnd auf Fußballen."
+        },
+        {
+          title: "14x Ausfallschritte",
+          sub: "Einfach · Dash-Schritt",
+          xp: 25, power: 450,
+          pose: "lunge",
+          tip: "Schnell und sauber."
+        }
+      ],
+      advanced: [
+        {
+          title: "16x Sprung-Kniebeugen",
+          sub: "Profi · Himmels-Sprung",
+          xp: 50, power: 1000,
+          pose: "jump",
+          tip: "Weich landen!"
+        },
+        {
+          title: "22x Ausfallschritte",
+          sub: "Profi · Sturm-Lauf",
+          xp: 45, power: 950,
+          pose: "lunge",
+          tip: "Zügiger Wechsel."
+        }
+      ],
+      master: [
+        {
+          title: "25x Sprung-Kniebeugen",
+          sub: "Meister · Aero-Flug",
+          xp: 95, power: 2600,
+          pose: "jump",
+          tip: "Ab in die Lüfte!"
+        },
+        {
+          title: "55 Sek. Speed-Hampelmänner",
+          sub: "Meister · Wirbel-Beine",
+          xp: 85, power: 2200,
+          pose: "jump", sec: 55,
+          tip: "Höchstgeschwindigkeit!"
+        }
+      ]
+    }
+  }
+
+    ,
+  14: {
+    arms: {
+      easy: [
+        {
+          title: "14x Knie-Liegestütze",
+          sub: "Einfach · Götter-Basis",
+          xp: 25, power: 450,
+          pose: "kneepushup",
+          tip: "Perfekte Technik!"
+        },
+        {
+          title: "25 Sek. Omega-Punches",
+          sub: "Einfach · Urknall-Faust",
+          xp: 25, power: 400,
+          pose: "punch", sec: 25,
+          tip: "Volle Konzentration."
+        }
+      ],
+      advanced: [
+        {
+          title: "18x Echte Liegestütze",
+          sub: "Profi · Götter-Kraft",
+          xp: 50, power: 1000,
+          pose: "pushup",
+          tip: "Brust tief zum Boden."
+        },
+        {
+          title: "16x Stuhl-Dips",
+          sub: "Profi · Omega-Arme",
+          xp: 50, power: 1000,
+          pose: "dips",
+          tip: "Ganz durchstrecken."
+        }
+      ],
+      master: [
+        {
+          title: "30x Omega-Liegestütze",
+          sub: "Meister · Urknall-Power",
+          xp: 100, power: 2800,
+          pose: "pushup",
+          tip: "Göttliche Armkraft!"
+        },
+        {
+          title: "25x Stuhl-Dips",
+          sub: "Meister · Meister-Form",
+          xp: 90, power: 2400,
+          pose: "dips",
+          tip: "Bis zum Limit!"
+        }
+      ]
+    },
+    core: {
+      easy: [
+        {
+          title: "30 Sek. Götter-Plank",
+          sub: "Einfach · Omega-Aura",
+          xp: 25, power: 450,
+          pose: "plank", sec: 30,
+          tip: "Absolute Körperspannung."
+        },
+        {
+          title: "16x Crunches",
+          sub: "Einfach · Meister-Mitte",
+          xp: 25, power: 450,
+          pose: "situp",
+          tip: "Sauber einrollen."
+        }
+      ],
+      advanced: [
+        {
+          title: "55 Sek. Omega-Plank",
+          sub: "Profi · Götter-Schild",
+          xp: 50, power: 1000,
+          pose: "plank", sec: 55,
+          tip: "Ruhig atmen und halten."
+        },
+        {
+          title: "24x Beinheben",
+          sub: "Profi · Kosmos-Kern",
+          xp: 50, power: 1000,
+          pose: "legraise",
+          tip: "Beine gestreckt lassen."
+        }
+      ],
+      master: [
+        {
+          title: "90 Sek. Omega-Wall",
+          sub: "Meister · Unsterblich",
+          xp: 100, power: 2800,
+          pose: "plank", sec: 90,
+          tip: "90 Sekunden Götter-Fokus!"
+        },
+        {
+          title: "35x Sit-Ups",
+          sub: "Meister · Urknall-Rumpf",
+          xp: 90, power: 2400,
+          pose: "situp",
+          tip: "Volle Kraft voraus!"
+        }
+      ]
+    },
+    legs: {
+      easy: [
+        {
+          title: "18x Kniebeugen",
+          sub: "Einfach · Götter-Stand",
+          xp: 25, power: 450,
+          pose: "squat",
+          tip: "Tief und stabil."
+        },
+        {
+          title: "14x Ausfallschritte",
+          sub: "Einfach · Omega-Schritt",
+          xp: 25, power: 450,
+          pose: "lunge",
+          tip: "Saubere Balance."
+        }
+      ],
+      advanced: [
+        {
+          title: "18x Sprung-Kniebeugen",
+          sub: "Profi · Götter-Sprung",
+          xp: 50, power: 1000,
+          pose: "jump",
+          tip: "Explosiv nach oben!"
+        },
+        {
+          title: "50 Sek. Wandsitzen",
+          sub: "Profi · Omega-Säule",
+          xp: 50, power: 1000,
+          pose: "wallsit", sec: 50,
+          tip: "90 Grad halten!"
+        }
+      ],
+      master: [
+        {
+          title: "28x Omega-Sprünge",
+          sub: "Meister · Urknall-Start",
+          xp: 100, power: 2800,
+          pose: "jump",
+          tip: "Maximale Höhe!"
+        },
+        {
+          title: "75 Sek. Wandsitzen",
+          sub: "Meister · Götter-Thron",
+          xp: 90, power: 2400,
+          pose: "wallsit", sec: 75,
+          tip: "Nichts erschüttert dich!"
+        }
+      ]
+    }
+  }
+
+    ,
+  15: {
+    arms: {
+      easy: [
+        {
+          title: "12x Knie-Liegestütze",
+          sub: "Einfach · Natur-Kraft",
+          xp: 25, power: 400,
+          pose: "kneepushup",
+          tip: "Rücken gerade halten."
+        },
+        {
+          title: "25 Sek. Sturm-Punches",
+          sub: "Einfach · Smaragd-Faust",
+          xp: 20, power: 350,
+          pose: "punch", sec: 25,
+          tip: "Kraftvolle Schläge!"
+        }
+      ],
+      advanced: [
+        {
+          title: "16x Echte Liegestütze",
+          sub: "Profi · Sturm-Stoß",
+          xp: 45, power: 950,
+          pose: "pushup",
+          tip: "Brust tief absenken."
+        },
+        {
+          title: "14x Stuhl-Dips",
+          sub: "Profi · Wurzel-Kraft",
+          xp: 45, power: 900,
+          pose: "dips",
+          tip: "Sauber hochdrücken."
+        }
+      ],
+      master: [
+        {
+          title: "25x Sturm-Liegestütze",
+          sub: "Meister · Natur-Gewalt",
+          xp: 90, power: 2500,
+          pose: "pushup",
+          tip: "Volle Power in den Armen!"
+        },
+        {
+          title: "45 Sek. Smaragd-Boxen",
+          sub: "Meister · Omega-Sturm",
+          xp: 85, power: 2200,
+          pose: "punch", sec: 45,
+          tip: "Mit voller Wucht!"
+        }
+      ]
+    },
+    core: {
+      easy: [
+        {
+          title: "25 Sek. Eichen-Plank",
+          sub: "Einfach · Fester Stamm",
+          xp: 25, power: 450,
+          pose: "plank", sec: 25,
+          tip: "Stark wie ein Baum!"
+        },
+        {
+          title: "14x Crunches",
+          sub: "Einfach · Sturm-Mitte",
+          xp: 25, power: 400,
+          pose: "situp",
+          tip: "Bauch anspannen."
+        }
+      ],
+      advanced: [
+        {
+          title: "45 Sek. Sturm-Plank",
+          sub: "Profi · Natur-Schild",
+          xp: 45, power: 950,
+          pose: "plank", sec: 45,
+          tip: "Ruhig atmen und halten."
+        },
+        {
+          title: "22x Sit-Ups",
+          sub: "Profi · Smaragd-Rumpf",
+          xp: 45, power: 900,
+          pose: "situp",
+          tip: "Gleichmäßig arbeiten."
+        }
+      ],
+      master: [
+        {
+          title: "75 Sek. Mammut-Plank",
+          sub: "Meister · Unerschütterlich",
+          xp: 90, power: 2400,
+          pose: "plank", sec: 75,
+          tip: "Tief verwurzelt bleiben!"
+        },
+        {
+          title: "28x Beinheben",
+          sub: "Meister · Sturm-Kern",
+          xp: 85, power: 2200,
+          pose: "legraise",
+          tip: "Kontrolliert absenken."
+        }
+      ]
+    },
+    legs: {
+      easy: [
+        {
+          title: "18x Kniebeugen",
+          sub: "Einfach · Starke Wurzeln",
+          xp: 25, power: 450,
+          pose: "squat",
+          tip: "Tief in die Hocke gehen."
+        },
+        {
+          title: "12x Ausfallschritte",
+          sub: "Einfach · Sturm-Schritt",
+          xp: 25, power: 400,
+          pose: "lunge",
+          tip: "Sicherer Stand."
+        }
+      ],
+      advanced: [
+        {
+          title: "30x Kniebeugen",
+          sub: "Profi · Smaragd-Beine",
+          xp: 50, power: 1000,
+          pose: "squat",
+          tip: "Über die Fersen hoch!"
+        },
+        {
+          title: "20x Ausfallschritte",
+          sub: "Profi · Natur-Marsch",
+          xp: 45, power: 950,
+          pose: "lunge",
+          tip: "Große, tiefe Schritte."
+        }
+      ],
+      master: [
+        {
+          title: "24x Sturm-Sprünge",
+          sub: "Meister · Erdbeben",
+          xp: 95, power: 2600,
+          pose: "jump",
+          tip: "Mit voller Beinkraft hoch!"
+        },
+        {
+          title: "65 Sek. Wandsitzen",
+          sub: "Meister · Eichen-Säule",
+          xp: 85, power: 2200,
+          pose: "wallsit", sec: 65,
+          tip: "Halte bis zum Gong!"
+        }
+      ]
+    }
+  }
+  
 };
 let state = JSON.parse(
   localStorage.getItem("zwarriors_neon_v8")
