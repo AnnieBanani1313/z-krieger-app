@@ -71,7 +71,7 @@ const BODY_WORKOUTS = {
     ]
   }
 };
-let state = JSON.parse(localStorage.getItem("zwarriors_poster_v2")) || {
+let state = JSON.parse(localStorage.getItem("zwarriors_poster_v4")) || {
   level: 1, xp: 0, powerLevel: 1000, carouselIndex: 0, selectedChar: 1,
   selectedStage: 1, selectedPart: "arms", difficulty: "easy", partXP: { arms: 0, core: 0, legs: 0 }
 };
@@ -292,7 +292,7 @@ function updateUI() {
     pillsContainer.appendChild(btn);
   });
 
-  localStorage.setItem("zwarriors_poster_v2", JSON.stringify(state));
+  localStorage.setItem("zwarriors_poster_v4", JSON.stringify(state));
 }
 
 document.getElementById("enter-app-btn").addEventListener("click", () => {
