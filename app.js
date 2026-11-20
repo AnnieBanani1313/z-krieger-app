@@ -71,6 +71,7 @@ const BODY_WORKOUTS = {
     ]
   }
 };
+
 let state = JSON.parse(localStorage.getItem("zwarriors_neon_v7")) || {
   level: 1, xp: 0, powerLevel: 1000, carouselIndex: 0, selectedChar: 1,
   selectedStage: 1, selectedPart: "arms", difficulty: "easy", partXP: { arms: 0, core: 0, legs: 0 }
@@ -136,11 +137,6 @@ function updateStaggeredCarousel() {
   document.getElementById("name-curr").textContent = cCurr.name;
   document.getElementById("lvl-curr").textContent = `LVL ${state.level}`;
   document.getElementById("evo-curr").textContent = `STUFE · ${getMaxUnlockedStage(state.level)}`;
-
-  const centerImg = document.getElementById("img-curr");
-  centerImg.style.transform = cCurr.id === 3
-    ? "translateY(-64%) scale(2.45)"
-    : "translateY(-66%) scale(2.05)";
 
   document.getElementById("fb-prev").textContent = `#${String(cPrev.id).padStart(2, "0")}`;
   document.getElementById("fb-curr").textContent = `#${String(cCurr.id).padStart(2, "0")}`;
@@ -217,6 +213,7 @@ function openCharacterDetails(charId) {
 
   showScreen("detail-screen");
 }
+
 function renderWorkouts() {
   const partData = BODY_WORKOUTS[state.selectedPart] || BODY_WORKOUTS.arms;
   document.getElementById("selected-part-title").textContent = partData.label;
