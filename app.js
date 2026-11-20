@@ -71,7 +71,7 @@ const BODY_WORKOUTS = {
     ]
   }
 };
-let state = JSON.parse(localStorage.getItem("zwarriors_neon_v1")) || {
+let state = JSON.parse(localStorage.getItem("zwarriors_neon_v2")) || {
   level: 1, xp: 0, powerLevel: 1000, carouselIndex: 0, selectedChar: 1,
   selectedStage: 1, selectedPart: "arms", difficulty: "easy", partXP: { arms: 0, core: 0, legs: 0 }
 };
@@ -132,7 +132,6 @@ function updateStaggeredCarousel() {
   document.getElementById("card-curr").style.background = cCurr.color;
   document.getElementById("card-next").style.background = cNext.color;
 
-  // Name & Level stehen links neben den Kacheln
   document.getElementById("name-curr").textContent = cCurr.name;
   document.getElementById("lvl-curr").textContent = `LVL ${state.level}`;
   document.getElementById("evo-curr").textContent = `STUFE ${getMaxUnlockedStage(state.level)}/5`;
@@ -161,11 +160,27 @@ function stepCarousel(dir) {
 }
 
 let touchStartY = 0;
+let isSwiping = false;
 const carouselEl = document.getElementById("staggered-carousel");
-carouselEl.addEventListener("touchstart", e => { touchStartY = e.touches[0].clientY; }, { passive: true });
+
+carouselEl.addEventListener("touchstart", e => {
+  if (e.touches.length > 0) {
+    touchStartY = e.touches[0].clientY;
+    isSwiping = true;
+  }
+}, { passive: true });
+
+carouselEl.addEventListener("touchmove", e => {
+  if (isSwiping) e.preventDefault();
+}, { passive: false });
+
 carouselEl.addEventListener("touchend", e => {
+  if (!isSwiping || e.changedTouches.length === 0) return;
+  isSwiping = false;
   const diff = touchStartY - e.changedTouches[0].clientY;
-  if (Math.abs(diff) > 30) stepCarousel(diff > 0 ? 1 : -1);
+  if (Math.abs(diff) > 25) {
+    stepCarousel(diff > 0 ? 1 : -1);
+  }
 });
 
 document.getElementById("card-prev").addEventListener("click", () => stepCarousel(-1));
@@ -293,7 +308,7 @@ function updateUI() {
     pillsContainer.appendChild(btn);
   });
 
-  localStorage.setItem("zwarriors_neon_v1", JSON.stringify(state));
+  localStorage.setItem("zwarriors_neon_v2", JSON.stringify(state));
 }
 
 document.getElementById("enter-app-btn").addEventListener("click", () => {
