@@ -96,43 +96,111 @@ body {
 .avatar-thumb { width: 38px; height: 38px; border-radius: 10px; background: var(--orange); overflow: hidden; }
 .avatar-thumb img { width: 100%; height: 100%; object-fit: cover; object-position: top; }
 
-/* SCREEN 2: KÄMPFERAUSWAHL */
+/* SCREEN 2: MITTLERES QUADRAT + SCHRÄGE KACHELN DARÜBER & DARUNTER */
 .dragon-svg { position: absolute; left: -25px; top: 25%; width: 245px; height: 360px; opacity: 0.045; pointer-events: none; z-index: 1; }
-.mockup-split-body { flex: 1; position: relative; display: flex; margin-top: 12px; }
-.left-info-col { width: 46%; display: flex; flex-direction: column; justify-content: space-between; padding: 6px 0 18px; z-index: 5; pointer-events: none; }
+.mockup-split-body { flex: 1; position: relative; display: flex; margin-top: 10px; }
+.left-info-col { width: 45%; display: flex; flex-direction: column; justify-content: space-between; padding: 6px 0 18px; z-index: 5; pointer-events: none; }
 .orange-kicker-tall { display: block; font-family: 'Anton', sans-serif; font-size: 1.45rem; letter-spacing: 0.8px; color: var(--orange-bright); line-height: 1; }
 .scroll-indicator { width: 3px; height: 54px; background: #282830; border-radius: 99px; margin-left: 6px; overflow: hidden; }
 .scroll-thumb { width: 100%; height: 20px; background: var(--orange); border-radius: 99px; transition: transform 0.25s ease; }
 .orange-bottom-caption { font-family: 'Anton', sans-serif; font-size: 1.05rem; letter-spacing: 0.6px; line-height: 1.15; color: var(--orange); }
 
-.staggered-carousel { position: absolute; right: -6px; top: 0; bottom: 0; width: 68%; touch-action: pan-y; }
-.s-card { position: absolute; border-radius: 22px; cursor: pointer; transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1); }
+.staggered-carousel { position: absolute; right: -8px; top: 0; bottom: 0; width: 70%; touch-action: pan-y; }
 
-.card-top { top: 2%; right: 0; width: 148px; height: 140px; opacity: 0.92; z-index: 2; }
-.card-top .s-char-img { position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); width: 145px; height: 175px; object-fit: contain; mix-blend-mode: lighten; }
+.s-card {
+  position: absolute;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
 
+/* 1. OBERE KARTE: Unten schräg abgeschnitten */
+.card-top {
+  top: 2%;
+  right: 0;
+  width: 155px;
+  height: 155px;
+  z-index: 2;
+  opacity: 0.95;
+  border-radius: 22px 0 0 22px;
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 0 78%);
+}
+
+.card-top .s-char-img {
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 150px;
+  height: 185px;
+  object-fit: contain;
+  mix-blend-mode: lighten;
+}
+
+/* 2. MITTLERE KARTE (Ausgewählt): Sauberes abgerundetes Quadrat */
 .card-center {
   top: 50%;
-  right: 26px;
-  transform: translateY(-46%);
+  right: 22px;
+  transform: translateY(-45%);
   width: 215px;
   height: 215px;
   z-index: 6;
-  box-shadow: 0 20px 42px rgba(0, 0, 0, 0.85);
+  border-radius: 24px;
+  box-shadow: 0 22px 45px rgba(0, 0, 0, 0.9);
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
   padding: 14px 16px;
 }
 
-.card-center .s-char-img { position: absolute; bottom: 44px; left: 50%; transform: translateX(-50%); width: 212px; height: 255px; object-fit: contain; mix-blend-mode: lighten; pointer-events: none; }
-.center-name { font-family: 'Anton', sans-serif; font-size: 1.45rem; letter-spacing: 0.5px; color: #0a0a0c; line-height: 1; margin-bottom: 5px; }
+.card-center .s-char-img {
+  position: absolute;
+  bottom: 46px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 225px;
+  height: 270px;
+  object-fit: contain;
+  mix-blend-mode: lighten;
+  pointer-events: none;
+  z-index: 8;
+}
+
+.center-name { font-family: 'Anton', sans-serif; font-size: 1.5rem; letter-spacing: 0.5px; color: #0a0a0c; line-height: 1; margin-bottom: 5px; }
 .center-pills { display: flex; gap: 6px; }
 .dark-pill { background: #0a0a0c; color: var(--orange-bright); font-family: 'Anton', sans-serif; font-size: 0.75rem; letter-spacing: 0.6px; padding: 3px 9px; border-radius: 6px; }
 
-.card-bottom { bottom: 2%; right: 0; width: 152px; height: 145px; opacity: 0.92; z-index: 3; }
-.card-bottom .s-char-img { position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); width: 148px; height: 180px; object-fit: contain; mix-blend-mode: lighten; }
-.s-fallback { position: absolute; inset: 0; display: grid; place-items: center; font-family: 'Anton', sans-serif; font-size: 2.3rem; color: rgba(0, 0, 0, 0.3); }
+/* 3. UNTERE KARTE: Oben schräg abgeschnitten */
+.card-bottom {
+  bottom: 1%;
+  right: 0;
+  width: 158px;
+  height: 155px;
+  z-index: 3;
+  opacity: 0.95;
+  border-radius: 22px 0 0 22px;
+  clip-path: polygon(0 22%, 100% 0, 100% 100%, 0 100%);
+}
+
+.card-bottom .s-char-img {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 150px;
+  height: 185px;
+  object-fit: contain;
+  mix-blend-mode: lighten;
+}
+
+.s-fallback {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-family: 'Anton', sans-serif;
+  font-size: 2.3rem;
+  color: rgba(0, 0, 0, 0.3);
+}
 /* SCREEN 3: FIGHTERS STECKBRIEF */
 .orange-num-tag { font-family: 'Anton', sans-serif; font-size: 1.4rem; color: var(--orange); letter-spacing: 1px; }
 .fighters-backdrop-area { position: relative; height: 300px; display: grid; place-items: center; }
