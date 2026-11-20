@@ -43,21 +43,16 @@ body {
   letter-spacing: 1px;
   color: var(--orange);
   text-transform: uppercase;
-  -webkit-text-stroke: 1.5px var(--orange);
+  -webkit-text-stroke: 2px var(--orange);
   transform: scaleY(1.22);
   transform-origin: left top;
   position: relative;
   z-index: 1;
 }
 
-.tall-orange-title.select-big-word {
-  font-size: 3.7rem;
-  line-height: 0.9;
-  margin-top: 2px;
-}
+.tall-orange-title.select-big-word { font-size: 3.7rem; line-height: 0.9; margin-top: 2px; }
 
 .tall-orange-title.center-name-title {
-  font-family: 'Anton', sans-serif;
   font-size: 2.3rem;
   letter-spacing: 1px;
   color: #ffffff;
@@ -67,10 +62,7 @@ body {
   margin-bottom: 6px;
 }
 
-.tall-orange-title.small {
-  font-size: 2.5rem;
-  transform-origin: center;
-}
+.tall-orange-title.small { font-size: 2.5rem; transform-origin: center; }
 
 .tall-orange-heading {
   font-family: 'Anton', sans-serif;
@@ -121,7 +113,7 @@ body {
 .avatar-thumb { width: 38px; height: 38px; border-radius: 10px; background: var(--orange); overflow: hidden; }
 .avatar-thumb img { width: 100%; height: 100%; object-fit: cover; object-position: top; }
 
-/* SCREEN 2: BÜNDIG AM RECHTEN RAND & INFOS UNTEN IN DER HAUPTKACHEL */
+/* SCREEN 2: KÄMPFERAUSWAHL */
 .dragon-svg { position: absolute; left: -25px; top: 25%; width: 245px; height: 360px; opacity: 0.045; pointer-events: none; z-index: 0; }
 .mockup-split-body { flex: 1; position: relative; display: flex; margin-top: 6px; }
 .left-info-col { width: 46%; display: flex; flex-direction: column; justify-content: space-between; padding: 6px 0 14px; z-index: 1; pointer-events: none; }
@@ -130,70 +122,43 @@ body {
 .scroll-thumb { width: 100%; height: 20px; background: var(--orange); border-radius: 99px; transition: transform 0.25s ease; }
 .orange-bottom-caption { font-family: 'Anton', sans-serif; font-size: 1.25rem; letter-spacing: 0.6px; line-height: 1.05; color: var(--orange); -webkit-text-stroke: 0.4px var(--orange); }
 
-.staggered-carousel {
-  position: absolute;
-  right: -20px;
-  top: 0;
-  bottom: 0;
-  width: 76%;
-  touch-action: none;
-  z-index: 5;
-}
+.staggered-carousel { position: absolute; right: -20px; top: 0; bottom: 0; width: 78%; touch-action: none; z-index: 5; }
 
+/* feste Bühne 252 x 497 px, alles darin absolut platziert */
 .neon-stack {
-  position: absolute;
-  right: 0;
-  top: 50%;
-  transform: translateY(-48%);
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 0px;
+  position: absolute; right: -10px; top: 50%;
+  width: 252px; height: 497px;
+  transform: translateY(-50%);
+  transform-origin: right center;
 }
 
-.s-card { cursor: pointer; transition: all 0.28s cubic-bezier(0.22, 1, 0.36, 1); position: relative; }
+.s-card { position: absolute; cursor: pointer; transition: all 0.28s cubic-bezier(0.22, 1, 0.36, 1); }
+.card-top    { right: 0;    top: 0;     width: 165px; height: 145px; z-index: 2; clip-path: polygon(0 16%, 100% 0, 100% 100%, 0 100%); }
+.card-center { right: 32px; top: 131px; width: 220px; height: 235px; z-index: 6; border-radius: 24px; box-shadow: 0 22px 48px rgba(0, 0, 0, 0.9); }
+.card-bottom { right: 0;    top: 352px; width: 165px; height: 145px; z-index: 3; clip-path: polygon(0 0, 100% 0, 100% 100%, 0 84%); }
 
-.card-top {
-  width: 165px;
-  height: 145px;
-  z-index: 2;
-  border-radius: 22px 0 0 0;
-  clip-path: polygon(0 16%, 100% 0, 100% 100%, 0 100%);
-  margin-bottom: -14px;
+/* Figuren: gleiche Größe auf jedem Gerät, Füße enden über dem Textfeld */
+.s-char-img { position: absolute; object-fit: contain; pointer-events: none; filter: drop-shadow(0 12px 16px rgba(0, 0, 0, 0.8)); }
+.char-top    { right: 0;    top: -45px; width: 165px; height: 185px; object-position: center bottom; z-index: 4; }
+.char-center { right: 17px; top: 12px;  width: 250px; height: 290px; object-position: center bottom; z-index: 15; }
+.char-bottom { right: 0;    top: 368px; width: 165px; height: 135px; object-position: center center; z-index: 4; }
+
+/* Textfeld liegt AUSSERHALB der Karte, daher immer über der Figur */
+.center-card-footer {
+  position: absolute; right: 32px; top: 300px; width: 220px; height: 66px;
+  padding: 0 14px 10px;
+  display: flex; flex-direction: column; justify-content: flex-end;
+  border-radius: 0 0 24px 24px;
+  background: linear-gradient(to top, rgba(8, 8, 10, 0.95) 0%, rgba(8, 8, 10, 0.95) 60%, rgba(8, 8, 10, 0) 100%);
+  z-index: 20; pointer-events: none;
 }
-
-.card-center {
-  width: 220px;
-  height: 235px;
-  margin-right: 32px;
-  z-index: 6;
-  border-radius: 24px;
-  box-shadow: 0 22px 48px rgba(0, 0, 0, 0.9);
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  padding: 12px 16px;
-}
-
-.center-card-footer { position: relative; z-index: 16; pointer-events: none; }
-.center-name { font-family: 'Anton', sans-serif; font-size: 1.55rem; letter-spacing: 0.6px; color: #0a0a0c; line-height: 1; margin-bottom: 4px; }
+.center-name { font-family: 'Anton', sans-serif; font-size: 1.5rem; letter-spacing: 0.6px; color: #fff; -webkit-text-stroke: 0.4px #fff; text-shadow: 0 2px 6px #000; line-height: 1; margin-bottom: 5px; }
 .center-pills { display: flex; gap: 6px; }
-.dark-pill { background: #0a0a0c; color: var(--orange-bright); font-family: 'Anton', sans-serif; font-size: 0.78rem; letter-spacing: 0.6px; padding: 2px 9px; border-radius: 6px; }
-
-.card-bottom {
-  width: 165px;
-  height: 145px;
-  z-index: 3;
-  border-radius: 0 0 0 22px;
-  clip-path: polygon(0 0, 100% 0, 100% 100%, 0 84%);
-  margin-top: -14px;
-}
-
-.s-char-img { position: absolute; object-fit: contain; pointer-events: none; filter: drop-shadow(0 14px 20px rgba(0, 0, 0, 0.85)); }
-.char-top { top: 4%; right: -6px; width: 210px; height: 240px; transform: scale(1.65); z-index: 8; }
-.char-center { top: 50%; right: 20px; width: 280px; height: 330px; transform: translateY(-66%) scale(2.05); z-index: 15; }
-.char-bottom { bottom: 2%; right: -4px; width: 210px; height: 240px; transform: scale(1.65); z-index: 9; }
+.dark-pill { background: var(--orange); color: #0a0a0c; font-family: 'Anton', sans-serif; font-size: 0.78rem; letter-spacing: 0.6px; padding: 2px 9px; border-radius: 6px; }
 .s-fallback { position: absolute; inset: 0; display: grid; place-items: center; font-family: 'Anton', sans-serif; font-size: 2.3rem; color: rgba(0, 0, 0, 0.25); }
+
+@media (max-height: 720px) { .neon-stack { transform: translateY(-50%) scale(0.82); } }
+
 /* SCREEN 3: FIGHTERS STECKBRIEF */
 .orange-num-tag { font-family: 'Anton', sans-serif; font-size: 1.5rem; color: var(--orange); letter-spacing: 1px; }
 .fighters-backdrop-area { position: relative; height: 290px; display: grid; place-items: center; }
