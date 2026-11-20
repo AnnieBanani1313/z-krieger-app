@@ -113,7 +113,6 @@ body {
 .ki-sub-line strong { color: #ffffff; }
 .avatar-thumb { width: 38px; height: 38px; border-radius: 10px; background: var(--orange); overflow: hidden; }
 .avatar-thumb img { width: 100%; height: 100%; object-fit: cover; object-position: top; }
-
 /* SCREEN 2: KARUSSELL */
 .dragon-svg { position: absolute; left: -25px; top: 25%; width: 245px; height: 360px; opacity: 0.045; pointer-events: none; z-index: 0; }
 .mockup-split-body { flex: 1; position: relative; display: flex; margin-top: 6px; }
@@ -214,6 +213,13 @@ body {
 .char-bottom { bottom: -6px; right: 12px; width: 135px; height: 145px; z-index: 4; }
 .s-fallback { position: absolute; inset: 0; display: grid; place-items: center; font-family: 'Anton', sans-serif; font-size: 2.3rem; color: rgba(0, 0, 0, 0.25); }
 
+/* Cyber-Red (id 3) proportional vergrößern */
+.char-center.is-c3 { transform: translateY(-58%) scale(1.42) !important; }
+.char-top.is-c3,
+.char-bottom.is-c3,
+.fighters-center-char.is-c3,
+.arena-char-img.is-c3 { transform: scale(1.42) !important; }
+
 /* SCREEN 3 & 4 */
 .orange-num-tag { font-family: 'Anton', sans-serif; font-size: 1.5rem; color: var(--orange); letter-spacing: 1px; }
 .fighters-backdrop-area { position: relative; height: 290px; display: grid; place-items: center; }
@@ -263,4 +269,4 @@ body {
 .levelup-card { background: var(--surface); border: 2px solid var(--orange); border-radius: 16px; padding: 24px; text-align: center; max-width: 330px; width: 100%; display: flex; flex-direction: column; gap: 12px; }
 .orange-tag { align-self: center; background: var(--orange); color: #0a0a0c; font-family: 'Anton', sans-serif; font-size: 0.92rem; letter-spacing: 0.8px; padding: 3px 12px; border-radius: 6px; }
 .reset-link { background: none; border: none; color: var(--muted); font-size: 0.75rem; text-decoration: underline; cursor: pointer; margin: 4px auto; }
-
+                  
