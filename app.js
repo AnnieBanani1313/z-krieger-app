@@ -3848,6 +3848,11 @@ function completeExercise(gainedXP, gainedPower) {
     stageEl.classList.remove("shake-active");
     void stageEl.offsetWidth;
     stageEl.classList.add("shake-active");
+    triggerKiImpact(
+  state.xp + finalXP >= state.level * 100 ||
+  (activeExercise && activeExercise.isBoss)
+);
+    
   }
 
   const xpNeeded = state.level * 100;
