@@ -251,27 +251,36 @@ body {
 
 .intro-artwork-wrap {
   position: relative;
-  flex: 1;
-  min-height: 0;
   width: 100%;
-  margin-top: -28px;
+  height: 225px;
+  max-height: 225px;
+  margin-top: -12px;
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 3;
   pointer-events: none;
+  overflow: hidden;
 }
 
 .intro-artwork-img {
-  width: 100%;
+  width: auto;
+  max-width: 82%;
   height: 100%;
-  max-height: 360px;
+  max-height: 225px;
   object-fit: contain;
   mask-image: linear-gradient(
     to bottom,
     black 78%,
     transparent 100%
   );
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    black 78%,
+    transparent 100%
+  );
+}
+  
   -webkit-mask-image: linear-gradient(
     to bottom,
     black 78%,
