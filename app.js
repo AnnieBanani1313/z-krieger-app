@@ -4153,19 +4153,16 @@ document.getElementById("reset-btn")
 
 loadSmartImage(
   document.getElementById("intro-hero-img"),
-  "c1_s1",
-  () => {}
+  "intro_bg",
+  () => {
+    loadSmartImage(
+      document.getElementById("intro-hero-img"),
+      "c1_s1",
+      () => {}
+    );
+  }
 );
-loadSmartImage(
-  document.getElementById("intro-left-img"),
-  "c2_s1",
-  () => {}
-);
-loadSmartImage(
-  document.getElementById("intro-right-img"),
-  "c3_s1",
-  () => {}
-);
+
 
 updateStaggeredCarousel();
 updateUI();
