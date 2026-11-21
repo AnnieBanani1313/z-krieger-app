@@ -57,11 +57,13 @@
         KRIEGER WÄHLEN &rarr;
       </button>
       
+              <button id="enter-app-btn"
         class="tall-orange-btn">
         KRIEGER WÄHLEN &rarr;
       </button>
     </div>
   </section>
+  
   
   
 
@@ -233,5 +235,21 @@
   </div>
 
   <script src="app.js?v=23"></script>
+    <script src="app.js?v=25"></script>
+  <script>
+    document.getElementById("enter-app-btn")
+      .onclick = function () {
+        document.getElementById("intro-screen")
+          .classList.add("hidden");
+        document.getElementById("select-screen")
+          .classList.remove("hidden");
+        if (typeof updateStaggeredCarousel === "function") {
+          updateStaggeredCarousel();
+        }
+      };
+  </script>
+</body>
+</html>
+
 </body>
 </html>
