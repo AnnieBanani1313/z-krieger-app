@@ -3274,11 +3274,112 @@ function getComicSVG(pose) {
   return svgs[pose] || svgs.punch;
 }
 
+const CLEAN_CACHE = {};
+
+function cleanWhiteBg(imgEl, baseName) {
+  try {
+    const hit = CLEAN_CACHE[baseName];
+    if (hit === "dark") {
+      imgEl.classList.remove("white-bg");
+      return false;
+    }
+    if (hit) {
+      imgEl.dataset.cleaned = baseName;
+      imgEl.classList.add("white-bg");
+      imgEl.src = hit;
+      return true;
+    }
+    const w = imgEl.naturalWidth;
+    const h = imgEl.naturalHeight;
+    if (!w || !h) return false;
+    const cv =
+      document.createElement("canvas");
+    cv.width = w;
+    cv.height = h;
+    const ctx = cv.getContext("2d");
+    ctx.drawImage(imgEl, 0, 0);
+    const img =
+      ctx.getImageData(0, 0, w, h);
+    const d = img.data;
+    if (
+      d[3] < 20 ||
+      d[0] < 220 ||
+      d[1] < 220 ||
+      d[2] < 220
+    ) {
+      CLEAN_CACHE[baseName] = "dark";
+      imgEl.classList.remove("white-bg");
+      return false;
+    }
+    const vis = new Uint8Array(w * h);
+    const q = new Int32Array(w * h);
+    let head = 0;
+    let tail = 0;
+    const push = (x, y) => {
+      if (
+        x < 0 || x >= w ||
+        y < 0 || y >= h
+      ) return;
+      const p = y * w + x;
+      if (vis[p]) return;
+      const i = p * 4;
+      const mn = Math.min(
+        d[i], d[i + 1], d[i + 2]
+      );
+      if (mn > 225) {
+        vis[p] = 1;
+        q[tail++] = p;
+      } else if (mn > 195) {
+        d[i + 3] = Math.min(
+          d[i + 3], (228 - mn) * 8
+        );
+      }
+    };
+    for (let x = 0; x < w; x++) {
+      push(x, 0);
+      push(x, h - 1);
+    }
+    for (let y = 0; y < h; y++) {
+      push(0, y);
+      push(w - 1, y);
+    }
+    while (head < tail) {
+      const p = q[head++];
+      d[p * 4 + 3] = 0;
+      const x = p % w;
+      const y = (p - x) / w;
+      push(x + 1, y);
+      push(x - 1, y);
+      push(x, y + 1);
+      push(x, y - 1);
+    }
+    ctx.putImageData(img, 0, 0);
+    const url = cv.toDataURL("image/png");
+    CLEAN_CACHE[baseName] = url;
+    imgEl.dataset.cleaned = baseName;
+    imgEl.classList.add("white-bg");
+    imgEl.src = url;
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+
 function loadSmartImage(
   imgEl, baseName, onFail, onSuccess
 ) {
   imgEl.style.display = "none";
+  imgEl.classList.remove("white-bg");
+  imgEl.dataset.cleaned = "";
   imgEl.onload = () => {
+    if (
+      baseName.startsWith("c") &&
+      imgEl.dataset.cleaned !== baseName
+    ) {
+      if (cleanWhiteBg(imgEl, baseName)) {
+        return;
+      }
+    }
     imgEl.style.display = "block";
     if (onSuccess) onSuccess();
   };
@@ -3293,13 +3394,6 @@ function loadSmartImage(
   imgEl.src = `${baseName}.png`;
 }
 
-function getMaxUnlockedStage(lvl) {
-  let max = 1;
-  STAGE_RULES.forEach(s => {
-    if (lvl >= s.minLevel) max = s.stage;
-  });
-  return max;
-}
 
 function updateStaggeredCarousel() {
   const total = CHARACTERS.length;
