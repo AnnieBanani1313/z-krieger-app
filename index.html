@@ -8,7 +8,19 @@
   <link rel="manifest" href="manifest.json" />
   <link rel="apple-touch-icon" href="c1_s1.png" />
   <title>Z-Krieger Training</title>
-  <link rel="stylesheet" href="style.css?v=14" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
+  <!-- TEMPORAER: zeigt JavaScript-Fehler als roten Balken -->
+  <script>
+    window.onerror = function (m, s, l) {
+      var d = document.createElement("div");
+      d.style.cssText = "position:fixed;top:0;left:0;right:0;z-index:99999;background:#c00;color:#fff;font:12px monospace;padding:6px";
+      d.textContent = m + " (Zeile " + l + ")";
+      document.body.appendChild(d);
+    };
+  </script>
+  <link rel="stylesheet" href="style.css?v=16" />
 </head>
 <body>
   <!-- SCREEN 1: INTRO -->
@@ -49,3 +61,155 @@
           <img id="header-avatar-img" alt="Avatar" />
         </div>
       </div>
+    </header>
+
+    <div class="mockup-split-body">
+      <div class="left-info-col">
+        <div>
+          <span class="orange-kicker-tall">WÄHLE DEINEN</span>
+          <h2 class="tall-orange-title select-big-word">KRIEGER</h2>
+        </div>
+
+        <div class="scroll-indicator">
+          <div id="scroll-thumb" class="scroll-thumb"></div>
+        </div>
+
+        <p class="orange-bottom-caption">UND STARTE DEIN<br>TRAINING...</p>
+      </div>
+
+      <div id="staggered-carousel" class="staggered-carousel">
+        <div class="neon-stack">
+          <div id="card-prev" class="s-card card-top"><div id="fb-prev" class="s-fallback">#15</div></div>
+          <div id="card-curr" class="s-card card-center"><div id="fb-curr" class="s-fallback">#01</div></div>
+          <div id="card-next" class="s-card card-bottom"><div id="fb-next" class="s-fallback">#02</div></div>
+
+          <img id="img-prev" class="s-char-img char-top" alt="" />
+          <img id="img-curr" class="s-char-img char-center" alt="" />
+          <img id="img-next" class="s-char-img char-bottom" alt="" />
+
+          <div class="center-card-footer">
+            <div id="name-curr" class="center-name">SON-BLITZ</div>
+            <div class="center-pills">
+              <span id="lvl-curr" class="dark-pill">LVL 1</span>
+              <span id="evo-curr" class="dark-pill">STUFE · 1</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SCREEN 3: FIGHTER STECKBRIEF -->
+  <section id="detail-screen" class="poster-screen hidden">
+    <header class="poster-nav">
+      <button id="back-to-carousel" class="dark-square-btn" aria-label="Zurück">&lt;</button>
+      <span id="detail-num" class="orange-num-tag">001</span>
+    </header>
+
+    <div class="fighters-backdrop-area">
+      <div class="mega-fighters-word">FIGHTERS</div>
+      <img id="detail-img" class="fighters-center-char" alt="Kämpfer" />
+      <div id="detail-placeholder" class="placeholder-box hidden">
+        <span id="detail-placeholder-code">c1_s1.png</span>
+      </div>
+    </div>
+
+    <div class="fighters-bio-block">
+      <h2 id="detail-name" class="tall-orange-title center-name-title">SON-BLITZ</h2>
+      <p id="detail-bio" class="poster-copy center">Furchtloser Saiyajin-Krieger.</p>
+
+      <div class="specs-strip">
+        <div>
+          <span>SPEZIAL-ATTACKE</span>
+          <strong id="detail-attack">SONNEN-KAMEHA</strong>
+        </div>
+        <div>
+          <span>FOKUS</span>
+          <strong id="detail-focus">GANZKÖRPER</strong>
+        </div>
+      </div>
+    </div>
+
+    <button id="confirm-fighter-btn" class="tall-orange-btn">IN DIE ARENA &rarr;</button>
+  </section>
+
+  <!-- SCREEN 4: TRAININGS-ARENA -->
+  <section id="arena-screen" class="poster-screen arena-mode hidden">
+    <header class="poster-nav">
+      <button id="arena-back-btn" class="dark-square-btn" aria-label="Zurück">&lt;</button>
+      <div class="ki-badge">KI: <span id="power-level">0</span></div>
+    </header>
+
+    <div class="arena-poster-stage">
+      <div id="bg-watermark" class="mega-fighters-word arena-bg-word">SON-BLITZ</div>
+      <div class="arena-top-info">
+        <span id="char-num" class="orange-num-tag">001</span>
+        <span id="fighter-title" class="orange-pill">SON-BLITZ · STUFE 1</span>
+      </div>
+
+      <div class="fighter-scanner">
+        <img id="fighter-img" class="arena-char-img" alt="Arena Kämpfer" />
+        <div id="placeholder-box" class="placeholder-box hidden">
+          <span id="placeholder-code">c1_s1.png</span>
+        </div>
+
+        <button class="body-hotspot active" data-part="arms" style="top: 34%; left: 26%;">💪 ARME</button>
+        <button class="body-hotspot" data-part="core" style="top: 47%; left: 52%;">⚡ BAUCH</button>
+        <button class="body-hotspot" data-part="legs" style="top: 68%; left: 36%;">🦵 BEINE</button>
+      </div>
+
+      <div id="stage-pills" class="stage-pills"></div>
+
+      <div class="body-stats-grid">
+        <div class="stat-box active-box" data-part-box="arms">
+          <span>ARME</span>
+          <strong id="stat-arms">LVL 1</strong>
+        </div>
+        <div class="stat-box" data-part-box="core">
+          <span>BAUCH</span>
+          <strong id="stat-core">LVL 1</strong>
+        </div>
+        <div class="stat-box" data-part-box="legs">
+          <span>BEINE</span>
+          <strong id="stat-legs">LVL 1</strong>
+        </div>
+      </div>
+
+      <div class="xp-row">
+        <span id="level-label">LVL 1</span>
+        <div class="xp-track">
+          <div id="ki-bar-fill" class="xp-fill" style="width: 0%;"></div>
+        </div>
+        <span id="xp-text">0 / 100 XP</span>
+      </div>
+    </div>
+
+    <div class="flex-1">
+      <div class="training-head">
+        <h3 id="selected-part-title" class="tall-orange-heading">TRAINING: ARME &amp; BRUST</h3>
+        <div class="diff-switch">
+          <button class="diff-tab active" data-diff="easy">EINFACH</button>
+          <button class="diff-tab" data-diff="advanced">PROFI</button>
+          <button class="diff-tab" data-diff="master">MEISTER</button>
+        </div>
+      </div>
+
+      <div id="workout-list" class="workout-list"></div>
+    </div>
+
+    <button id="reset-btn" class="reset-link">Fortschritt zurücksetzen</button>
+  </section>
+
+  <!-- LEVEL UP OVERLAY -->
+  <div id="levelup-overlay" class="levelup-overlay hidden">
+    <div class="levelup-card">
+      <span id="levelup-badge" class="orange-tag">LEVEL UP</span>
+      <h2 id="levelup-title" class="tall-orange-title small">LEVEL 2</h2>
+      <p id="levelup-desc" class="poster-copy center">Deine Kampfkraft steigt!</p>
+      <button id="close-levelup" class="tall-orange-btn">WEITER</button>
+    </div>
+  </div>
+
+  <script src="app.js?v=16"></script>
+</body>
+</html>
