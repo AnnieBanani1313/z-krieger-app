@@ -4151,7 +4151,8 @@ document.getElementById("reset-btn")
     }
   });
 
-loadSmartImage(
+
+  loadSmartImage(
   document.getElementById("intro-hero-img"),
   "intro_bg",
   () => {
@@ -4162,12 +4163,9 @@ loadSmartImage(
     );
   }
 );
-
-
 updateStaggeredCarousel();
 updateUI();
 renderWorkouts();
-    
-  
+
 
 
