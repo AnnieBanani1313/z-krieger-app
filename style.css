@@ -547,3 +547,39 @@ body {
   cursor: pointer;
   margin: 4px auto;
 }
+
+/* === STARTSEITE: DREI KRIEGER VOR DER SCHRIFT === */
+.poster-hero-top {
+  flex: 1;
+  min-height: 430px;
+  height: auto;
+}
+
+.hero-trio {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 370px;
+  z-index: 5;
+  pointer-events: none;
+}
+
+.trio-img {
+  position: absolute;
+  bottom: 0;
+  object-fit: contain;
+  object-position: center bottom;
+  filter: drop-shadow(0 14px 20px rgba(0, 0, 0, 0.9));
+}
+
+.trio-left { left: -14px; width: 140px; height: 270px; z-index: 1; }
+.trio-right { right: -14px; width: 140px; height: 270px; z-index: 1; transform: scale(1.4); transform-origin: center bottom; }
+.trio-center { left: 50%; width: 200px; height: 350px; z-index: 2; transform: translateX(-50%); }
+
+/* === Bilder mit weißem Hintergrund === */
+.arena-char-img.white-bg,
+.arena-char-img.white-bg.aura-active {
+  mix-blend-mode: normal !important;
+  filter: none !important;
+}
