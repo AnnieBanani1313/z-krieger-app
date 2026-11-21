@@ -1,38 +1,33 @@
 (function loadAppFonts() {
   const host =
-    ["fonts", "googleapis", "com"].join(".");
+    ["fonts", "googleapis", "com"]
+      .join(".");
   const link =
     document.createElement("link");
   link.rel = "stylesheet";
   link.href =
     `https://${host}/css2?family=Anton` +
-    `&family=Rajdhani:wght@600;700&display=swap`;
+    `&family=Rajdhani:wght@600;700` +
+    `&display=swap`;
   document.head.appendChild(link);
 })();
 
-(function injectEffectsAndModals() {
+(function injectGameUI() {
   const style =
     document.createElement("style");
   style.textContent = `
     @keyframes kiShake {
       0%, 100% {
-        transform: translate(0, 0) rotate(0deg);
+        transform: translate(0, 0);
       }
-      20% {
-        transform: translate(-6px, 4px)
-          rotate(-1deg);
+      25% {
+        transform: translate(-6px, 4px);
       }
-      40% {
-        transform: translate(6px, -4px)
-          rotate(1deg);
+      50% {
+        transform: translate(6px, -4px);
       }
-      60% {
-        transform: translate(-4px, -2px)
-          rotate(-0.5deg);
-      }
-      80% {
-        transform: translate(4px, 3px)
-          rotate(0.5deg);
+      75% {
+        transform: translate(-4px, -2px);
       }
     }
     @keyframes auraPulse {
@@ -48,109 +43,100 @@
       }
     }
     .shake-active {
-      animation: kiShake 0.45s ease-in-out;
+      animation: kiShake 0.45s ease;
     }
     .aura-active {
-      animation: auraPulse 1.8s infinite
-        ease-in-out;
+      animation: auraPulse 1.8s infinite;
     }
     .comic-stage {
       background: #101015;
       border: 2px solid #ff9900;
       border-radius: 12px; padding: 12px;
-      position: relative; overflow: hidden;
-      background-image: radial-gradient(
-        #262632 1px, transparent 1px
-      );
-      background-size: 10px 10px;
+      position: relative;
+      overflow: hidden;
     }
     .comic-badge {
-      position: absolute; top: 8px; left: 8px;
-      background: #ff9900; color: #0b0b0d;
+      position: absolute;
+      top: 8px; left: 8px;
+      background: #ff9900;
+      color: #0b0b0d;
       font-family: 'Anton', sans-serif;
-      font-size: 0.78rem; padding: 2px 8px;
-      border-radius: 5px; letter-spacing: 0.6px;
+      font-size: 0.78rem;
+      padding: 2px 8px;
+      border-radius: 5px;
     }
     .timer-box {
       font-family: 'Anton', sans-serif;
-      font-size: 2.2rem; color: #ffb703;
-      letter-spacing: 2px; margin: 4px 0;
+      font-size: 2.2rem;
+      color: #ffb703;
+      letter-spacing: 2px;
+      margin: 4px 0;
     }
     .timer-btn {
       background: #1c1c24;
       border: 1.5px solid #ff9900;
       color: #ff9900;
       font-family: 'Anton', sans-serif;
-      font-size: 1rem; padding: 6px 14px;
-      border-radius: 8px; cursor: pointer;
-      letter-spacing: 0.8px;
+      font-size: 1rem;
+      padding: 6px 14px;
+      border-radius: 8px;
+      cursor: pointer;
     }
-    .powerup-bar {
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      gap: 6px; margin-bottom: 10px;
+    .hud-strip {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-bottom: 10px;
     }
-    .pu-chip {
-      background: #141418;
-      border: 1px solid #2c2c38;
-      border-radius: 8px; padding: 6px 4px;
-      text-align: center;
+    .hud-chip {
+      background: #16161c;
+      border: 1px solid #2e2e3a;
+      color: #fff;
       font-family: 'Anton', sans-serif;
-      font-size: 0.82rem; color: #ffffff;
-      cursor: pointer; letter-spacing: 0.4px;
+      font-size: 0.85rem;
+      padding: 4px 9px;
+      border-radius: 8px;
+      cursor: pointer;
     }
-    .pu-chip.active-senzu {
+    .hud-chip.senzu-ready {
       border-color: #52e588;
-      background: #12281c;
       color: #52e588;
     }
-    .pu-chip.used-senzu {
-      opacity: 0.45;
-    }
-    .boss-card {
-      border-left: 4px solid #ff3b5c !important;
-      background: #1d1116 !important;
-    }
-    .boss-tag {
-      background: #ff3b5c; color: #fff;
-      font-family: 'Anton', sans-serif;
-      font-size: 0.72rem; padding: 2px 6px;
-      border-radius: 4px; margin-left: 6px;
+    .hud-chip.senzu-on {
+      background: #52e588;
+      color: #0b0b0d;
     }
     .trophy-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 8px; text-align: left;
+      gap: 8px;
+      text-align: left;
     }
     .trophy-item {
       background: #101015;
-      border: 1px solid #2a2a36;
-      border-radius: 10px; padding: 8px;
-      opacity: 0.42;
+      border: 1px solid #2c2c38;
+      border-radius: 8px;
+      padding: 8px;
+      opacity: 0.4;
     }
     .trophy-item.unlocked {
+      border-color: #ffb703;
       opacity: 1;
-      border-color: #ff9900;
-    }
-    .trophy-name {
-      font-family: 'Anton', sans-serif;
-      font-size: 0.92rem; color: #ffb703;
-    }
-    .trophy-desc {
-      font-size: 0.72rem; color: #a8a8b8;
     }
   `;
   document.head.appendChild(style);
 
-   const modal = document.createElement("div");
+  const modal =
+    document.createElement("div");
   modal.id = "exercise-modal";
-  modal.className = "levelup-overlay hidden";
+  modal.className =
+    "levelup-overlay hidden";
   modal.innerHTML = `
     <div class="levelup-card"
       style="max-width: 360px;">
       <span id="ex-modal-tag"
         class="orange-tag">
-        COMIC-ANLEITUNG
+        TECHNIK-GUIDE
       </span>
       <h2 id="ex-modal-title"
         class="tall-orange-title small">
@@ -158,20 +144,22 @@
       </h2>
       <div class="comic-stage">
         <span class="comic-badge">
-          TECHNIK-GUIDE
+          COMIC-VORSCHAU
         </span>
         <img id="ex-comic-img"
-          style="width:100%;height:140px;
-          object-fit:contain;display:none;"
-          alt="" />
+          style="width:100%;height:135px;
+          object-fit:contain;
+          display:none;" alt="" />
         <div id="ex-comic-svg"
-          style="height:140px;display:grid;
+          style="height:135px;
+          display:grid;
           place-items:center;"></div>
       </div>
       <p id="ex-modal-tip"
         class="poster-copy center"
         style="color:#fff;"></p>
-      <div id="ex-timer-area" class="hidden">
+      <div id="ex-timer-area"
+        class="hidden">
         <div id="ex-timer-display"
           class="timer-box">00:20</div>
         <button id="ex-timer-start"
@@ -184,32 +172,65 @@
         GESCHAFFT (+25 XP)
       </button>
       <button id="ex-close-btn"
-        class="reset-link">Abbrechen</button>
+        class="reset-link">
+        Abbrechen
+      </button>
     </div>
   `;
   document.body.appendChild(modal);
 
-  const tModal = document.createElement("div");
-  tModal.id = "trophy-modal";
-  tModal.className = "levelup-overlay hidden";
-  tModal.innerHTML = `
+  const trophyModal =
+    document.createElement("div");
+  trophyModal.id = "trophy-modal";
+  trophyModal.className =
+    "levelup-overlay hidden";
+  trophyModal.innerHTML = `
     <div class="levelup-card"
       style="max-width: 360px;">
       <span class="orange-tag">
         RUHMESHALLE
       </span>
-      <h2 class="tall-orange-title small">
+      <h2
+        class="tall-orange-title small">
         TROPHÄEN
       </h2>
-      <div id="trophy-grid"
+      <div id="trophy-list"
         class="trophy-grid"></div>
-      <button id="close-trophy-btn"
+      <button id="close-trophy"
         class="tall-orange-btn">
         SCHLIESSEN
       </button>
     </div>
   `;
-  document.body.appendChild(tModal);
+  document.body.appendChild(trophyModal);
+
+  const stage = document.querySelector(
+    ".arena-poster-stage"
+  );
+  if (stage) {
+    const hud =
+      document.createElement("div");
+    hud.className = "hud-strip";
+    hud.innerHTML = `
+      <span id="streak-chip"
+        class="hud-chip">
+        🔥 0 TAGE
+      </span>
+      <button id="senzu-btn"
+        class="hud-chip senzu-ready">
+        🌱 SENZU (2x KI)
+      </button>
+      <button id="boss-btn"
+        class="hud-chip">
+        👹 BOSS-KAMPF
+      </button>
+      <button id="trophy-btn"
+        class="hud-chip">
+        🏆 TROPHÄEN
+      </button>
+    `;
+    stage.prepend(hud);
+  }
 })();
 
 const CHARACTERS = [
@@ -224,145 +245,99 @@ const CHARACTERS = [
     id: 2, name: "PRINZ-KI",
     attack: "FINALER BLITZ",
     focus: "ARME & BRUST",
-    bio: "Meister der schweren Schwerkraft.",
+    bio: "Meister der Schwerkraft.",
     color: "#5ce1e6"
   },
   {
     id: 3, name: "CYBER-RED",
     attack: "FLAMMEN-HIEB",
     focus: "REAKTION & BAUCH",
-    bio: "High-Tech-Rüstung und Reflexe.",
+    bio: "High-Tech-Rüstung & Reflexe.",
     color: "#ff5c77"
   },
   {
     id: 4, name: "SHADOW-X",
     attack: "PHANTOM-SALVE",
     focus: "BAUCH & BALANCE",
-    bio: "Bewegt sich lautlos wie der Wind.",
+    bio: "Lautlos wie der Wind.",
     color: "#c77dff"
   },
   {
     id: 5, name: "NOVA-GOLD",
     attack: "SUPERNOVA",
     focus: "GANZKÖRPER",
-    bio: "Seine goldene Energie erhellt alles.",
+    bio: "Seine goldene Energie strahlt.",
     color: "#ffe66d"
   },
   {
     id: 6, name: "TITAN-FORCE",
     attack: "TITANEN-WALL",
     focus: "ARME & BAUCH",
-    bio: "Verteidiger mit starkem Ki-Schild.",
+    bio: "Verteidiger mit Ki-Schild.",
     color: "#48cae4"
   },
   {
     id: 7, name: "BLITZ-KID",
     attack: "DONNER-SPRINT",
     focus: "BEINE & SPEED",
-    bio: "Extrem wendig und voller Schnellkraft.",
+    bio: "Extrem wendig & schnell.",
     color: "#ff9e5e"
   },
   {
     id: 8, name: "FROST-ZEN",
     attack: "GLETSCHER-STRAHL",
-    focus: "BAUCH & RUHE",
-    bio: "Bleibt unter höchstem Druck eiskalt.",
+    focus: "BAUCH-KRAFT",
+    bio: "Bleibt unter Druck eiskalt.",
     color: "#72efdd"
   },
   {
     id: 9, name: "FLAME-REX",
     attack: "MAGMA-FAUST",
     focus: "BRUST & SCHULTERN",
-    bio: "Seine Aura steigt mit jedem Training.",
+    bio: "Glühende Kampf-Aura.",
     color: "#ff6b6b"
   },
   {
     id: 10, name: "ULTRA-VEX",
     attack: "KOMETEN-REGEN",
     focus: "GANZKÖRPER",
-    bio: "Nutzt kosmische Sprungkraft.",
+    bio: "Kosmische Sprungkraft.",
     color: "#b8c0ff"
   },
   {
     id: 11, name: "SOLAR-KAI",
     attack: "HELIOS-WELLE",
     focus: "AUSDAUER",
-    bio: "Zieht Kraft aus dem Sonnenlicht.",
+    bio: "Zieht Kraft aus der Sonne.",
     color: "#ffd166"
   },
   {
     id: 12, name: "DARK-ORION",
     attack: "ECLIPSE-SCHLAG",
     focus: "ARME & RÜCKEN",
-    bio: "Einzelgänger mit gewaltiger Kraft.",
+    bio: "Einzelgänger mit Wucht.",
     color: "#80ffdb"
   },
   {
     id: 13, name: "AERO-DASH",
     attack: "WIRBELSTURM",
     focus: "BEINE & AGILITÄT",
-    bio: "Beherrscht den Himmel blitzschnell.",
+    bio: "Beherrscht den Himmel.",
     color: "#64dfdf"
   },
   {
     id: 14, name: "OMEGA-GOD",
     attack: "OMEGA-URKNALL",
     focus: "ALLE BEREICHE",
-    bio: "Meister-Krieger aller Techniken.",
+    bio: "Meister aller Techniken.",
     color: "#ff758f"
   },
   {
     id: 15, name: "STURM-GREEN",
     attack: "OMEGA-STURM",
     focus: "BEINE & KRAFT",
-    bio: "Entfesselt smaragdgrüne Energie.",
+    bio: "Smaragdgrüne Natur-Energie.",
     color: "#52e588"
-  }
-];
-
-const TROPHIES = [
-  {
-    id: "first",
-    icon: "🥋",
-    name: "ERSTER SCHLAG",
-    desc: "1. Übung abgeschlossen",
-    check: (s) => s.powerLevel > 0
-  },
-  {
-    id: "stage2",
-    icon: "⚡",
-    name: "SUPER-KRIEGER",
-    desc: "Stufe 2 erreicht",
-    check: (s) => s.level >= 2
-  },
-  {
-    id: "boss1",
-    icon: "👹",
-    name: "BOSS-BEZWINGER",
-    desc: "Ersten Boss besiegt",
-    check: (s) => (s.bossWins || 0) >= 1
-  },
-  {
-    id: "ki5k",
-    icon: "🔥",
-    name: "5.000 KI-POWER",
-    desc: "5.000 Ki gesammelt",
-    check: (s) => s.powerLevel >= 5000
-  },
-  {
-    id: "streak3",
-    icon: "📅",
-    name: "3-TAGE-SERIE",
-    desc: "3 Tage am Stück trainiert",
-    check: (s) => (s.streak || 0) >= 3
-  },
-  {
-    id: "team5",
-    icon: "🌟",
-    name: "KRIEGER-MEISTER",
-    desc: "Mit 5 Kriegern trainiert",
-    check: (s) =>
-      (s.testedChars || []).length >= 5
   }
 ];
 
@@ -374,6 +349,65 @@ const STAGE_RULES = [
   { stage: 5, minLevel: 8 }
 ];
 
+const BOSS_CHALLENGES = [
+  {
+    title: "BOSS: SCHWERKRAFT 50x G",
+    sub: "Kombi-Prüfung · Doppel-XP",
+    xp: 120, power: 3000,
+    pose: "plank", sec: 30,
+    isBoss: true,
+    tip: "10 Kniebeugen + 30 Sek. Plank!"
+  },
+  {
+    title: "BOSS: MEISTER-PRÜFUNG",
+    sub: "Endboss · Doppel-XP",
+    xp: 140, power: 3500,
+    pose: "pushup", sec: 25,
+    isBoss: true,
+    tip: "10 Liegestütze + 25 Sek. Boxen!"
+  },
+  {
+    title: "BOSS: GALAXIE-TURNIER",
+    sub: "Finale · Doppel-XP",
+    xp: 160, power: 4000,
+    pose: "jump", sec: 30,
+    isBoss: true,
+    tip: "15 Ausfallschritte + 30s Sprünge!"
+  }
+];
+
+const TROPHIES = [
+  {
+    id: "t1", icon: "⚡",
+    name: "ERWACHEN",
+    desc: "Stufe 2 erreicht"
+  },
+  {
+    id: "t2", icon: "🔥",
+    name: "10.000 KI",
+    desc: "10.000 Ki gesammelt"
+  },
+  {
+    id: "t3", icon: "👹",
+    name: "BOSS-JÄGER",
+    desc: "Ersten Boss besiegt"
+  },
+  {
+    id: "t4", icon: "📅",
+    name: "DISZIPLIN",
+    desc: "3 Tage Streak"
+  },
+  {
+    id: "t5", icon: "💪",
+    name: "BAUCH-STAHL",
+    desc: "Bauch Level 3"
+  },
+  {
+    id: "t6", icon: "👑",
+    name: "TEAM-LEADER",
+    desc: "5 Krieger trainiert"
+  }
+];
 const BODY_WORKOUTS = {
   arms: {
     label: "TRAINING: ARME & BRUST",
@@ -383,14 +417,14 @@ const BODY_WORKOUTS = {
         sub: "Einfach · Basis",
         xp: 25, power: 400,
         pose: "kneepushup",
-        tip: "Knie auf den Boden, Rücken gerade."
+        tip: "Knie auf Boden, Rücken gerade."
       },
       {
         title: "20 Sek. Schattenboxen",
         sub: "Einfach · Ki-Fäuste",
         xp: 20, power: 350,
         pose: "punch", sec: 20,
-        tip: "Schnelle gerade Schläge nach vorn!"
+        tip: "Schnelle Schläge nach vorn!"
       }
     ],
     advanced: [
@@ -415,7 +449,7 @@ const BODY_WORKOUTS = {
         sub: "Meister · 100x G",
         xp: 80, power: 2000,
         pose: "pushup",
-        tip: "Kurz vor dem Boden abstoppen."
+        tip: "Kurz vor Boden abstoppen."
       },
       {
         title: "10x Diamant-Liegestütze",
@@ -438,10 +472,10 @@ const BODY_WORKOUTS = {
       },
       {
         title: "10x Crunches",
-        sub: "Einfach · Bauchmuskeln",
+        sub: "Einfach · Körpermitte",
         xp: 25, power: 400,
         pose: "situp",
-        tip: "Schultern kontrolliert einrollen."
+        tip: "Schultern kontrolliert rollen."
       }
     ],
     advanced: [
@@ -450,7 +484,7 @@ const BODY_WORKOUTS = {
         sub: "Profi · Goldene Aura",
         xp: 45, power: 950,
         pose: "plank", sec: 40,
-        tip: "Ruhig weiteratmen und halten."
+        tip: "Ruhig weiteratmen & halten."
       },
       {
         title: "18x Sit-Ups",
@@ -466,11 +500,11 @@ const BODY_WORKOUTS = {
         sub: "Meister · Abwehr",
         xp: 85, power: 2200,
         pose: "plank", sec: 70,
-        tip: "Unzerstörbarer Bauch-Schild!"
+        tip: "Unzerstörbare Bauch-Spannung!"
       },
       {
         title: "25x Beinheben",
-        sub: "Meister · Unterer Bauch",
+        sub: "Meister · Götter-Bauch",
         xp: 80, power: 2100,
         pose: "legraise",
         tip: "Beine gestreckt langsam heben."
@@ -492,7 +526,7 @@ const BODY_WORKOUTS = {
         sub: "Einfach · Speed",
         xp: 20, power: 350,
         pose: "jump", sec: 25,
-        tip: "Leichtfüßig auf den Fußballen."
+        tip: "Leichtfüßig auf Fußballen."
       }
     ],
     advanced: [
@@ -524,7 +558,7 @@ const BODY_WORKOUTS = {
         sub: "Meister · 100x G",
         xp: 80, power: 2100,
         pose: "wallsit", sec: 45,
-        tip: "Knie im 90-Grad-Winkel halten."
+        tip: "Knie im 90-Grad-Winkel."
       }
     ]
   }
@@ -1447,8 +1481,7 @@ const CHARACTER_WORKOUTS = {
     }
   },
 
-
-    7: {
+  7: {
     arms: {
       easy: [
         {
@@ -1752,9 +1785,7 @@ const CHARACTER_WORKOUTS = {
       ]
     }
   },
-
-
-    9: {
+  9: {
     arms: {
       easy: [
         {
@@ -2058,9 +2089,7 @@ const CHARACTER_WORKOUTS = {
       ]
     }
   },
-
-
-    11: {
+  11: {
     arms: {
       easy: [
         {
@@ -2364,9 +2393,7 @@ const CHARACTER_WORKOUTS = {
       ]
     }
   },
-
-
-    13: {
+  13: {
     arms: {
       easy: [
         {
@@ -2671,7 +2698,6 @@ const CHARACTER_WORKOUTS = {
     }
   },
 
-
     15: {
     arms: {
       easy: [
@@ -2796,7 +2822,7 @@ const CHARACTER_WORKOUTS = {
           sub: "Profi · Smaragd-Beine",
           xp: 50, power: 1000,
           pose: "squat",
-          tip: "Über die Fersen hoch!"
+          tip: "Über Fersen hoch!"
         },
         {
           title: "20x Ausfallschritte",
@@ -2825,8 +2851,6 @@ const CHARACTER_WORKOUTS = {
     }
   }
 };
-
-
 let state = JSON.parse(
   localStorage.getItem("zwarriors_neon_v10")
 ) || {
@@ -2944,7 +2968,6 @@ function playSound(mode = "click") {
     osc.stop(now + 0.19);
   } catch (e) {}
 }
-
 function getComicSVG(pose) {
   const cObj =
     CHARACTERS.find(
@@ -3092,7 +3115,6 @@ function getComicSVG(pose) {
           stroke-linecap="round" fill="none"/>
         ${hair(184, 46, 15)}
       </svg>`,
-
 
         dips:
       `<svg viewBox="0 0 260 125"
@@ -3274,24 +3296,11 @@ function getComicSVG(pose) {
   return svgs[pose] || svgs.punch;
 }
 
-const CLEAN_CACHE = {};
-
 function cleanWhiteBg(imgEl, baseName) {
   try {
-    const hit = CLEAN_CACHE[baseName];
-    if (hit === "dark") {
-      imgEl.classList.remove("white-bg");
-      return false;
-    }
-    if (hit) {
-      imgEl.dataset.cleaned = baseName;
-      imgEl.classList.add("white-bg");
-      imgEl.src = hit;
-      return true;
-    }
     const w = imgEl.naturalWidth;
     const h = imgEl.naturalHeight;
-    if (!w || !h) return false;
+    if (!w || !h) return;
     const cv =
       document.createElement("canvas");
     cv.width = w;
@@ -3302,14 +3311,12 @@ function cleanWhiteBg(imgEl, baseName) {
       ctx.getImageData(0, 0, w, h);
     const d = img.data;
     if (
-      d[3] < 20 ||
-      d[0] < 220 ||
-      d[1] < 220 ||
-      d[2] < 220
+      d < 220 ||
+      d < 220 ||
+      d < 220
     ) {
-      CLEAN_CACHE[baseName] = "dark";
       imgEl.classList.remove("white-bg");
-      return false;
+      return;
     }
     const vis = new Uint8Array(w * h);
     const q = new Int32Array(w * h);
@@ -3354,15 +3361,11 @@ function cleanWhiteBg(imgEl, baseName) {
       push(x, y - 1);
     }
     ctx.putImageData(img, 0, 0);
-    const url = cv.toDataURL("image/png");
-    CLEAN_CACHE[baseName] = url;
     imgEl.dataset.cleaned = baseName;
     imgEl.classList.add("white-bg");
-    imgEl.src = url;
-    return true;
-  } catch (e) {
-    return false;
-  }
+    imgEl.src =
+      cv.toDataURL("image/png");
+  } catch (e) {}
 }
 
 function loadSmartImage(
@@ -3376,9 +3379,7 @@ function loadSmartImage(
       baseName.startsWith("c") &&
       imgEl.dataset.cleaned !== baseName
     ) {
-      if (cleanWhiteBg(imgEl, baseName)) {
-        return;
-      }
+      cleanWhiteBg(imgEl, baseName);
     }
     imgEl.style.display = "block";
     if (onSuccess) onSuccess();
@@ -3401,31 +3402,6 @@ function getMaxUnlockedStage(lvl) {
   });
   return max;
 }
-
-window.BOSS_CHALLENGES =
-  window.BOSS_CHALLENGES || [
-  {
-    title: "BOSS: 20x Kniebeugen",
-    sub: "Boss · Doppelte Power",
-    xp: 60, power: 1500,
-    pose: "squat", isBoss: true,
-    tip: "Besiege den Boss!"
-  },
-  {
-    title: "BOSS: 30 Sek. Plank",
-    sub: "Boss · Eiserner Wille",
-    xp: 60, power: 1500,
-    pose: "plank", sec: 30, isBoss: true,
-    tip: "Keine Bewegung zulassen!"
-  },
-  {
-    title: "BOSS: 15x Liegestütze",
-    sub: "Boss · Kampf der Giganten",
-    xp: 70, power: 1800,
-    pose: "pushup", isBoss: true,
-    tip: "Gib alles!"
-  }
-];
 
 function updateStaggeredCarousel() {
   const total = CHARACTERS.length;
@@ -3597,8 +3573,7 @@ function openCharacterDetails(charId) {
     phEl.classList.remove("hidden");
   });
   showScreen("detail-screen");
-}
-
+    }
 
 function openExerciseModal(ex) {
   activeExercise = ex;
@@ -3873,7 +3848,6 @@ function completeExercise(gainedXP, gainedPower) {
   }
   updateUI();
 }
-
 function updateUI() {
   const xpNeeded = state.level * 100;
   const maxUnlocked =
@@ -4154,8 +4128,22 @@ document.getElementById("reset-btn")
 loadSmartImage(
   document.getElementById("intro-hero-img"),
   "intro_bg",
-  () => {}
+  () => {
+    loadSmartImage(
+      document.getElementById("intro-hero-img"),
+      "c1_s1",
+      () => {}
+    );
+  }
 );
 updateStaggeredCarousel();
 updateUI();
 renderWorkouts();
+
+
+
+
+  
+  
+  
+  
