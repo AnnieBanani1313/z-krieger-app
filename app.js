@@ -3689,7 +3689,7 @@ function openCharacterDetails(charId) {
 function openExerciseModal(ex) {
   activeExercise = ex;
   clearInterval(timerInterval);
-  playSound("click");
+  playSound("select");
 
   const mult = state.senzuActive ? 2 : 1;
   const tagEl =
