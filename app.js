@@ -4156,6 +4156,17 @@ loadSmartImage(
   "c1_s1",
   () => {}
 );
+loadSmartImage(
+  document.getElementById("intro-left-img"),
+  "c2_s1",
+  () => {}
+);
+loadSmartImage(
+  document.getElementById("intro-right-img"),
+  "c3_s1",
+  () => {}
+);
+
 updateStaggeredCarousel();
 updateUI();
 renderWorkouts();
