@@ -1122,3 +1122,8 @@ body {
   animation:
     sparkRise 0.85s ease-out forwards;
 }
+.arena-char-img.clean-alpha,
+.arena-char-img.clean-alpha.aura-active {
+  mix-blend-mode: normal !important;
+  filter: none !important;
+}
