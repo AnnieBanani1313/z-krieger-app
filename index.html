@@ -386,5 +386,11 @@
   </div>
 
   <script src="app.js?v=36"></script>
+    <script>
+    window.onerror = function(msg, url, line) {
+      alert("Fehler Zeile " + line + ": " + msg);
+    };
+    </script>
+  
 </body>
 </html>
