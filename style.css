@@ -946,7 +946,7 @@ body {
 }
 .char-center.is-c3 {
   transform:
-    translateY(-54%) scale(1.85)
+    translateY(-54%) scale(1.75)
     !important;
 }
 
@@ -986,10 +986,12 @@ body {
 }
 
 .char-center {
-  top: 41% !important;
-  right: 26px !important;
-  width: 295px !important;
-  height: 325px !important;
+  top: 40% !important;
+  right: 8px !important;
+  width: 365px !important;
+  height: 400px !important;
+  transform: translateY(-58%) !important;
+
 }
 
 .char-top {
