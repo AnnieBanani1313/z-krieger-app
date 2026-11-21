@@ -928,18 +928,18 @@ body {
 }
 .char-center.is-c3 {
   transform:
-    translateY(-54%) scale(1.48)
+    translateY(-54%) scale(1.85)
     !important;
 }
 
 .char-top.is-c3,
 .char-bottom.is-c3 {
   transform:
-    translateY(2px) scale(1.42)
+    translateY(2px) scale(1.75)
     !important;
 }
 
 .fighters-center-char.is-c3,
 .arena-char-img.is-c3 {
-  transform: scale(1.42) !important;
+  transform: scale(1.75) !important;
 }
