@@ -4142,6 +4142,14 @@ document.querySelectorAll(".body-hotspot")
     spot.addEventListener("click", () => {
       state.selectedPart = spot.dataset.part;
       playSound("click");
+      const fImg =
+  document.getElementById("fighter-img");
+if (fImg) {
+  fImg.classList.remove("fighter-pop");
+  void fImg.offsetWidth;
+  fImg.classList.add("fighter-pop");
+}
+      
       renderWorkouts();
     });
   });
