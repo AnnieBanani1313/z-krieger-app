@@ -4008,8 +4008,7 @@ function completeExercise(gainedXP, gainedPower) {
     setTimeout(() => {
       openExerciseModal(boss);
     }, 350);
-  } else {
-    playSound("click");
+  } else { playSound("done"); }
   }
   updateUI();
 }
