@@ -3742,6 +3742,55 @@ function renderTrophies() {
     grid.appendChild(div);
   });
 }
+function triggerKiImpact(intense = false) {
+  const charObj =
+    CHARACTERS.find(
+      c => c.id === state.selectedChar
+    ) || CHARACTERS.at(0);
+  const col = charObj.color || "#ff9900";
+
+  const flash =
+    document.createElement("div");
+  flash.className = "ki-screen-flash";
+  flash.style.setProperty("--wave-col", col);
+  document.body.appendChild(flash);
+  setTimeout(() => flash.remove(), 450);
+
+  const scanner =
+    document.querySelector(".fighter-scanner");
+  if (scanner) {
+    const wave =
+      document.createElement("div");
+    wave.className = "ki-shockwave";
+    wave.style.setProperty("--wave-col", col);
+    scanner.appendChild(wave);
+    setTimeout(() => wave.remove(), 700);
+  }
+
+  const arena =
+    document.getElementById("arena-screen");
+  if (arena && intense) {
+    arena.classList.remove("mega-shake-active");
+    void arena.offsetWidth;
+    arena.classList.add("mega-shake-active");
+  }
+
+  const count = intense ? 24 : 10;
+  for (let i = 0; i < count; i++) {
+    const sp =
+      document.createElement("div");
+    sp.className = "ki-spark";
+    sp.style.setProperty("--wave-col", col);
+    sp.style.left =
+      `${15 + Math.random() * 70}%`;
+    sp.style.top =
+      `${35 + Math.random() * 35}%`;
+    sp.style.animationDelay =
+      `${Math.random() * 0.18}s`;
+    document.body.appendChild(sp);
+    setTimeout(() => sp.remove(), 1050);
+  }
+}
 
 function completeExercise(gainedXP, gainedPower) {
   const oldMax =
