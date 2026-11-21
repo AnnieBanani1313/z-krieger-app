@@ -4009,7 +4009,7 @@ function completeExercise(gainedXP, gainedPower) {
       openExerciseModal(boss);
     }, 350);
   } else { playSound("done"); }
-  }
+  
   updateUI();
 }
 function updateUI() {
