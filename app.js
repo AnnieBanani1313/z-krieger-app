@@ -4151,21 +4151,11 @@ document.getElementById("reset-btn")
     }
   });
 
-
-  loadSmartImage(
+loadSmartImage(
   document.getElementById("intro-hero-img"),
   "intro_bg",
-  () => {
-    loadSmartImage(
-      document.getElementById("intro-hero-img"),
-      "c1_s1",
-      () => {}
-    );
-  }
+  () => {}
 );
 updateStaggeredCarousel();
 updateUI();
 renderWorkouts();
-
-
-
