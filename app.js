@@ -3296,7 +3296,7 @@ function getComicSVG(pose) {
   return svgs[pose] || svgs.punch;
 }
 
-function cleanWhiteBg(imgEl, baseName) {
+function cleanImageBg(imgEl, baseName) {
   try {
     const w = imgEl.naturalWidth;
     const h = imgEl.naturalHeight;
@@ -3310,18 +3310,20 @@ function cleanWhiteBg(imgEl, baseName) {
     const img =
       ctx.getImageData(0, 0, w, h);
     const d = img.data;
-    if (
-      d < 220 ||
-      d < 220 ||
-      d < 220
-    ) {
-      imgEl.classList.remove("white-bg");
-      return;
-    }
+    const r0 = d.at(0);
+    const g0 = d.at(1);
+    const b0 = d.at(2);
+    const isWhite =
+      r0 > 215 && g0 > 215 && b0 > 215;
+    const isBlack =
+      r0 < 45 && g0 < 45 && b0 < 45;
+    if (!isWhite && !isBlack) return;
+
     const vis = new Uint8Array(w * h);
     const q = new Int32Array(w * h);
     let head = 0;
     let tail = 0;
+
     const push = (x, y) => {
       if (
         x < 0 || x >= w ||
@@ -3330,18 +3332,33 @@ function cleanWhiteBg(imgEl, baseName) {
       const p = y * w + x;
       if (vis[p]) return;
       const i = p * 4;
-      const mn = Math.min(
-        d[i], d[i + 1], d[i + 2]
-      );
-      if (mn > 225) {
-        vis[p] = 1;
-        q[tail++] = p;
-      } else if (mn > 195) {
-        d[i + 3] = Math.min(
-          d[i + 3], (228 - mn) * 8
+      if (isWhite) {
+        const mn = Math.min(
+          d[i], d[i + 1], d[i + 2]
         );
+        if (mn > 220) {
+          vis[p] = 1;
+          q[tail++] = p;
+        } else if (mn > 190) {
+          d[i + 3] = Math.min(
+            d[i + 3], (224 - mn) * 8
+          );
+        }
+      } else {
+        const mx = Math.max(
+          d[i], d[i + 1], d[i + 2]
+        );
+        if (mx < 36) {
+          vis[p] = 1;
+          q[tail++] = p;
+        } else if (mx < 62) {
+          d[i + 3] = Math.min(
+            d[i + 3], (mx - 34) * 9
+          );
+        }
       }
     };
+
     for (let x = 0; x < w; x++) {
       push(x, 0);
       push(x, h - 1);
@@ -3362,7 +3379,7 @@ function cleanWhiteBg(imgEl, baseName) {
     }
     ctx.putImageData(img, 0, 0);
     imgEl.dataset.cleaned = baseName;
-    imgEl.classList.add("white-bg");
+    imgEl.classList.add("clean-alpha");
     imgEl.src =
       cv.toDataURL("image/png");
   } catch (e) {}
@@ -3372,14 +3389,14 @@ function loadSmartImage(
   imgEl, baseName, onFail, onSuccess
 ) {
   imgEl.style.display = "none";
-  imgEl.classList.remove("white-bg");
+  imgEl.classList.remove("clean-alpha");
   imgEl.dataset.cleaned = "";
   imgEl.onload = () => {
     if (
       baseName.startsWith("c") &&
       imgEl.dataset.cleaned !== baseName
     ) {
-      cleanWhiteBg(imgEl, baseName);
+      cleanImageBg(imgEl, baseName);
     }
     imgEl.style.display = "block";
     if (onSuccess) onSuccess();
