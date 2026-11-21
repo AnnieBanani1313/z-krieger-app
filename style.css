@@ -926,3 +926,20 @@ body {
   cursor: pointer;
   margin: 4px auto;
 }
+.char-center.is-c3 {
+  transform:
+    translateY(-56%) scale(1.12)
+    !important;
+}
+
+.char-top.is-c3,
+.char-bottom.is-c3 {
+  transform:
+    translateY(4px) scale(1.12)
+    !important;
+}
+
+.fighters-center-char.is-c3,
+.arena-char-img.is-c3 {
+  transform: scale(1.12) !important;
+}
