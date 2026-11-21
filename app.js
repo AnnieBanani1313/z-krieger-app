@@ -3394,6 +3394,38 @@ function loadSmartImage(
   imgEl.src = `${baseName}.png`;
 }
 
+function getMaxUnlockedStage(lvl) {
+  let max = 1;
+  STAGE_RULES.forEach(s => {
+    if (lvl >= s.minLevel) max = s.stage;
+  });
+  return max;
+}
+
+window.BOSS_CHALLENGES =
+  window.BOSS_CHALLENGES || [
+  {
+    title: "BOSS: 20x Kniebeugen",
+    sub: "Boss · Doppelte Power",
+    xp: 60, power: 1500,
+    pose: "squat", isBoss: true,
+    tip: "Besiege den Boss!"
+  },
+  {
+    title: "BOSS: 30 Sek. Plank",
+    sub: "Boss · Eiserner Wille",
+    xp: 60, power: 1500,
+    pose: "plank", sec: 30, isBoss: true,
+    tip: "Keine Bewegung zulassen!"
+  },
+  {
+    title: "BOSS: 15x Liegestütze",
+    sub: "Boss · Kampf der Giganten",
+    xp: 70, power: 1800,
+    pose: "pushup", isBoss: true,
+    tip: "Gib alles!"
+  }
+];
 
 function updateStaggeredCarousel() {
   const total = CHARACTERS.length;
