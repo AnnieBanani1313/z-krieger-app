@@ -4044,6 +4044,7 @@ if (senzuEl) {
     state.senzuDate = getTodayKey();
     state.senzuActive = true;
     playSound("levelup");
+    triggerKiImpact(true);
     updateUI();
   });
 }
