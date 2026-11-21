@@ -2919,6 +2919,72 @@ function playSound(mode = "click") {
     if (!ctx) return;
     const now = ctx.currentTime;
 
+    if (mode === "select") {
+      Array.of(780, 1180).forEach(
+        (freq, idx) => {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = "sine";
+          osc.frequency.setValueAtTime(
+            freq, now + idx * 0.06
+          );
+          gain.gain.setValueAtTime(
+            0.18, now + idx * 0.06
+          );
+          gain.gain.exponentialRampToValueAtTime(
+            0.005, now + idx * 0.06 + 0.08
+          );
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(now + idx * 0.06);
+          osc.stop(now + idx * 0.06 + 0.09);
+        }
+      );
+      return;
+    }
+
+    if (mode === "done") {
+      if (navigator.vibrate) {
+        navigator.vibrate(Array.of(50, 30, 90));
+      }
+      const bass = ctx.createOscillator();
+      const bGain = ctx.createGain();
+      bass.type = "sawtooth";
+      bass.frequency.setValueAtTime(140, now);
+      bass.frequency.exponentialRampToValueAtTime(
+        48, now + 0.24
+      );
+      bGain.gain.setValueAtTime(0.28, now);
+      bGain.gain.exponentialRampToValueAtTime(
+        0.005, now + 0.26
+      );
+      bass.connect(bGain);
+      bGain.connect(ctx.destination);
+      bass.start(now);
+      bass.stop(now + 0.27);
+
+      const rise = ctx.createOscillator();
+      const rGain = ctx.createGain();
+      rise.type = "triangle";
+      rise.frequency.setValueAtTime(
+        280, now + 0.06
+      );
+      rise.frequency.exponentialRampToValueAtTime(
+        920, now + 0.34
+      );
+      rGain.gain.setValueAtTime(
+        0.22, now + 0.06
+      );
+      rGain.gain.exponentialRampToValueAtTime(
+        0.005, now + 0.36
+      );
+      rise.connect(rGain);
+      rGain.connect(ctx.destination);
+      rise.start(now + 0.06);
+      rise.stop(now + 0.37);
+      return;
+    }
+
     if (mode === "stageup") {
       if (navigator.vibrate) {
         navigator.vibrate(
@@ -2994,6 +3060,7 @@ function playSound(mode = "click") {
     osc.stop(now + 0.2);
   } catch (e) {}
 }
+
 
 function getComicSVG(pose) {
   const cObj =
