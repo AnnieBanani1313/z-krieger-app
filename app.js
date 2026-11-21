@@ -2885,12 +2885,38 @@ function showScreen(id) {
   });
 }
 
-function playSound(mode = "click") {
-  try {
+
+let sharedAudioCtx = null;
+
+function getAudioCtx() {
+  if (!sharedAudioCtx) {
     const AudioCtx =
       window.AudioContext ||
       window.webkitAudioContext;
-    const ctx = new AudioCtx();
+    if (AudioCtx) {
+      sharedAudioCtx = new AudioCtx();
+    }
+  }
+  if (
+    sharedAudioCtx &&
+    sharedAudioCtx.state === "suspended"
+  ) {
+    sharedAudioCtx.resume();
+  }
+  return sharedAudioCtx;
+}
+
+document.addEventListener(
+  "touchstart", getAudioCtx, { passive: true }
+);
+document.addEventListener(
+  "click", getAudioCtx, { passive: true }
+);
+
+function playSound(mode = "click") {
+  try {
+    const ctx = getAudioCtx();
+    if (!ctx) return;
     const now = ctx.currentTime;
 
     if (mode === "stageup") {
@@ -2899,7 +2925,7 @@ function playSound(mode = "click") {
           Array.of(90, 40, 140, 40, 220)
         );
       }
-      Array.of(220, 330, 440, 660, 880)
+      Array.of(220, 330, 440, 660, 990)
         .forEach((freq, idx) => {
           const osc = ctx.createOscillator();
           const gain = ctx.createGain();
@@ -2909,18 +2935,18 @@ function playSound(mode = "click") {
             freq, now + idx * 0.08
           );
           osc.frequency.exponentialRampToValueAtTime(
-            freq * 1.35, now + idx * 0.08 + 0.28
+            freq * 1.45, now + idx * 0.08 + 0.32
           );
           gain.gain.setValueAtTime(
-            0.14, now + idx * 0.08
+            0.22, now + idx * 0.08
           );
           gain.gain.exponentialRampToValueAtTime(
-            0.005, now + idx * 0.08 + 0.3
+            0.005, now + idx * 0.08 + 0.35
           );
           osc.connect(gain);
           gain.connect(ctx.destination);
           osc.start(now + idx * 0.08);
-          osc.stop(now + idx * 0.08 + 0.31);
+          osc.stop(now + idx * 0.08 + 0.36);
         });
       return;
     }
@@ -2929,7 +2955,7 @@ function playSound(mode = "click") {
       if (navigator.vibrate) {
         navigator.vibrate(Array.of(80, 40, 130));
       }
-      Array.of(330, 440, 660)
+      Array.of(330, 440, 660, 880)
         .forEach((freq, idx) => {
           const osc = ctx.createOscillator();
           const gain = ctx.createGain();
@@ -2938,15 +2964,15 @@ function playSound(mode = "click") {
             freq, now + idx * 0.07
           );
           gain.gain.setValueAtTime(
-            0.15, now + idx * 0.07
+            0.22, now + idx * 0.07
           );
           gain.gain.exponentialRampToValueAtTime(
-            0.01, now + idx * 0.07 + 0.25
+            0.01, now + idx * 0.07 + 0.28
           );
           osc.connect(gain);
           gain.connect(ctx.destination);
           osc.start(now + idx * 0.07);
-          osc.stop(now + idx * 0.07 + 0.26);
+          osc.stop(now + idx * 0.07 + 0.3);
         });
       return;
     }
@@ -2954,20 +2980,21 @@ function playSound(mode = "click") {
     const osc = ctx.createOscillator();
     const gain = ctx.createGain();
     osc.type = "triangle";
-    osc.frequency.setValueAtTime(190, now);
+    osc.frequency.setValueAtTime(220, now);
     osc.frequency.exponentialRampToValueAtTime(
-      540, now + 0.16
+      620, now + 0.16
     );
-    gain.gain.setValueAtTime(0.13, now);
+    gain.gain.setValueAtTime(0.2, now);
     gain.gain.exponentialRampToValueAtTime(
-      0.01, now + 0.18
+      0.01, now + 0.19
     );
     osc.connect(gain);
     gain.connect(ctx.destination);
     osc.start(now);
-    osc.stop(now + 0.19);
+    osc.stop(now + 0.2);
   } catch (e) {}
 }
+
 function getComicSVG(pose) {
   const cObj =
     CHARACTERS.find(
