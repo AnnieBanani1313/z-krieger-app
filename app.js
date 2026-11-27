@@ -1559,8 +1559,10 @@ loadSmartImage(document.getElementById("intro-hero-img"), "intro_bg", () => {
     document.getElementById("gta-stars-label").textContent = "★".repeat(stars) + "☆".repeat(5 - stars);
 
     const heroObj = CHARACTERS.find(c => c.id === state.selectedChar) || CHARACTERS.at(0);
-    const enemyId = ((state.selectedChar + lvl + 1) % CHARACTERS.length) + 1;
-    const enemyObj = CHARACTERS.find(c => c.id === enemyId) || CHARACTERS.at(1);
+    // Gegner: Versatz 1 … (Anzahl-1) zum Helden – kann nie derselbe Charakter sein
+    const heroIdx = Math.max(0, CHARACTERS.indexOf(heroObj));
+    const enemyOffset = 1 + ((lvl + 1) % (CHARACTERS.length - 1));
+    const enemyObj = CHARACTERS.at((heroIdx + enemyOffset) % CHARACTERS.length);
 
     document.getElementById("lg-hero-name").textContent = heroObj.name;
     document.getElementById("lg-enemy-name").textContent = enemyObj.name;
