@@ -1106,3 +1106,43 @@ body {
   right: 8px !important;
   transform: none !important;
 }
+/* === ÜBERSCHREIBUNG: GERADE FIGUREN & HD-KAMPF-LEISTE === */
+.card-top {
+  margin-right: -18px !important;
+  transform: scale(0.88) !important;
+  margin-bottom: -14px !important;
+}
+.card-bottom {
+  margin-right: -18px !important;
+  transform: scale(0.88) !important;
+  margin-top: -14px !important;
+}
+.char-top,
+.char-bottom {
+  right: 8px !important;
+  transform: none !important;
+}
+
+.gta-wanted-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #09090d;
+  border: 1px solid #2e2e3a;
+  border-radius: 8px;
+  padding: 4px 10px;
+  margin-bottom: 6px;
+}
+.gta-stars {
+  font-size: 1rem;
+  letter-spacing: 2px;
+  color: #ffb703;
+  text-shadow: 0 0 10px rgba(255, 183, 3, 0.8);
+}
+.gta-mode-tag {
+  font-family: 'Anton', sans-serif;
+  font-size: 0.82rem;
+  letter-spacing: 1px;
+  color: #ffb703;
+  text-transform: uppercase;
+}
