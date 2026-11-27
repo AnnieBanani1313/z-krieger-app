@@ -940,7 +940,10 @@ loadSmartImage(document.getElementById("intro-hero-img"), "intro_bg", () => {
     <div class="levelup-card" style="max-width: 390px; padding: 14px; border-color:#ffb703;">
       <div class="gta-wanted-bar">
         <span id="gta-mode-label" class="gta-mode-tag">TURNIER DER KRAFT</span>
-        <span id="gta-stars-label" class="gta-stars">★☆☆☆☆</span>
+        <div class="gta-right">
+          <span id="gta-stars-label" class="gta-stars">★☆☆☆☆</span>
+          <button id="lg-mute-btn" class="lg-mute-btn" type="button" aria-pressed="false" aria-label="Kampf-Sound stummschalten">🔊</button>
+        </div>
       </div>
       <div class="legends-hud">
         <div>
@@ -1055,130 +1058,480 @@ loadSmartImage(document.getElementById("intro-hero-img"), "intro_bg", () => {
       campBtn.textContent = `🐉 KAMPF (${progress}/${EXERCISES_PER_TICKET})`;
     }
   };
-    function drawDbzEnvironment(ctx, w, h, scrollX, worldIdx) {
-    const world = worldIdx % 3;
+  // ===== KAMPF-GRAFIK (Parallax-Hintergrund, Aura, Energiestrahlen) =====
+  const TAU = Math.PI * 2;
 
-    if (world === 0) {
-      const space = ctx.createRadialGradient(w * 0.5, h * 0.35, 15, w * 0.5, h * 0.4, w * 0.85);
-      space.addColorStop(0, "#3b1d5e");
-      space.addColorStop(0.45, "#191030");
-      space.addColorStop(1, "#07070c");
-      ctx.fillStyle = space;
-      ctx.fillRect(0, 0, w, h);
+  function hexToRgba(hex, a) {
+    const h = String(hex || "#ffffff").replace("#", "");
+    const full = h.length === 3 ? h.split("").map(c => c + c).join("") : h.padEnd(6, "f");
+    const n = parseInt(full.slice(0, 6), 16);
+    return `rgba(${(n >> 16) & 255}, ${(n >> 8) & 255}, ${n & 255}, ${a})`;
+  }
 
-      ctx.fillStyle = "rgba(180, 120, 255, 0.14)";
-      ctx.beginPath(); ctx.ellipse(w * 0.3, h * 0.25, 110, 32, -0.25, 0, Math.PI * 2); ctx.fill();
-      ctx.fillStyle = "rgba(0, 220, 255, 0.12)";
-      ctx.beginPath(); ctx.ellipse(w * 0.72, h * 0.3, 95, 26, 0.2, 0, Math.PI * 2); ctx.fill();
-
-      ctx.fillStyle = "#ffffff";
-      for (let i = 0; i < 38; i++) {
-        const sx = ((i * 73 + scrollX * 0.12) % w);
-        const sy = (i * 41) % (h * 0.65);
-        ctx.globalAlpha = 0.35 + (i % 4) * 0.18;
-        ctx.fillRect(sx, sy, (i % 3 === 0 ? 2 : 1.2), (i % 3 === 0 ? 2 : 1.2));
-      }
-      ctx.globalAlpha = 1;
-
-      Array.of(0.18, 0.48, 0.82).forEach((rx, idx) => {
-        const fx = ((w * rx - scrollX * (0.2 + idx * 0.08) + w) % w);
-        const fy = h * (0.24 + idx * 0.09) + Math.sin(scrollX * 0.03 + idx) * 5;
-        ctx.fillStyle = "#251c38";
-        ctx.beginPath();
-        ctx.moveTo(fx - 18, fy); ctx.lineTo(fx - 6, fy - 14);
-        ctx.lineTo(fx + 15, fy - 8); ctx.lineTo(fx + 10, fy + 12); ctx.lineTo(fx - 12, fy + 9);
-        ctx.closePath(); ctx.fill();
+  // Eigene Arena-Bilder (arena_1.jpg bis arena_3.jpg) haben Vorrang – erst beim ersten Kampf laden
+  let arenaImages = null;
+  function getArenaImage(world) {
+    if (!arenaImages) {
+      arenaImages = Array.of(1, 2, 3).map(n => {
+        const img = new Image();
+        img.src = `arena_${n}.jpg`;
+        return img;
       });
+    }
+    const img = arenaImages.at(world);
+    return img && img.complete && img.naturalWidth > 0 ? img : null;
+  }
 
-      const floor = ctx.createLinearGradient(0, h * 0.68, 0, h);
-      floor.addColorStop(0, "#2c283d");
-      floor.addColorStop(0.25, "#1b1926");
-      floor.addColorStop(1, "#0b0a10");
-      ctx.fillStyle = floor;
-      ctx.fillRect(0, h * 0.68, w, h * 0.32);
+  const STAGE_THEMES = Array.of(
+    { // 0: Weltraum-Turnier
+      sky: Array.of("#2a1250", "#150c2c", "#07070c"), stars: 1,
+      sun: { x: 0.78, y: 0.2, r: 19, core: "#f3e8ff", col: "#c77dff" },
+      hills: Array.of("#3a2d5c", "#2a2142", "#18132a"), haze: "#7b5cc4",
+      ground: Array.of("#2c283d", "#1b1926", "#0b0a10"), grid: "#b980ff"
+    },
+    { // 1: Canyon im Sonnenuntergang
+      sky: Array.of("#1d3557", "#c06c5a", "#f4a261"), stars: 0.45,
+      sun: { x: 0.7, y: 0.5, r: 30, core: "#fff3d6", col: "#ff9e5e" },
+      hills: Array.of("#a86a45", "#7a4528", "#4f2a17"), haze: "#f4a261",
+      ground: Array.of("#9c6644", "#6f452c", "#2b1910"), grid: "#ffd2a0"
+    },
+    { // 2: Grüne Planeten-Ebene
+      sky: Array.of("#0b525b", "#1b9aaa", "#72efdd"), stars: 0.3,
+      sun: { x: 0.24, y: 0.22, r: 22, core: "#ffffff", col: "#fffbe0" },
+      hills: Array.of("#3fb5a5", "#228277", "#145a52"), haze: "#9ff5e6",
+      ground: Array.of("#2ec4b6", "#1b7a6e", "#0a2e2a"), grid: "#d6fff6"
+    }
+  );
 
-      ctx.strokeStyle = "#9d4edd";
-      ctx.lineWidth = 2.5;
-      ctx.beginPath(); ctx.moveTo(0, h * 0.68); ctx.lineTo(w, h * 0.68); ctx.stroke();
+  const STAR_FIELD = Array.from({ length: 70 }, (_, i) => ({
+    x: Math.random(), y: Math.random() * 0.6,
+    s: 0.6 + Math.random() * 1.6, ph: Math.random() * TAU,
+    sp: 0.6 + Math.random() * 1.8, big: i % 9 === 0
+  }));
 
-    } else if (world === 1) {
-      const sky = ctx.createLinearGradient(0, 0, 0, h * 0.72);
-      sky.addColorStop(0, "#1d3557");
-      sky.addColorStop(0.55, "#457b9d");
-      sky.addColorStop(0.88, "#f4a261");
-      sky.addColorStop(1, "#e76f51");
-      ctx.fillStyle = sky;
-      ctx.fillRect(0, 0, w, h);
+  function ridge(x, seed) {
+    return Math.sin(x * 0.011 + seed) * 0.5
+      + Math.sin(x * 0.027 + seed * 2.3) * 0.3
+      + Math.sin(x * 0.063 + seed * 4.1) * 0.2;
+  }
 
-      ctx.save();
-      ctx.fillStyle = "rgba(255, 240, 200, 0.07)";
-      Array.of(0.2, 0.5, 0.78).forEach(rx => {
-        ctx.beginPath();
-        ctx.moveTo(w * rx, 0); ctx.lineTo(w * rx + 55, 0);
-        ctx.lineTo(w * rx + 120, h * 0.7); ctx.lineTo(w * rx - 25, h * 0.7);
-        ctx.closePath(); ctx.fill();
-      });
-      ctx.restore();
+  function drawVignette(ctx, w, h) {
+    const vg = ctx.createRadialGradient(w * 0.5, h * 0.48, h * 0.3, w * 0.5, h * 0.5, w * 0.72);
+    vg.addColorStop(0, "rgba(0, 0, 0, 0)");
+    vg.addColorStop(1, "rgba(0, 0, 0, 0.68)");
+    ctx.fillStyle = vg;
+    ctx.fillRect(0, 0, w, h);
+  }
 
-      const peaks = Array.of(
-        { x: 0.12, w: 54, h: 92 }, { x: 0.34, w: 42, h: 68 },
-        { x: 0.64, w: 62, h: 102 }, { x: 0.88, w: 48, h: 78 }
-      );
-      peaks.forEach(pk => {
-        const px = ((w * pk.x - scrollX * 0.25 + w) % (w + 60)) - 30;
-        const baseY = h * 0.69;
-        ctx.fillStyle = "#5c3a21";
-        ctx.beginPath();
-        ctx.moveTo(px - pk.w * 0.5, baseY);
-        ctx.lineTo(px - pk.w * 0.15, baseY - pk.h);
-        ctx.lineTo(px + pk.w * 0.18, baseY - pk.h * 0.92);
-        ctx.lineTo(px + pk.w * 0.5, baseY);
-        ctx.closePath(); ctx.fill();
-        ctx.fillStyle = "#8d5b3c";
-        ctx.beginPath();
-        ctx.moveTo(px - pk.w * 0.15, baseY - pk.h);
-        ctx.lineTo(px + pk.w * 0.18, baseY - pk.h * 0.92);
-        ctx.lineTo(px + pk.w * 0.5, baseY);
-        ctx.lineTo(px + 4, baseY);
-        ctx.closePath(); ctx.fill();
-      });
+  function drawStageBackground(ctx, w, h, scrollX, worldIdx, t) {
+    const world = ((worldIdx % 3) + 3) % 3;
 
-      const ground = ctx.createLinearGradient(0, h * 0.68, 0, h);
-      ground.addColorStop(0, "#9c6644");
-      ground.addColorStop(0.3, "#6f452c");
-      ground.addColorStop(1, "#2b1910");
-      ctx.fillStyle = ground;
-      ctx.fillRect(0, h * 0.68, w, h * 0.32);
-
-    } else {
-      const namekSky = ctx.createLinearGradient(0, 0, 0, h * 0.66);
-      namekSky.addColorStop(0, "#0b525b");
-      namekSky.addColorStop(0.6, "#1b9aaa");
-      namekSky.addColorStop(1, "#72efdd");
-      ctx.fillStyle = namekSky;
-      ctx.fillRect(0, 0, w, h);
-
-      ctx.fillStyle = "rgba(255, 255, 220, 0.85)";
-      ctx.beginPath(); ctx.arc(w * 0.25, h * 0.2, 22, 0, Math.PI * 2); ctx.fill();
-      ctx.beginPath(); ctx.arc(w * 0.78, h * 0.16, 15, 0, Math.PI * 2); ctx.fill();
-
-      ctx.fillStyle = "#118ab2";
-      ctx.fillRect(0, h * 0.56, w, h * 0.14);
-
-      const grass = ctx.createLinearGradient(0, h * 0.68, 0, h);
-      grass.addColorStop(0, "#2ec4b6");
-      grass.addColorStop(0.35, "#1b7a6e");
-      grass.addColorStop(1, "#0a2e2a");
-      ctx.fillStyle = grass;
-      ctx.fillRect(0, h * 0.68, w, h * 0.32);
+    const custom = getArenaImage(world);
+    if (custom) {
+      const s = Math.max(w / custom.naturalWidth, h / custom.naturalHeight);
+      const dw = custom.naturalWidth * s, dh = custom.naturalHeight * s;
+      ctx.drawImage(custom, (w - dw) / 2, (h - dh) / 2, dw, dh);
+      drawVignette(ctx, w, h);
+      return;
     }
 
-    ctx.strokeStyle = "rgba(255, 255, 255, 0.14)";
-    ctx.lineWidth = 1;
-    Array.of(0.75, 0.84, 0.93).forEach(ry => {
-      ctx.beginPath(); ctx.moveTo(0, h * ry); ctx.lineTo(w, h * ry); ctx.stroke();
+    const th = STAGE_THEMES.at(world);
+    const groundY = h * 0.68;
+
+    // Himmel
+    const sky = ctx.createLinearGradient(0, 0, 0, groundY);
+    th.sky.forEach((c, i) => sky.addColorStop(i / (th.sky.length - 1), c));
+    ctx.fillStyle = sky;
+    ctx.fillRect(0, 0, w, h);
+
+    ctx.save();
+    ctx.globalCompositeOperation = "lighter";
+
+    // Funkelnde Sterne (minimaler Parallax)
+    STAR_FIELD.forEach(st => {
+      const tw = 0.5 + 0.5 * Math.sin(t * 0.003 * st.sp + st.ph);
+      const a = th.stars * (0.25 + tw * 0.75);
+      if (a < 0.04) return;
+      const sx = (((st.x * w - scrollX * 0.03) % w) + w) % w;
+      const sy = st.y * h;
+      ctx.fillStyle = `rgba(255, 255, 255, ${a})`;
+      ctx.beginPath(); ctx.arc(sx, sy, st.s * (0.7 + tw * 0.5), 0, TAU); ctx.fill();
+      if (st.big && tw > 0.6) {
+        ctx.strokeStyle = `rgba(255, 255, 255, ${a * 0.6})`;
+        ctx.lineWidth = 0.8;
+        const L = 4 + tw * 4;
+        ctx.beginPath();
+        ctx.moveTo(sx - L, sy); ctx.lineTo(sx + L, sy);
+        ctx.moveTo(sx, sy - L); ctx.lineTo(sx, sy + L);
+        ctx.stroke();
+      }
     });
-          }
+
+    // Große Sonne mit Glow
+    const sun = th.sun;
+    const sunX = sun.x * w + Math.sin(scrollX * 0.002) * 6;
+    const sunY = sun.y * h;
+    const glowR = sun.r * (4.2 + Math.sin(t / 700) * 0.3);
+    const glow = ctx.createRadialGradient(sunX, sunY, sun.r * 0.6, sunX, sunY, glowR);
+    glow.addColorStop(0, hexToRgba(sun.col, 0.55));
+    glow.addColorStop(0.4, hexToRgba(sun.col, 0.18));
+    glow.addColorStop(1, hexToRgba(sun.col, 0));
+    ctx.fillStyle = glow;
+    ctx.beginPath(); ctx.arc(sunX, sunY, glowR, 0, TAU); ctx.fill();
+    ctx.restore();
+
+    const disc = ctx.createRadialGradient(sunX - sun.r * 0.25, sunY - sun.r * 0.25, 1, sunX, sunY, sun.r);
+    disc.addColorStop(0, sun.core);
+    disc.addColorStop(1, sun.col);
+    ctx.fillStyle = disc;
+    ctx.beginPath(); ctx.arc(sunX, sunY, sun.r, 0, TAU); ctx.fill();
+
+    // Drei Bergschichten mit unterschiedlicher Scroll-Geschwindigkeit
+    const LAYERS = Array.of(
+      { speed: 0.08, base: 74, amp: 26, seed: 1.7, haze: 0.45 },
+      { speed: 0.2, base: 50, amp: 20, seed: 4.2, haze: 0.22 },
+      { speed: 0.45, base: 28, amp: 13, seed: 8.9, haze: 0 }
+    );
+    LAYERS.forEach((L, i) => {
+      const off = scrollX * L.speed;
+      ctx.beginPath();
+      ctx.moveTo(0, groundY + 1);
+      for (let x = 0; x <= w + 6; x += 6) {
+        ctx.lineTo(x, groundY - L.base - ridge(x + off, L.seed) * L.amp);
+      }
+      ctx.lineTo(w, groundY + 1);
+      ctx.closePath();
+      const mg = ctx.createLinearGradient(0, groundY - L.base - L.amp, 0, groundY);
+      mg.addColorStop(0, th.hills.at(i));
+      mg.addColorStop(1, hexToRgba(th.haze, 0.2 + L.haze * 0.5));
+      ctx.fillStyle = th.hills.at(i);
+      ctx.fill();
+      ctx.fillStyle = mg;
+      ctx.globalAlpha = 0.35 + L.haze;
+      ctx.fill();
+      ctx.globalAlpha = 1;
+      ctx.strokeStyle = "rgba(255, 255, 255, 0.1)";
+      ctx.lineWidth = 1;
+      ctx.stroke();
+    });
+
+    // Boden
+    const ground = ctx.createLinearGradient(0, groundY, 0, h);
+    th.ground.forEach((c, i) => ground.addColorStop(i / (th.ground.length - 1), c));
+    ctx.fillStyle = ground;
+    ctx.fillRect(0, groundY, w, h - groundY);
+
+    // Scrollendes Perspektiv-Gitter
+    ctx.save();
+    ctx.beginPath(); ctx.rect(0, groundY, w, h - groundY); ctx.clip();
+    const gridFade = ctx.createLinearGradient(0, groundY, 0, h);
+    gridFade.addColorStop(0, hexToRgba(th.grid, 0));
+    gridFade.addColorStop(1, hexToRgba(th.grid, 0.38));
+    ctx.strokeStyle = gridFade;
+    ctx.lineWidth = 1;
+    const vx = w * 0.5, spacing = 34, squeeze = 0.12;
+    const gOff = ((scrollX % spacing) + spacing) % spacing;
+    ctx.beginPath();
+    for (let xb = -w * 1.6 - gOff; xb <= w * 2.6; xb += spacing) {
+      ctx.moveTo(vx + (xb - vx) * squeeze, groundY);
+      ctx.lineTo(xb, h);
+    }
+    for (let k = 1; k <= 7; k++) {
+      const y = groundY + (h - groundY) * Math.pow(k / 7, 1.8);
+      ctx.moveTo(0, y); ctx.lineTo(w, y);
+    }
+    ctx.stroke();
+    ctx.restore();
+
+    // Leuchtende Horizontlinie
+    ctx.save();
+    ctx.globalCompositeOperation = "lighter";
+    ctx.strokeStyle = hexToRgba(th.grid, 0.55);
+    ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.moveTo(0, groundY); ctx.lineTo(w, groundY); ctx.stroke();
+    ctx.restore();
+
+    drawVignette(ctx, w, h);
+  }
+
+  // Leuchtrand: einfarbige Silhouette einmal pro Bild/Farbe vorberechnen
+  function getRimSprite(img, color, dw, dh) {
+    const key = `${img.src}|${color}|${Math.round(dw)}x${Math.round(dh)}`;
+    if (img._rimKey === key) return img._rimCanvas;
+    const c = document.createElement("canvas");
+    c.width = Math.max(1, Math.round(dw * 2));
+    c.height = Math.max(1, Math.round(dh * 2));
+    const g = c.getContext("2d");
+    g.drawImage(img, 0, 0, c.width, c.height);
+    g.globalCompositeOperation = "source-in";
+    g.fillStyle = color;
+    g.fillRect(0, 0, c.width, c.height);
+    img._rimKey = key;
+    img._rimCanvas = c;
+    return c;
+  }
+
+  // Figur im Original-Seitenverhältnis, Füße auf feetY
+  function drawFighterUnstretched(ctx, img, cx, feetY, opts) {
+    const { color = "#ffb703", flip = false, t = 0, maxW = 84, maxH = 115 } = opts || {};
+    const ready = !!(img && img.complete && img.naturalWidth > 0);
+    let dw = maxW * 0.72, dh = maxH;
+    if (ready) {
+      const s = Math.min(maxW / img.naturalWidth, maxH / img.naturalHeight);
+      dw = img.naturalWidth * s;
+      dh = img.naturalHeight * s;
+    }
+    const midY = feetY - dh * 0.5;
+
+    ctx.save();
+    ctx.globalCompositeOperation = "lighter";
+
+    // Boden-Schein
+    const fg = ctx.createRadialGradient(cx, feetY, 2, cx, feetY, dw * 0.8);
+    fg.addColorStop(0, hexToRgba(color, 0.45));
+    fg.addColorStop(1, hexToRgba(color, 0));
+    ctx.save();
+    ctx.translate(cx, feetY); ctx.scale(1, 0.25); ctx.translate(-cx, -feetY);
+    ctx.fillStyle = fg;
+    ctx.beginPath(); ctx.arc(cx, feetY, dw * 0.8, 0, TAU); ctx.fill();
+    ctx.restore();
+
+    // Pulsierende Aura
+    const pulse = 1 + Math.sin(t / 110) * 0.06;
+    const rx = dw * 0.78 * pulse;
+    const ry = dh * 0.64 * pulse;
+    const ag = ctx.createRadialGradient(cx, midY, 2, cx, midY, rx);
+    ag.addColorStop(0, "rgba(255, 255, 255, 0.32)");
+    ag.addColorStop(0.45, hexToRgba(color, 0.42));
+    ag.addColorStop(1, hexToRgba(color, 0));
+    ctx.save();
+    ctx.translate(cx, midY); ctx.scale(1, ry / rx); ctx.translate(-cx, -midY);
+    ctx.fillStyle = ag;
+    ctx.beginPath(); ctx.arc(cx, midY, rx, 0, TAU); ctx.fill();
+    ctx.restore();
+
+    // Aufsteigende Aura-Flammen
+    const N = 16;
+    for (let i = 0; i < N; i++) {
+      const phase = ((t / 720 + i * 0.618) % 1 + 1) % 1;
+      const side = Math.sin(i * 12.9898);
+      const fx = cx + side * dw * 0.46 + Math.sin(t / 140 + i * 1.7) * 3 * (1 - phase);
+      const fy = feetY - phase * dh * 1.12;
+      const size = (1 - phase) * dw * 0.2 + 2.5;
+      const alpha = Math.sin(phase * Math.PI) * 0.6;
+      const flame = ctx.createRadialGradient(fx, fy, 0, fx, fy, size);
+      flame.addColorStop(0, `rgba(255, 255, 255, ${alpha * 0.8})`);
+      flame.addColorStop(0.4, hexToRgba(color, alpha));
+      flame.addColorStop(1, hexToRgba(color, 0));
+      ctx.save();
+      ctx.translate(fx, fy); ctx.scale(0.6, 1.5); ctx.translate(-fx, -fy);
+      ctx.fillStyle = flame;
+      ctx.beginPath(); ctx.arc(fx, fy, size, 0, TAU); ctx.fill();
+      ctx.restore();
+    }
+    ctx.restore();
+
+    if (!ready) return;
+
+    // Atem-Animation (Squash & Stretch), Anker an den Füßen
+    const breath = Math.sin(t / 320);
+    const sx = 1 - breath * 0.018;
+    const sy = 1 + breath * 0.028;
+
+    ctx.save();
+    ctx.translate(cx, feetY);
+    ctx.scale(flip ? -sx : sx, sy);
+
+    // Leuchtrand
+    const rim = getRimSprite(img, color, dw, dh);
+    ctx.globalCompositeOperation = "lighter";
+    ctx.globalAlpha = 0.5 + 0.25 * Math.sin(t / 150);
+    for (let k = 0; k < 8; k++) {
+      const ox = Math.cos((k / 8) * TAU) * 2.2;
+      const oy = Math.sin((k / 8) * TAU) * 2.2;
+      ctx.drawImage(rim, -dw / 2 + ox, -dh + oy, dw, dh);
+    }
+    ctx.globalAlpha = 1;
+    ctx.globalCompositeOperation = "source-over";
+    ctx.drawImage(img, -dw / 2, -dh, dw, dh);
+    ctx.restore();
+  }
+
+  // Energiestrahl von x1 nach x2 (Strahlkopf bei x2)
+  function drawBeam(ctx, x1, x2, y, dicke, farbe, t) {
+    const len = x2 - x1;
+    if (Math.abs(len) < 1 || dicke <= 0) return;
+    const steps = Math.max(6, Math.ceil(Math.abs(len) / 9));
+    const th = dicke * (1 + Math.sin(t / 45) * 0.08);
+
+    const tracePath = (amp) => {
+      ctx.beginPath();
+      for (let i = 0; i <= steps; i++) {
+        const f = i / steps;
+        const wob = (Math.sin(f * 9 - t / 40) * 0.7 + Math.sin(f * 23 + t / 27) * 0.3) * amp * f;
+        if (i === 0) ctx.moveTo(x1, y);
+        else ctx.lineTo(x1 + len * f, y + wob);
+      }
+    };
+
+    ctx.save();
+    ctx.lineCap = "round";
+    ctx.lineJoin = "round";
+    ctx.globalCompositeOperation = "lighter";
+
+    const LAYERS = Array.of(
+      { w: 2.4, col: hexToRgba(farbe, 0.16), amp: 0.16 },
+      { w: 1.6, col: hexToRgba(farbe, 0.32), amp: 0.13 },
+      { w: 1.0, col: hexToRgba(farbe, 0.8), amp: 0.1 },
+      { w: 0.55, col: "rgba(255, 255, 255, 0.75)", amp: 0.07 },
+      { w: 0.28, col: "#ffffff", amp: 0.05 }
+    );
+    LAYERS.forEach(L => {
+      tracePath(th * L.amp);
+      ctx.strokeStyle = L.col;
+      ctx.lineWidth = th * L.w;
+      ctx.stroke();
+    });
+
+    // Mündungsfeuer am Start
+    const mr = th * 0.9;
+    const mg = ctx.createRadialGradient(x1, y, 0, x1, y, mr);
+    mg.addColorStop(0, "rgba(255, 255, 255, 0.9)");
+    mg.addColorStop(1, hexToRgba(farbe, 0));
+    ctx.fillStyle = mg;
+    ctx.beginPath(); ctx.arc(x1, y, mr, 0, TAU); ctx.fill();
+
+    // Leuchtender Strahlkopf
+    const hr = th * (1.15 + Math.sin(t / 35) * 0.12);
+    const hg = ctx.createRadialGradient(x2, y, 0, x2, y, hr * 1.8);
+    hg.addColorStop(0, "rgba(255, 255, 255, 1)");
+    hg.addColorStop(0.3, hexToRgba(farbe, 0.85));
+    hg.addColorStop(1, hexToRgba(farbe, 0));
+    ctx.fillStyle = hg;
+    ctx.beginPath(); ctx.arc(x2, y, hr * 1.8, 0, TAU); ctx.fill();
+
+    ctx.strokeStyle = "rgba(255, 255, 255, 0.55)";
+    ctx.lineWidth = 1.4;
+    ctx.beginPath();
+    for (let k = 0; k < 8; k++) {
+      const ang = (k / 8) * TAU + t / 300;
+      const r2 = hr * (1.35 + 0.45 * Math.sin(t / 60 + k * 2.1));
+      ctx.moveTo(x2 + Math.cos(ang) * hr * 0.5, y + Math.sin(ang) * hr * 0.5);
+      ctx.lineTo(x2 + Math.cos(ang) * r2, y + Math.sin(ang) * r2);
+    }
+    ctx.stroke();
+    ctx.restore();
+  }
+  // ===== KAMPF-SOUNDS (Web Audio API, synthetisch – keine Dateien nötig) =====
+  // Eigener Schlüssel, damit "zwarriors_neon_v10" unverändert bleibt
+  const SFX_MUTE_KEY = "zkrieger_kampf_stumm";
+  let fightMuted = localStorage.getItem(SFX_MUTE_KEY) === "1";
+  let noiseBuffer = null;
+
+  function getNoiseBuffer(ac) {
+    if (noiseBuffer && noiseBuffer.sampleRate === ac.sampleRate) return noiseBuffer;
+    const len = Math.floor(ac.sampleRate * 1.3);
+    noiseBuffer = ac.createBuffer(1, len, ac.sampleRate);
+    noiseBuffer.copyToChannel(Float32Array.from({ length: len }, () => Math.random() * 2 - 1), 0);
+    return noiseBuffer;
+  }
+
+  function sfxNoise(ac, out, { start, dur, type = "lowpass", f0, f1, q = 1, vol }) {
+    const src = ac.createBufferSource();
+    src.buffer = getNoiseBuffer(ac);
+    const flt = ac.createBiquadFilter();
+    flt.type = type;
+    flt.Q.value = q;
+    flt.frequency.setValueAtTime(f0, start);
+    flt.frequency.exponentialRampToValueAtTime(f1, start + dur);
+    const g = ac.createGain();
+    g.gain.setValueAtTime(vol, start);
+    g.gain.exponentialRampToValueAtTime(0.001, start + dur);
+    src.connect(flt); flt.connect(g); g.connect(out);
+    src.start(start); src.stop(start + dur + 0.03);
+  }
+
+  function sfxTone(ac, out, { start, dur, type = "sine", f0, f1, vol, attack = 0.005, vibrato = 0 }) {
+    const osc = ac.createOscillator();
+    osc.type = type;
+    osc.frequency.setValueAtTime(f0, start);
+    if (f1) osc.frequency.exponentialRampToValueAtTime(f1, start + dur);
+    if (vibrato) {
+      const lfo = ac.createOscillator();
+      const depth = ac.createGain();
+      lfo.frequency.value = 18;
+      depth.gain.value = vibrato;
+      lfo.connect(depth); depth.connect(osc.frequency);
+      lfo.start(start); lfo.stop(start + dur + 0.03);
+    }
+    const g = ac.createGain();
+    g.gain.setValueAtTime(0.0001, start);
+    g.gain.exponentialRampToValueAtTime(vol, start + attack);
+    g.gain.exponentialRampToValueAtTime(0.001, start + dur);
+    osc.connect(g); g.connect(out);
+    osc.start(start); osc.stop(start + dur + 0.03);
+  }
+
+  // Treffer, Strahl, Aufladen, K.O. (+ kleiner "zap"); andere Namen fallen auf playSound zurück
+  function playFightSfx(name) {
+    if (fightMuted) return;
+    const FIGHT_SFX = { hit: 1, beam: 1, charge: 1, ko: 1, zap: 1 };
+    if (!Reflect.get(FIGHT_SFX, name)) { playSound(name); return; }
+    try {
+      const ac = getAudioCtx();
+      if (!ac) return;
+      const now = ac.currentTime;
+      const out = ac.createGain();
+      out.gain.value = 0.85;
+      const comp = ac.createDynamicsCompressor();
+      out.connect(comp); comp.connect(ac.destination);
+
+      if (name === "hit") {
+        sfxTone(ac, out, { start: now, dur: 0.2, f0: 170, f1: 42, vol: 0.6 });
+        sfxNoise(ac, out, { start: now, dur: 0.13, type: "bandpass", f0: 2600, f1: 450, q: 0.8, vol: 0.55 });
+        sfxTone(ac, out, { start: now, dur: 0.06, type: "square", f0: 950, f1: 280, vol: 0.12 });
+        if (navigator.vibrate) navigator.vibrate(25);
+      } else if (name === "zap") {
+        sfxTone(ac, out, { start: now, dur: 0.17, type: "sawtooth", f0: 1500, f1: 240, vol: 0.13 });
+        sfxNoise(ac, out, { start: now, dur: 0.1, type: "highpass", f0: 3000, f1: 1200, vol: 0.18 });
+      } else if (name === "beam") {
+        sfxTone(ac, out, { start: now, dur: 0.22, type: "sawtooth", f0: 220, f1: 880, vol: 0.1, attack: 0.03 });
+        sfxNoise(ac, out, { start: now + 0.08, dur: 0.95, f0: 3200, f1: 380, q: 0.7, vol: 0.5 });
+        sfxTone(ac, out, { start: now + 0.08, dur: 0.95, type: "sawtooth", f0: 115, f1: 75, vol: 0.2, attack: 0.04, vibrato: 9 });
+        sfxTone(ac, out, { start: now + 0.08, dur: 0.8, type: "square", f0: 232, f1: 150, vol: 0.05, attack: 0.04, vibrato: 14 });
+        if (navigator.vibrate) navigator.vibrate(Array.of(40, 30, 60));
+      } else if (name === "charge") {
+        sfxTone(ac, out, { start: now, dur: 0.5, type: "square", f0: 180, f1: 820, vol: 0.06, attack: 0.04, vibrato: 25 });
+        sfxTone(ac, out, { start: now, dur: 0.5, f0: 320, f1: 1300, vol: 0.12, attack: 0.04 });
+        sfxNoise(ac, out, { start: now, dur: 0.45, type: "bandpass", f0: 600, f1: 4000, q: 3, vol: 0.15 });
+      } else if (name === "ko") {
+        sfxTone(ac, out, { start: now, dur: 1.0, f0: 130, f1: 28, vol: 0.75 });
+        sfxNoise(ac, out, { start: now, dur: 1.2, f0: 2000, f1: 70, q: 0.6, vol: 0.6 });
+        Array.of(660, 494, 392, 262).forEach((f, i) => {
+          sfxTone(ac, out, { start: now + 0.35 + i * 0.13, dur: 0.24, type: "triangle", f0: f, vol: 0.16 });
+        });
+        if (navigator.vibrate) navigator.vibrate(Array.of(80, 40, 160));
+      }
+    } catch (e) {}
+  }
+
+  function updateMuteButton() {
+    const btn = document.getElementById("lg-mute-btn");
+    if (!btn) return;
+    btn.textContent = fightMuted ? "🔇" : "🔊";
+    btn.classList.toggle("muted", fightMuted);
+    btn.setAttribute("aria-pressed", fightMuted ? "true" : "false");
+    btn.setAttribute("aria-label", fightMuted ? "Kampf-Sound einschalten" : "Kampf-Sound stummschalten");
+  }
+
+  document.getElementById("lg-mute-btn").addEventListener("click", () => {
+    fightMuted = !fightMuted;
+    localStorage.setItem(SFX_MUTE_KEY, fightMuted ? "1" : "0");
+    updateMuteButton();
+    if (!fightMuted) playFightSfx("zap");
+  });
+  updateMuteButton();
+
     let animFrameId = null;
 
   function startDbzMission() {
@@ -1206,8 +1559,10 @@ loadSmartImage(document.getElementById("intro-hero-img"), "intro_bg", () => {
     document.getElementById("gta-stars-label").textContent = "★".repeat(stars) + "☆".repeat(5 - stars);
 
     const heroObj = CHARACTERS.find(c => c.id === state.selectedChar) || CHARACTERS.at(0);
-    const enemyId = ((state.selectedChar + lvl + 1) % CHARACTERS.length) + 1;
-    const enemyObj = CHARACTERS.find(c => c.id === enemyId) || CHARACTERS.at(1);
+    // Gegner: Versatz 1 … (Anzahl-1) zum Helden – kann nie derselbe Charakter sein
+    const heroIdx = Math.max(0, CHARACTERS.indexOf(heroObj));
+    const enemyOffset = 1 + ((lvl + 1) % (CHARACTERS.length - 1));
+    const enemyObj = CHARACTERS.at((heroIdx + enemyOffset) % CHARACTERS.length);
 
     document.getElementById("lg-hero-name").textContent = heroObj.name;
     document.getElementById("lg-enemy-name").textContent = enemyObj.name;
@@ -1215,8 +1570,8 @@ loadSmartImage(document.getElementById("intro-hero-img"), "intro_bg", () => {
 
     const heroSprite = new Image();
     const enemySprite = new Image();
-    loadSmartImage(heroSprite, `c${heroObj.id}_s${state.selectedStage}`);
-    loadSmartImage(enemySprite, `c${enemyObj.id}_s${Math.min(5, Math.ceil(lvl / 2))}`);
+    loadSmartImage(heroSprite, `c${heroObj.id}_s${state.selectedStage}`, () => loadSmartImage(heroSprite, `c${heroObj.id}_s1`));
+    loadSmartImage(enemySprite, `c${enemyObj.id}_s${Math.min(5, Math.ceil(lvl / 2))}`, () => loadSmartImage(enemySprite, `c${enemyObj.id}_s1`));
 
     const canvas = document.getElementById("legends-canvas");
     const ctx = canvas.getContext("2d");
@@ -1249,7 +1604,7 @@ loadSmartImage(document.getElementById("intro-hero-img"), "intro_bg", () => {
       if (sim.over) return;
       sim.over = true;
       sim.koBanner = won ? "SIEG · K.O.!" : "NIEDERLAGE";
-      playSound(won ? "stageup" : "done");
+      playFightSfx("ko");
       setTimeout(() => {
         cancelAnimationFrame(animFrameId);
         battleModal.classList.add("hidden");
@@ -1282,7 +1637,7 @@ loadSmartImage(document.getElementById("intro-hero-img"), "intro_bg", () => {
       document.getElementById("btn-m1").onclick = () => {
         if (sim.ki < 20 || sim.over) return;
         sim.ki -= 20; sim.heroX = 225; sim.hitStop = 4; sim.shake = 8;
-        playSound("done");
+        playFightSfx("hit");
         const dmg = 20 + state.selectedStage * 3;
         sim.enemyHp -= dmg;
         spawnSparks(275, 115, heroObj.color);
@@ -1292,13 +1647,13 @@ loadSmartImage(document.getElementById("intro-hero-img"), "intro_bg", () => {
       };
       document.getElementById("btn-m2").onclick = () => {
         if (sim.ki < 25 || sim.over) return;
-        sim.ki -= 25; playSound("click");
+        sim.ki -= 25; playFightSfx("zap");
         Array.of(0, 1, 2).forEach(i => sim.projectiles.push({ x: 105 - i * 18, y: 118 + (i - 1) * 16, vx: 9, fromHero: true, col: heroObj.color }));
       };
       document.getElementById("btn-m3").onclick = () => {
         if (sim.ki < 60 || sim.over) return;
         sim.ki -= 60; sim.beamTimer = 28; sim.hitStop = 5; sim.shake = 12;
-        playSound("stageup");
+        playFightSfx("beam");
         const dmg = 46 + state.selectedStage * 6;
         sim.enemyHp -= dmg;
         spawnSparks(275, 115, "#ff0055");
@@ -1308,13 +1663,13 @@ loadSmartImage(document.getElementById("intro-hero-img"), "intro_bg", () => {
       document.getElementById("btn-m4").onclick = () => {
         if (!sim.vanishReady || sim.over) return;
         sim.vanishReady = false; sim.warnTimer = 0; sim.heroY = 72;
-        playSound("select"); spawnFloat(70, 82, "VANISH STEP!", "#00f5d4");
+        playFightSfx("select"); spawnFloat(70, 82, "VANISH STEP!", "#00f5d4");
         setTimeout(() => { sim.heroY = 145; }, 380);
         setTimeout(() => { sim.vanishReady = true; }, 3400);
       };
       chargeBtn.onclick = () => {
         if (sim.over) return;
-        sim.ki = Math.min(100, sim.ki + 30); playSound("click");
+        sim.ki = Math.min(100, sim.ki + 30); playFightSfx("charge");
         spawnSparks(68, 125, "#52e588"); spawnFloat(68, 95, "+30 KI", "#52e588");
       };
     } else if (mode === 1) {
@@ -1324,8 +1679,8 @@ loadSmartImage(document.getElementById("intro-hero-img"), "intro_bg", () => {
         <button id="btn-up" class="l-card vanish" style="grid-column: span 2;">⬆️ OBEN AUSWEICHEN<span>FLUG-SPUR</span></button>
         <button id="btn-down" class="l-card" style="grid-column: span 2;">⬇️ UNTEN AUSWEICHEN<span>BODEN-SPUR</span></button>
       `;
-      document.getElementById("btn-up").onclick = () => { sim.lane = 0; playSound("click"); };
-      document.getElementById("btn-down").onclick = () => { sim.lane = 1; playSound("click"); };
+      document.getElementById("btn-up").onclick = () => { sim.lane = 0; playFightSfx("click"); };
+      document.getElementById("btn-down").onclick = () => { sim.lane = 1; playFightSfx("click"); };
     } else {
       document.getElementById("gta-mode-label").textContent = "NAMEK · KAMEHA-CLASH";
       chargeBtn.style.display = "none";
@@ -1339,39 +1694,50 @@ loadSmartImage(document.getElementById("intro-hero-img"), "intro_bg", () => {
         const hitZone = Math.abs(Math.sin(sim.ringAngle)) < 0.38;
         if (hitZone) {
           sim.beamPos += 16; sim.shake = 9; sim.hitStop = 3;
-          playSound("stageup"); spawnSparks(180, 125, "#00f5d4");
+          playFightSfx("hit"); spawnSparks(180, 125, "#00f5d4");
           spawnFloat(175, 85, "PERFEKT! +16%", "#00f5d4");
           if (sim.beamPos >= 100) { sim.enemyHp = 0; finishMission(true); }
         } else {
-          sim.beamPos -= 9; playSound("click");
+          sim.beamPos -= 9; playFightSfx("click");
           spawnFloat(150, 95, "DANEBEN!", "#ff0055");
         }
       };
           }
         battleModal.classList.remove("hidden");
+    if (mode === 2) playFightSfx("beam");
+
+    // Delta-Time: alle Werte sind auf "pro 60-Hz-Frame" ausgelegt, dt = 1 entspricht 16,67 ms.
+    // Auf 120-Hz-Geräten ist dt ≈ 0,5, bei Rucklern max. 3 (verhindert Sprünge nach Tab-Wechsel).
+    const FRAME_MS = 1000 / 60;
+    let lastFrameT = null;
 
     function loop(t) {
-      if (sim.hitStop > 0) { sim.hitStop -= 1; animFrameId = requestAnimationFrame(loop); return; }
+      const dt = lastFrameT === null ? 1 : Math.min(3, Math.max(0, (t - lastFrameT) / FRAME_MS));
+      lastFrameT = t;
+
+      if (sim.hitStop > 0) { sim.hitStop -= dt; animFrameId = requestAnimationFrame(loop); return; }
 
       ctx.save();
       if (sim.shake > 0) {
         ctx.translate((Math.random() - 0.5) * sim.shake, (Math.random() - 0.5) * sim.shake);
-        sim.shake *= 0.82;
+        sim.shake *= Math.pow(0.82, dt);
+        if (sim.shake < 0.2) sim.shake = 0;
       }
 
-      sim.scroll += mode === 1 ? 5.5 : 1.2;
-      drawDbzEnvironment(ctx, 356, 245, sim.scroll, lvl - 1);
+      sim.scroll += (mode === 1 ? 5.5 : 1.2) * dt;
+      drawStageBackground(ctx, 356, 245, sim.scroll, lvl - 1, t);
 
       const hover = Math.sin(t / 170) * 4;
 
       if (mode === 0) {
         if (!sim.over) {
-          sim.ki = Math.min(100, sim.ki + 0.09);
-          sim.attackCd -= 1;
-          if (sim.attackCd <= 0 && sim.warnTimer === 0) sim.warnTimer = 40;
+          sim.ki = Math.min(100, sim.ki + 0.09 * dt);
+          sim.attackCd -= dt;
+          if (sim.attackCd <= 0 && sim.warnTimer <= 0) sim.warnTimer = 40;
           if (sim.warnTimer > 0) {
-            sim.warnTimer -= 1;
-            if (sim.warnTimer === 0) {
+            sim.warnTimer -= dt;
+            if (sim.warnTimer <= 0) {
+              sim.warnTimer = 0;
               sim.projectiles.push({ x: 245, y: 125, vx: -(6.5 + lvl * 0.4), fromHero: false, col: "#ff0055" });
               sim.attackCd = Math.max(60, 120 - lvl * 7);
             }
@@ -1382,15 +1748,13 @@ loadSmartImage(document.getElementById("intro-hero-img"), "intro_bg", () => {
           ctx.fillText("!", sim.enemyX - 8, 52);
         }
         if (sim.beamTimer > 0) {
-          sim.beamTimer -= 1;
-          const grad = ctx.createLinearGradient(95, 0, 290, 0);
-          grad.addColorStop(0, heroObj.color); grad.addColorStop(1, "#ffffff");
-          ctx.fillStyle = grad; ctx.fillRect(95, 106, 195, 28);
+          sim.beamTimer = Math.max(0, sim.beamTimer - dt);
+          drawBeam(ctx, 95, 290, 120, 28 * Math.min(1, sim.beamTimer / 8), heroObj.color, t);
         }
       } else if (mode === 1) {
         sim.heroY = sim.lane === 0 ? 105 : 178;
         if (!sim.over) {
-          sim.attackCd -= 1;
+          sim.attackCd -= dt;
           if (sim.attackCd <= 0) {
             const isOrb = Math.random() < 0.35;
             const spawnLane = Math.random() < 0.5 ? 105 : 178;
@@ -1399,14 +1763,14 @@ loadSmartImage(document.getElementById("intro-hero-img"), "intro_bg", () => {
           }
         }
       } else {
-        sim.ringAngle += 0.075 + lvl * 0.006;
+        sim.ringAngle += (0.075 + lvl * 0.006) * dt;
         if (!sim.over) {
-          sim.beamPos -= 0.16 + lvl * 0.02;
+          sim.beamPos -= (0.16 + lvl * 0.02) * dt;
           if (sim.beamPos <= 0) { sim.heroHp = 0; finishMission(false); }
         }
         const clashX = 75 + (sim.beamPos / 100) * 205;
-        ctx.fillStyle = heroObj.color; ctx.fillRect(75, 118, clashX - 75, 20);
-        ctx.fillStyle = "#ff0055"; ctx.fillRect(clashX, 118, 280 - clashX, 20);
+        drawBeam(ctx, 280, clashX, 128, 20, "#ff0055", t + 500);
+        drawBeam(ctx, 75, clashX, 128, 20, heroObj.color, t);
         const pulseR = 24 + Math.abs(Math.sin(sim.ringAngle)) * 28;
         ctx.strokeStyle = "#52e588"; ctx.lineWidth = 3;
         ctx.beginPath(); ctx.arc(178, 65, 25, 0, Math.PI * 2); ctx.stroke();
@@ -1414,38 +1778,17 @@ loadSmartImage(document.getElementById("intro-hero-img"), "intro_bg", () => {
         ctx.beginPath(); ctx.arc(178, 65, pulseR, 0, Math.PI * 2); ctx.stroke();
       }
 
-      // Glühende Super-Saiyajin-Aura hinter dem Helden
-      const auraPulse = 36 + Math.sin(t / 90) * 6;
-      const hAura = ctx.createRadialGradient(sim.heroX, sim.heroY - 22, 6, sim.heroX, sim.heroY - 22, auraPulse);
-      hAura.addColorStop(0, "rgba(255, 255, 255, 0.75)");
-      hAura.addColorStop(0.5, heroObj.color + "88");
-      hAura.addColorStop(1, "transparent");
-      ctx.fillStyle = hAura;
-      ctx.beginPath(); ctx.arc(sim.heroX, sim.heroY - 22, auraPulse, 0, Math.PI * 2); ctx.fill();
-
-      // Glühende Gegner-Aura
-      const eAura = ctx.createRadialGradient(sim.enemyX, sim.enemyY - 22, 6, sim.enemyX, sim.enemyY - 22, auraPulse);
-      eAura.addColorStop(0, "rgba(255, 255, 255, 0.55)");
-      eAura.addColorStop(0.5, "rgba(255, 0, 85, 0.5)");
-      eAura.addColorStop(1, "transparent");
-      ctx.fillStyle = eAura;
-      ctx.beginPath(); ctx.arc(sim.enemyX, sim.enemyY - 22, auraPulse, 0, Math.PI * 2); ctx.fill();
-
-      if (heroSprite.complete && heroSprite.naturalWidth) {
-        ctx.drawImage(heroSprite, sim.heroX - 42, sim.heroY - 75 + hover, 84, 115);
-      }
-      if (enemySprite.complete && enemySprite.naturalWidth) {
-        ctx.save(); ctx.translate(sim.enemyX, sim.enemyY - hover); ctx.scale(-1, 1);
-        ctx.drawImage(enemySprite, -42, -75, 84, 115); ctx.restore();
-      }
+      // Kämpfer mit Aura, Flammen, Atem-Animation und Leuchtrand (Füße bei y + 40)
+      drawFighterUnstretched(ctx, heroSprite, sim.heroX, sim.heroY + 40 + hover, { color: heroObj.color, t });
+      drawFighterUnstretched(ctx, enemySprite, sim.enemyX, sim.enemyY + 40 - hover, { color: "#ff0055", flip: true, t: t + 900 });
 
       sim.projectiles = sim.projectiles.filter(p => {
-        p.x += p.vx;
+        p.x += p.vx * dt;
         ctx.beginPath(); ctx.arc(p.x, p.y, p.isOrb ? 13 : 11, 0, Math.PI * 2);
         ctx.fillStyle = p.col; ctx.fill();
         if (p.fromHero && p.x >= sim.enemyX - 25) {
           const dmg = 9 + state.selectedStage;
-          sim.enemyHp -= dmg; spawnSparks(sim.enemyX - 15, p.y, p.col);
+          sim.enemyHp -= dmg; spawnSparks(sim.enemyX - 15, p.y, p.col); playFightSfx("hit");
           spawnFloat(sim.enemyX - 20, 90, `-${dmg}`, p.col);
           if (sim.enemyHp <= 0) finishMission(true);
           return false;
@@ -1456,11 +1799,11 @@ loadSmartImage(document.getElementById("intro-hero-img"), "intro_bg", () => {
           }
           if (mode === 1 && Math.abs(p.y - (sim.heroY - 20)) > 28) return true;
           if (p.isOrb) {
-            const dmg = 22; sim.enemyHp -= dmg; playSound("stageup");
+            const dmg = 22; sim.enemyHp -= dmg; playFightSfx("hit");
             spawnSparks(sim.heroX, p.y, "#00f5d4"); spawnFloat(sim.heroX, 85, `KONTER -${dmg}!`, "#00f5d4");
             if (sim.enemyHp <= 0) finishMission(true);
           } else {
-            const dmg = 18 + lvl * 2; sim.heroHp -= dmg; sim.shake = 10; playSound("done");
+            const dmg = 18 + lvl * 2; sim.heroHp -= dmg; sim.shake = 10; playFightSfx("hit");
             spawnSparks(sim.heroX, p.y, "#ff0055"); spawnFloat(sim.heroX - 10, 85, `-${dmg}`, "#ff0055");
             if (sim.heroHp <= 0) finishMission(false);
           }
@@ -1470,13 +1813,13 @@ loadSmartImage(document.getElementById("intro-hero-img"), "intro_bg", () => {
       });
 
       sim.sparks = sim.sparks.filter(s => {
-        s.x += s.vx; s.y += s.vy; s.life -= 1;
+        s.x += s.vx * dt; s.y += s.vy * dt; s.life -= dt;
         ctx.fillStyle = s.col; ctx.fillRect(s.x, s.y, 4, 4);
         return s.life > 0;
       });
 
       sim.floats = sim.floats.filter(ft => {
-        ft.y -= 0.8; ft.life -= 1;
+        ft.y -= 0.8 * dt; ft.life -= dt;
         ctx.fillStyle = "#000"; ctx.font = "bold 17px Anton, sans-serif";
         ctx.fillText(ft.txt, ft.x + 2, ft.y + 2);
         ctx.fillStyle = ft.col; ctx.fillText(ft.txt, ft.x, ft.y);
