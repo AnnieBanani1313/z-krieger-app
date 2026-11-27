@@ -1139,6 +1139,25 @@ body {
   color: #ffb703;
   text-shadow: 0 0 10px rgba(255, 183, 3, 0.8);
 }
+.gta-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.lg-mute-btn {
+  background: #16161c;
+  border: 1px solid #2e2e3a;
+  border-radius: 6px;
+  color: #fff;
+  font-size: 0.95rem;
+  line-height: 1;
+  padding: 4px 6px;
+  cursor: pointer;
+}
+.lg-mute-btn.muted {
+  border-color: #ff4d6d;
+  opacity: 0.75;
+}
 .gta-mode-tag {
   font-family: 'Anton', sans-serif;
   font-size: 0.82rem;

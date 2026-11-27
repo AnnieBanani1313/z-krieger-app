@@ -940,7 +940,10 @@ loadSmartImage(document.getElementById("intro-hero-img"), "intro_bg", () => {
     <div class="levelup-card" style="max-width: 390px; padding: 14px; border-color:#ffb703;">
       <div class="gta-wanted-bar">
         <span id="gta-mode-label" class="gta-mode-tag">TURNIER DER KRAFT</span>
-        <span id="gta-stars-label" class="gta-stars">★☆☆☆☆</span>
+        <div class="gta-right">
+          <span id="gta-stars-label" class="gta-stars">★☆☆☆☆</span>
+          <button id="lg-mute-btn" class="lg-mute-btn" type="button" aria-pressed="false" aria-label="Kampf-Sound stummschalten">🔊</button>
+        </div>
       </div>
       <div class="legends-hud">
         <div>
@@ -1419,6 +1422,116 @@ loadSmartImage(document.getElementById("intro-hero-img"), "intro_bg", () => {
     ctx.stroke();
     ctx.restore();
   }
+  // ===== KAMPF-SOUNDS (Web Audio API, synthetisch – keine Dateien nötig) =====
+  // Eigener Schlüssel, damit "zwarriors_neon_v10" unverändert bleibt
+  const SFX_MUTE_KEY = "zkrieger_kampf_stumm";
+  let fightMuted = localStorage.getItem(SFX_MUTE_KEY) === "1";
+  let noiseBuffer = null;
+
+  function getNoiseBuffer(ac) {
+    if (noiseBuffer && noiseBuffer.sampleRate === ac.sampleRate) return noiseBuffer;
+    const len = Math.floor(ac.sampleRate * 1.3);
+    noiseBuffer = ac.createBuffer(1, len, ac.sampleRate);
+    noiseBuffer.copyToChannel(Float32Array.from({ length: len }, () => Math.random() * 2 - 1), 0);
+    return noiseBuffer;
+  }
+
+  function sfxNoise(ac, out, { start, dur, type = "lowpass", f0, f1, q = 1, vol }) {
+    const src = ac.createBufferSource();
+    src.buffer = getNoiseBuffer(ac);
+    const flt = ac.createBiquadFilter();
+    flt.type = type;
+    flt.Q.value = q;
+    flt.frequency.setValueAtTime(f0, start);
+    flt.frequency.exponentialRampToValueAtTime(f1, start + dur);
+    const g = ac.createGain();
+    g.gain.setValueAtTime(vol, start);
+    g.gain.exponentialRampToValueAtTime(0.001, start + dur);
+    src.connect(flt); flt.connect(g); g.connect(out);
+    src.start(start); src.stop(start + dur + 0.03);
+  }
+
+  function sfxTone(ac, out, { start, dur, type = "sine", f0, f1, vol, attack = 0.005, vibrato = 0 }) {
+    const osc = ac.createOscillator();
+    osc.type = type;
+    osc.frequency.setValueAtTime(f0, start);
+    if (f1) osc.frequency.exponentialRampToValueAtTime(f1, start + dur);
+    if (vibrato) {
+      const lfo = ac.createOscillator();
+      const depth = ac.createGain();
+      lfo.frequency.value = 18;
+      depth.gain.value = vibrato;
+      lfo.connect(depth); depth.connect(osc.frequency);
+      lfo.start(start); lfo.stop(start + dur + 0.03);
+    }
+    const g = ac.createGain();
+    g.gain.setValueAtTime(0.0001, start);
+    g.gain.exponentialRampToValueAtTime(vol, start + attack);
+    g.gain.exponentialRampToValueAtTime(0.001, start + dur);
+    osc.connect(g); g.connect(out);
+    osc.start(start); osc.stop(start + dur + 0.03);
+  }
+
+  // Treffer, Strahl, Aufladen, K.O. (+ kleiner "zap"); andere Namen fallen auf playSound zurück
+  function playFightSfx(name) {
+    if (fightMuted) return;
+    const FIGHT_SFX = { hit: 1, beam: 1, charge: 1, ko: 1, zap: 1 };
+    if (!Reflect.get(FIGHT_SFX, name)) { playSound(name); return; }
+    try {
+      const ac = getAudioCtx();
+      if (!ac) return;
+      const now = ac.currentTime;
+      const out = ac.createGain();
+      out.gain.value = 0.85;
+      const comp = ac.createDynamicsCompressor();
+      out.connect(comp); comp.connect(ac.destination);
+
+      if (name === "hit") {
+        sfxTone(ac, out, { start: now, dur: 0.2, f0: 170, f1: 42, vol: 0.6 });
+        sfxNoise(ac, out, { start: now, dur: 0.13, type: "bandpass", f0: 2600, f1: 450, q: 0.8, vol: 0.55 });
+        sfxTone(ac, out, { start: now, dur: 0.06, type: "square", f0: 950, f1: 280, vol: 0.12 });
+        if (navigator.vibrate) navigator.vibrate(25);
+      } else if (name === "zap") {
+        sfxTone(ac, out, { start: now, dur: 0.17, type: "sawtooth", f0: 1500, f1: 240, vol: 0.13 });
+        sfxNoise(ac, out, { start: now, dur: 0.1, type: "highpass", f0: 3000, f1: 1200, vol: 0.18 });
+      } else if (name === "beam") {
+        sfxTone(ac, out, { start: now, dur: 0.22, type: "sawtooth", f0: 220, f1: 880, vol: 0.1, attack: 0.03 });
+        sfxNoise(ac, out, { start: now + 0.08, dur: 0.95, f0: 3200, f1: 380, q: 0.7, vol: 0.5 });
+        sfxTone(ac, out, { start: now + 0.08, dur: 0.95, type: "sawtooth", f0: 115, f1: 75, vol: 0.2, attack: 0.04, vibrato: 9 });
+        sfxTone(ac, out, { start: now + 0.08, dur: 0.8, type: "square", f0: 232, f1: 150, vol: 0.05, attack: 0.04, vibrato: 14 });
+        if (navigator.vibrate) navigator.vibrate(Array.of(40, 30, 60));
+      } else if (name === "charge") {
+        sfxTone(ac, out, { start: now, dur: 0.5, type: "square", f0: 180, f1: 820, vol: 0.06, attack: 0.04, vibrato: 25 });
+        sfxTone(ac, out, { start: now, dur: 0.5, f0: 320, f1: 1300, vol: 0.12, attack: 0.04 });
+        sfxNoise(ac, out, { start: now, dur: 0.45, type: "bandpass", f0: 600, f1: 4000, q: 3, vol: 0.15 });
+      } else if (name === "ko") {
+        sfxTone(ac, out, { start: now, dur: 1.0, f0: 130, f1: 28, vol: 0.75 });
+        sfxNoise(ac, out, { start: now, dur: 1.2, f0: 2000, f1: 70, q: 0.6, vol: 0.6 });
+        Array.of(660, 494, 392, 262).forEach((f, i) => {
+          sfxTone(ac, out, { start: now + 0.35 + i * 0.13, dur: 0.24, type: "triangle", f0: f, vol: 0.16 });
+        });
+        if (navigator.vibrate) navigator.vibrate(Array.of(80, 40, 160));
+      }
+    } catch (e) {}
+  }
+
+  function updateMuteButton() {
+    const btn = document.getElementById("lg-mute-btn");
+    if (!btn) return;
+    btn.textContent = fightMuted ? "🔇" : "🔊";
+    btn.classList.toggle("muted", fightMuted);
+    btn.setAttribute("aria-pressed", fightMuted ? "true" : "false");
+    btn.setAttribute("aria-label", fightMuted ? "Kampf-Sound einschalten" : "Kampf-Sound stummschalten");
+  }
+
+  document.getElementById("lg-mute-btn").addEventListener("click", () => {
+    fightMuted = !fightMuted;
+    localStorage.setItem(SFX_MUTE_KEY, fightMuted ? "1" : "0");
+    updateMuteButton();
+    if (!fightMuted) playFightSfx("zap");
+  });
+  updateMuteButton();
+
     let animFrameId = null;
 
   function startDbzMission() {
@@ -1489,7 +1602,7 @@ loadSmartImage(document.getElementById("intro-hero-img"), "intro_bg", () => {
       if (sim.over) return;
       sim.over = true;
       sim.koBanner = won ? "SIEG · K.O.!" : "NIEDERLAGE";
-      playSound(won ? "stageup" : "done");
+      playFightSfx("ko");
       setTimeout(() => {
         cancelAnimationFrame(animFrameId);
         battleModal.classList.add("hidden");
@@ -1522,7 +1635,7 @@ loadSmartImage(document.getElementById("intro-hero-img"), "intro_bg", () => {
       document.getElementById("btn-m1").onclick = () => {
         if (sim.ki < 20 || sim.over) return;
         sim.ki -= 20; sim.heroX = 225; sim.hitStop = 4; sim.shake = 8;
-        playSound("done");
+        playFightSfx("hit");
         const dmg = 20 + state.selectedStage * 3;
         sim.enemyHp -= dmg;
         spawnSparks(275, 115, heroObj.color);
@@ -1532,13 +1645,13 @@ loadSmartImage(document.getElementById("intro-hero-img"), "intro_bg", () => {
       };
       document.getElementById("btn-m2").onclick = () => {
         if (sim.ki < 25 || sim.over) return;
-        sim.ki -= 25; playSound("click");
+        sim.ki -= 25; playFightSfx("zap");
         Array.of(0, 1, 2).forEach(i => sim.projectiles.push({ x: 105 - i * 18, y: 118 + (i - 1) * 16, vx: 9, fromHero: true, col: heroObj.color }));
       };
       document.getElementById("btn-m3").onclick = () => {
         if (sim.ki < 60 || sim.over) return;
         sim.ki -= 60; sim.beamTimer = 28; sim.hitStop = 5; sim.shake = 12;
-        playSound("stageup");
+        playFightSfx("beam");
         const dmg = 46 + state.selectedStage * 6;
         sim.enemyHp -= dmg;
         spawnSparks(275, 115, "#ff0055");
@@ -1548,13 +1661,13 @@ loadSmartImage(document.getElementById("intro-hero-img"), "intro_bg", () => {
       document.getElementById("btn-m4").onclick = () => {
         if (!sim.vanishReady || sim.over) return;
         sim.vanishReady = false; sim.warnTimer = 0; sim.heroY = 72;
-        playSound("select"); spawnFloat(70, 82, "VANISH STEP!", "#00f5d4");
+        playFightSfx("select"); spawnFloat(70, 82, "VANISH STEP!", "#00f5d4");
         setTimeout(() => { sim.heroY = 145; }, 380);
         setTimeout(() => { sim.vanishReady = true; }, 3400);
       };
       chargeBtn.onclick = () => {
         if (sim.over) return;
-        sim.ki = Math.min(100, sim.ki + 30); playSound("click");
+        sim.ki = Math.min(100, sim.ki + 30); playFightSfx("charge");
         spawnSparks(68, 125, "#52e588"); spawnFloat(68, 95, "+30 KI", "#52e588");
       };
     } else if (mode === 1) {
@@ -1564,8 +1677,8 @@ loadSmartImage(document.getElementById("intro-hero-img"), "intro_bg", () => {
         <button id="btn-up" class="l-card vanish" style="grid-column: span 2;">⬆️ OBEN AUSWEICHEN<span>FLUG-SPUR</span></button>
         <button id="btn-down" class="l-card" style="grid-column: span 2;">⬇️ UNTEN AUSWEICHEN<span>BODEN-SPUR</span></button>
       `;
-      document.getElementById("btn-up").onclick = () => { sim.lane = 0; playSound("click"); };
-      document.getElementById("btn-down").onclick = () => { sim.lane = 1; playSound("click"); };
+      document.getElementById("btn-up").onclick = () => { sim.lane = 0; playFightSfx("click"); };
+      document.getElementById("btn-down").onclick = () => { sim.lane = 1; playFightSfx("click"); };
     } else {
       document.getElementById("gta-mode-label").textContent = "NAMEK · KAMEHA-CLASH";
       chargeBtn.style.display = "none";
@@ -1579,16 +1692,17 @@ loadSmartImage(document.getElementById("intro-hero-img"), "intro_bg", () => {
         const hitZone = Math.abs(Math.sin(sim.ringAngle)) < 0.38;
         if (hitZone) {
           sim.beamPos += 16; sim.shake = 9; sim.hitStop = 3;
-          playSound("stageup"); spawnSparks(180, 125, "#00f5d4");
+          playFightSfx("hit"); spawnSparks(180, 125, "#00f5d4");
           spawnFloat(175, 85, "PERFEKT! +16%", "#00f5d4");
           if (sim.beamPos >= 100) { sim.enemyHp = 0; finishMission(true); }
         } else {
-          sim.beamPos -= 9; playSound("click");
+          sim.beamPos -= 9; playFightSfx("click");
           spawnFloat(150, 95, "DANEBEN!", "#ff0055");
         }
       };
           }
         battleModal.classList.remove("hidden");
+    if (mode === 2) playFightSfx("beam");
 
     // Delta-Time: alle Werte sind auf "pro 60-Hz-Frame" ausgelegt, dt = 1 entspricht 16,67 ms.
     // Auf 120-Hz-Geräten ist dt ≈ 0,5, bei Rucklern max. 3 (verhindert Sprünge nach Tab-Wechsel).
@@ -1672,7 +1786,7 @@ loadSmartImage(document.getElementById("intro-hero-img"), "intro_bg", () => {
         ctx.fillStyle = p.col; ctx.fill();
         if (p.fromHero && p.x >= sim.enemyX - 25) {
           const dmg = 9 + state.selectedStage;
-          sim.enemyHp -= dmg; spawnSparks(sim.enemyX - 15, p.y, p.col);
+          sim.enemyHp -= dmg; spawnSparks(sim.enemyX - 15, p.y, p.col); playFightSfx("hit");
           spawnFloat(sim.enemyX - 20, 90, `-${dmg}`, p.col);
           if (sim.enemyHp <= 0) finishMission(true);
           return false;
@@ -1683,11 +1797,11 @@ loadSmartImage(document.getElementById("intro-hero-img"), "intro_bg", () => {
           }
           if (mode === 1 && Math.abs(p.y - (sim.heroY - 20)) > 28) return true;
           if (p.isOrb) {
-            const dmg = 22; sim.enemyHp -= dmg; playSound("stageup");
+            const dmg = 22; sim.enemyHp -= dmg; playFightSfx("hit");
             spawnSparks(sim.heroX, p.y, "#00f5d4"); spawnFloat(sim.heroX, 85, `KONTER -${dmg}!`, "#00f5d4");
             if (sim.enemyHp <= 0) finishMission(true);
           } else {
-            const dmg = 18 + lvl * 2; sim.heroHp -= dmg; sim.shake = 10; playSound("done");
+            const dmg = 18 + lvl * 2; sim.heroHp -= dmg; sim.shake = 10; playFightSfx("hit");
             spawnSparks(sim.heroX, p.y, "#ff0055"); spawnFloat(sim.heroX - 10, 85, `-${dmg}`, "#ff0055");
             if (sim.heroHp <= 0) finishMission(false);
           }
