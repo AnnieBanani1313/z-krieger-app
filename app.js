@@ -1,5 +1,5 @@
 (function loadAppFonts() {
-  const host = ["fonts", "googleapis", "com"].join(".");
+  const host = Array.of("fonts", "googleapis", "com").join(".");
   const link = document.createElement("link");
   link.rel = "stylesheet";
   link.href = `https://${host}/css2?family=Anton&family=Rajdhani:wght@600;700&display=swap`;
@@ -104,7 +104,7 @@
   }
 })();
 
-const CHARACTERS = [
+const CHARACTERS = Array.of(
   { id: 1, name: "SON-BLITZ", attack: "SONNEN-KAMEHA", focus: "GANZKÖRPER", bio: "Furchtloser Saiyajin-Krieger.", color: "#ffb703" },
   { id: 2, name: "PRINZ-KI", attack: "FINALER BLITZ", focus: "ARME & BRUST", bio: "Meister der Schwerkraft.", color: "#5ce1e6" },
   { id: 3, name: "CYBER-RED", attack: "FLAMMEN-HIEB", focus: "REAKTION & BAUCH", bio: "High-Tech-Rüstung & Reflexe.", color: "#ff5c77" },
@@ -120,75 +120,75 @@ const CHARACTERS = [
   { id: 13, name: "AERO-DASH", attack: "WIRBELSTURM", focus: "BEINE & AGILITÄT", bio: "Beherrscht den Himmel.", color: "#64dfdf" },
   { id: 14, name: "OMEGA-GOD", attack: "OMEGA-URKNALL", focus: "ALLE BEREICHE", bio: "Meister aller Techniken.", color: "#ff758f" },
   { id: 15, name: "STURM-GREEN", attack: "OMEGA-STURM", focus: "BEINE & KRAFT", bio: "Smaragdgrüne Natur-Energie.", color: "#52e588" }
-];
+);
 
-const STAGE_RULES = [
+const STAGE_RULES = Array.of(
   { stage: 1, minLevel: 1 }, { stage: 2, minLevel: 2 },
   { stage: 3, minLevel: 4 }, { stage: 4, minLevel: 6 }, { stage: 5, minLevel: 8 }
-];
+);
 
-const BOSS_CHALLENGES = [
+const BOSS_CHALLENGES = Array.of(
   { title: "BOSS: SCHWERKRAFT 50x G", sub: "Kombi-Prüfung · Doppel-XP", xp: 120, power: 3000, pose: "plank", sec: 30, isBoss: true, tip: "10 Kniebeugen + 30 Sek. Plank!" },
   { title: "BOSS: MEISTER-PRÜFUNG", sub: "Endboss · Doppel-XP", xp: 140, power: 3500, pose: "benchpress", sec: 25, isBoss: true, tip: "10x Hantelbank-Drücken + 25s Boxen!" },
   { title: "BOSS: GALAXIE-TURNIER", sub: "Finale · Doppel-XP", xp: 160, power: 4000, pose: "jump", sec: 30, isBoss: true, tip: "15 Ausfallschritte + 30s Sprünge!" }
-];
+);
 
-const TROPHIES = [
+const TROPHIES = Array.of(
   { id: "t1", icon: "⚡", name: "ERWACHEN", desc: "Stufe 2 erreicht" },
   { id: "t2", icon: "🔥", name: "10.000 KI", desc: "10.000 Ki gesammelt" },
   { id: "t3", icon: "👹", name: "BOSS-JÄGER", desc: "Ersten Boss besiegt" },
   { id: "t4", icon: "📅", name: "DISZIPLIN", desc: "3 Tage Streak" },
   { id: "t5", icon: "💪", name: "BAUCH-STAHL", desc: "Bauch Level 3" },
   { id: "t6", icon: "👑", name: "TEAM-LEADER", desc: "5 Krieger trainiert" }
-];
-   const BODY_WORKOUTS = {
+);
+const BODY_WORKOUTS = {
   arms: {
     label: "TRAINING: ARME & HANTELBANK",
-    easy: [
+    easy: Array.of(
       { title: "12x Kurzhantel-Curls", sub: "Einfach · Hantel-Power", xp: 25, power: 450, pose: "dumbbellcurl", tip: "Hantel ruhig beugen & strecken." },
       { title: "10x Knie-Liegestütze", sub: "Einfach · Basis", xp: 25, power: 400, pose: "kneepushup", tip: "Knie auf Boden, Rücken gerade." },
       { title: "20 Sek. Schattenboxen", sub: "Einfach · Ki-Fäuste", xp: 20, power: 350, pose: "punch", sec: 20, tip: "Schnelle Schläge nach vorn!" }
-    ],
-    advanced: [
+    ),
+    advanced: Array.of(
       { title: "12x Hantelbank-Drücken", sub: "Profi · Brust & Arme", xp: 50, power: 1000, pose: "benchpress", tip: "Gewicht über der Brust hochdrücken!" },
       { title: "12x Echte Liegestütze", sub: "Profi · Kamehameha", xp: 45, power: 900, pose: "pushup", tip: "Körper wie ein Brett spannen." },
       { title: "10x Dips am Stuhl", sub: "Profi · Trizeps", xp: 45, power: 950, pose: "dips", tip: "Po dicht am Stuhl absenken." }
-    ],
-    master: [
+    ),
+    master: Array.of(
       { title: "16x Schweres Bankdrücken", sub: "Meister · 100x G Hantel", xp: 90, power: 2400, pose: "benchpress", tip: "Kontrolliert absenken & hoch!" },
       { title: "22x Tiefe Liegestütze", sub: "Meister · 100x G", xp: 80, power: 2000, pose: "pushup", tip: "Kurz vor Boden abstoppen." },
       { title: "15x Hantel-Schulterdrücken", sub: "Meister · Final-Ki", xp: 85, power: 2200, pose: "dumbbellcurl", tip: "Hanteln über den Kopf stemmen!" }
-    ]
+    )
   },
   core: {
     label: "TRAINING: BAUCH & RUMPF",
-    easy: [
+    easy: Array.of(
       { title: "20 Sek. Plank", sub: "Einfach · Bauch-Schild", xp: 25, power: 450, pose: "plank", sec: 20, tip: "Bauch und Po fest anspannen!" },
       { title: "10x Crunches", sub: "Einfach · Körpermitte", xp: 25, power: 400, pose: "situp", tip: "Schultern kontrolliert rollen." }
-    ],
-    advanced: [
+    ),
+    advanced: Array.of(
       { title: "40 Sek. Plank", sub: "Profi · Goldene Aura", xp: 45, power: 950, pose: "plank", sec: 40, tip: "Ruhig weiteratmen & halten." },
       { title: "16x Hantel-Russian-Twists", sub: "Profi · Saiyajin-Bauch", xp: 50, power: 1000, pose: "dumbbellcurl", tip: "Mit Gewicht von links nach rechts drehen." }
-    ],
-    master: [
+    ),
+    master: Array.of(
       { title: "70 Sek. Plank", sub: "Meister · Abwehr", xp: 85, power: 2200, pose: "plank", sec: 70, tip: "Unzerstörbare Bauch-Spannung!" },
       { title: "25x Beinheben", sub: "Meister · Götter-Bauch", xp: 80, power: 2100, pose: "legraise", tip: "Beine gestreckt langsam heben." }
-    ]
+    )
   },
   legs: {
     label: "TRAINING: BEINE & SPRUNGKRAFT",
-    easy: [
+    easy: Array.of(
       { title: "15x Kniebeugen", sub: "Einfach · Fester Stand", xp: 25, power: 450, pose: "squat", tip: "Po weit nach hinten schieben." },
       { title: "25 Sek. Hampelmänner", sub: "Einfach · Speed", xp: 20, power: 350, pose: "jump", sec: 25, tip: "Leichtfüßig auf Fußballen." }
-    ],
-    advanced: [
+    ),
+    advanced: Array.of(
       { title: "20x Hantel-Kniebeugen", sub: "Profi · 10x Schwerkraft", xp: 50, power: 1000, pose: "squat", tip: "Hantel vor der Brust halten & tief beugen." },
       { title: "14x Ausfallschritte", sub: "Profi · Ausweichen", xp: 45, power: 900, pose: "lunge", tip: "Großer Schritt nach vorn." }
-    ],
-    master: [
+    ),
+    master: Array.of(
       { title: "15x Sprung-Kniebeugen", sub: "Meister · Raketen-Start", xp: 85, power: 2300, pose: "jump", tip: "Explosiv abspringen!" },
       { title: "45 Sek. Wandsitzen", sub: "Meister · 100x G", xp: 80, power: 2100, pose: "wallsit", sec: 45, tip: "Knie im 90-Grad-Winkel." }
-    ]
+    )
   }
 };
 
@@ -201,7 +201,7 @@ let state = JSON.parse(localStorage.getItem("zwarriors_neon_v10")) || {
   streak: 0, lastTrainDate: "",
   senzuDate: "", senzuActive: false,
   bossCounter: 0, bossWins: 0,
-  testedChars: []
+  testedChars: Array.of()
 };
 
 let activeExercise = null;
@@ -212,7 +212,7 @@ function getTodayKey() {
 }
 
 function showScreen(id) {
-  ["intro-screen", "select-screen", "detail-screen", "arena-screen"].forEach(s => {
+  Array.of("intro-screen", "select-screen", "detail-screen", "arena-screen").forEach(s => {
     document.getElementById(s).classList.toggle("hidden", s !== id);
   });
 }
@@ -236,7 +236,7 @@ function playSound(mode = "click") {
     if (!ctx) return;
     const now = ctx.currentTime;
     if (mode === "select") {
-      [780, 1180].forEach((freq, idx) => {
+      Array.of(780, 1180).forEach((freq, idx) => {
         const osc = ctx.createOscillator();
         const gain = ctx.createGain();
         osc.type = "sine";
@@ -249,8 +249,8 @@ function playSound(mode = "click") {
       return;
     }
     if (mode === "done" || mode === "stageup" || mode === "levelup") {
-      if (navigator.vibrate) navigator.vibrate([50, 30, 90]);
-      const freqs = mode === "stageup" ? [220, 330, 440, 660, 990] :;
+      if (navigator.vibrate) navigator.vibrate(Array.of(50, 30, 90));
+      const freqs = mode === "stageup" ? Array.of(220, 330, 440, 660, 990) : Array.of(330, 440, 660, 880);
       freqs.forEach((freq, idx) => {
         const osc = ctx.createOscillator();
         const gain = ctx.createGain();
@@ -274,14 +274,177 @@ function playSound(mode = "click") {
     osc.start(now); osc.stop(now + 0.2);
   } catch (e) {}
 }
+function getComicSVG(pose) {
+  const cObj = CHARACTERS.find(c => c.id === state.selectedChar) || CHARACTERS.at(0);
+  const auraCol = cObj.color || "#ff9900";
+  const bg = `<defs>
+    <radialGradient id="kiAura" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="${auraCol}" stop-opacity="0.5"/>
+      <stop offset="100%" stop-color="${auraCol}" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="giGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="${auraCol}"/>
+      <stop offset="100%" stop-color="#e85d04"/>
+    </linearGradient>
+  </defs>
+  <ellipse cx="130" cy="70" rx="95" ry="48" fill="url(#kiAura)"/>
+  <line x1="20" y1="112" x2="240" y2="112" stroke="#3a3a48" stroke-width="3" stroke-linecap="round"/>`;
+
+  const hair = (x, y, rot = 0) => `<g transform="translate(${x},${y}) rotate(${rot})">
+    <polygon points="-10,-6 -22,-18 -6,-13 -12,-28 0,-16 6,-30 10,-15 22,-22 12,-8 20,-2 8,2" fill="#141418" stroke="${auraCol}" stroke-width="1.2"/>
+    <circle cx="2" cy="2" r="9" fill="#f4c095" stroke="#141418" stroke-width="1.5"/>
+  </g>`;
+
+  const svgs = {
+    benchpress: `<svg viewBox="0 0 260 125" width="235" height="120">${bg}
+      <rect x="65" y="84" width="115" height="10" rx="4" fill="#4a4e69"/>
+      <line x1="80" y1="94" x2="80" y2="112" stroke="#8d99ae" stroke-width="6"/>
+      <line x1="165" y1="94" x2="165" y2="112" stroke="#8d99ae" stroke-width="6"/>
+      <polyline points="155,80 185,84 195,110" stroke="#1d3557" stroke-width="12" fill="none" stroke-linecap="round"/>
+      <path d="M95,78 L155,78" stroke="url(#giGrad)" stroke-width="15" stroke-linecap="round"/>
+      <line x1="120" y1="74" x2="120" y2="34" stroke="#f4c095" stroke-width="9" stroke-linecap="round"/>
+      <line x1="88" y1="34" x2="152" y2="34" stroke="#adb5bd" stroke-width="5" stroke-linecap="round"/>
+      <rect x="82" y="22" width="10" height="24" rx="2" fill="${auraCol}"/>
+      <rect x="148" y="22" width="10" height="24" rx="2" fill="${auraCol}"/>
+      ${hair(78, 72, -80)}</svg>`,
+    dumbbellcurl: `<svg viewBox="0 0 260 125" width="235" height="120">${bg}
+      <polyline points="118,76 108,108" stroke="#1d3557" stroke-width="13" stroke-linecap="round"/>
+      <polyline points="134,76 144,108" stroke="#1d3557" stroke-width="13" stroke-linecap="round"/>
+      <path d="M126,40 L126,76" stroke="url(#giGrad)" stroke-width="18" stroke-linecap="round"/>
+      <polyline points="132,46 154,64 166,44" stroke="#f4c095" stroke-width="9" stroke-linecap="round" fill="none"/>
+      <line x1="154" y1="44" x2="178" y2="44" stroke="#adb5bd" stroke-width="5"/>
+      <rect x="150" y="36" width="7" height="16" rx="2" fill="${auraCol}"/>
+      <rect x="175" y="36" width="7" height="16" rx="2" fill="${auraCol}"/>
+      ${hair(126, 23, 0)}</svg>`,
+    pushup: `<svg viewBox="0 0 260 125" width="235" height="120">${bg}
+      <path d="M48,106 L108,88 L164,66" stroke="#1d3557" stroke-width="13" stroke-linecap="round" fill="none"/>
+      <path d="M108,88 L166,65" stroke="url(#giGrad)" stroke-width="16" stroke-linecap="round" fill="none"/>
+      <path d="M162,68 L156,90 L164,108" stroke="#f4c095" stroke-width="9" stroke-linecap="round" fill="none"/>
+      ${hair(182, 58, 18)}</svg>`,
+    kneepushup: `<svg viewBox="0 0 260 125" width="235" height="120">${bg}
+      <polyline points="42,92 84,106 122,82" stroke="#1d3557" stroke-width="13" stroke-linecap="round" fill="none"/>
+      <path d="M122,82 L172,62" stroke="url(#giGrad)" stroke-width="16" stroke-linecap="round"/>
+      <path d="M168,65 L164,90 L170,108" stroke="#f4c095" stroke-width="9" stroke-linecap="round" fill="none"/>
+      ${hair(188, 54, 18)}</svg>`,
+    dips: `<svg viewBox="0 0 260 125" width="235" height="120">${bg}
+      <polyline points="55,110 55,64 95,64 95,110" stroke="#555" stroke-width="5" fill="none"/>
+      <polyline points="124,84 162,86 184,108" stroke="#1d3557" stroke-width="13" stroke-linecap="round" fill="none"/>
+      <path d="M116,46 L124,84" stroke="url(#giGrad)" stroke-width="16" stroke-linecap="round"/>
+      <polyline points="116,48 92,62" stroke="#f4c095" stroke-width="8" stroke-linecap="round" fill="none"/>
+      ${hair(116, 30, 0)}</svg>`,
+    plank: `<svg viewBox="0 0 260 125" width="235" height="120">${bg}
+      <path d="M45,104 L112,88 L174,74" stroke="#1d3557" stroke-width="13" stroke-linecap="round" fill="none"/>
+      <path d="M112,88 L176,73" stroke="url(#giGrad)" stroke-width="16" stroke-linecap="round" fill="none"/>
+      <polyline points="172,76 168,104 190,104" stroke="#f4c095" stroke-width="9" stroke-linecap="round" fill="none"/>
+      ${hair(194, 68, 12)}</svg>`,
+    situp: `<svg viewBox="0 0 260 125" width="235" height="120">${bg}
+      <polyline points="126,104 162,74 188,106" stroke="#1d3557" stroke-width="13" stroke-linecap="round" fill="none"/>
+      <path d="M126,104 L104,58" stroke="url(#giGrad)" stroke-width="17" stroke-linecap="round"/>
+      ${hair(98, 42, -18)}</svg>`,
+    legraise: `<svg viewBox="0 0 260 125" width="235" height="120">${bg}
+      <path d="M68,104 L124,104" stroke="url(#giGrad)" stroke-width="16" stroke-linecap="round"/>
+      <path d="M124,104 L176,46" stroke="#1d3557" stroke-width="13" stroke-linecap="round"/>
+      ${hair(52, 98, -75)}</svg>`,
+    squat: `<svg viewBox="0 0 260 125" width="235" height="120">${bg}
+      <polyline points="122,76 154,84 134,108" stroke="#1d3557" stroke-width="13" stroke-linecap="round" fill="none"/>
+      <path d="M128,42 L120,76" stroke="url(#giGrad)" stroke-width="17" stroke-linecap="round"/>
+      ${hair(130, 26, 0)}</svg>`,
+    lunge: `<svg viewBox="0 0 260 125" width="235" height="120">${bg}
+      <polyline points="124,74 162,76 162,108" stroke="#1d3557" stroke-width="13" stroke-linecap="round" fill="none"/>
+      <polyline points="124,74 96,102 72,104" stroke="#1d3557" stroke-width="12" stroke-linecap="round" fill="none"/>
+      <path d="M124,38 L124,74" stroke="url(#giGrad)" stroke-width="17" stroke-linecap="round"/>
+      ${hair(124, 22, 0)}</svg>`,
+    wallsit: `<svg viewBox="0 0 260 125" width="235" height="120">${bg}
+      <line x1="94" y1="14" x2="94" y2="112" stroke="${auraCol}" stroke-width="5" stroke-linecap="round"/>
+      <polyline points="104,76 146,76 146,108" stroke="#1d3557" stroke-width="13" stroke-linecap="round" fill="none"/>
+      <path d="M104,38 L104,76" stroke="url(#giGrad)" stroke-width="17" stroke-linecap="round"/>
+      ${hair(106, 22, 0)}</svg>`,
+    punch: `<svg viewBox="0 0 260 125" width="235" height="120">${bg}
+      <polyline points="104,76 86,108" stroke="#1d3557" stroke-width="13" stroke-linecap="round"/>
+      <polyline points="108,76 130,108" stroke="#1d3557" stroke-width="13" stroke-linecap="round"/>
+      <path d="M106,40 L106,76" stroke="url(#giGrad)" stroke-width="18" stroke-linecap="round"/>
+      <line x1="108" y1="48" x2="174" y2="46" stroke="#f4c095" stroke-width="9" stroke-linecap="round"/>
+      <polygon points="188,46 218,36 208,46 218,56" fill="${auraCol}"/>
+      ${hair(106, 24, 0)}</svg>`,
+    jump: `<svg viewBox="0 0 260 125" width="235" height="120">${bg}
+      <polyline points="128,68 108,94" stroke="#1d3557" stroke-width="12" stroke-linecap="round"/>
+      <polyline points="132,68 152,94" stroke="#1d3557" stroke-width="12" stroke-linecap="round"/>
+      <path d="M130,34 L130,68" stroke="url(#giGrad)" stroke-width="17" stroke-linecap="round"/>
+      ${hair(130, 19, 0)}</svg>`
+  };
+  return svgs[pose] || svgs.punch;
+}
+
+function cleanImageBg(imgEl, baseName) {
+  try {
+    const w = imgEl.naturalWidth;
+    const h = imgEl.naturalHeight;
+    if (!w || !h) return;
+    const cv = document.createElement("canvas");
+    cv.width = w; cv.height = h;
+    const ctx = cv.getContext("2d");
+    ctx.drawImage(imgEl, 0, 0);
+    const img = ctx.getImageData(0, 0, w, h);
+    const d = img.data;
+    const r0 = d.at(0), g0 = d.at(1), b0 = d.at(2), a0 = d.at(3);
+    const isWhite = a0 > 200 && r0 > 215 && g0 > 215 && b0 > 215;
+    const isBlack = a0 > 200 && r0 < 45 && g0 < 45 && b0 < 45;
+    if (isWhite || isBlack) {
+      const vis = new Uint8Array(w * h);
+      const q = new Int32Array(w * h);
+      let head = 0, tail = 0;
+      const push = (x, y) => {
+        if (x < 0 || x >= w || y < 0 || y >= h) return;
+        const p = y * w + x;
+        if (vis.at(p)) return;
+        const i = p * 4;
+        if (isWhite) {
+          const mn = Math.min(d.at(i), d.at(i + 1), d.at(i + 2));
+          if (mn > 220) { vis.set(Array.of(1), p); q.set(Array.of(p), tail++); }
+          else if (mn > 190) { d.set(Array.of(Math.min(d.at(i + 3), (224 - mn) * 8)), i + 3); }
+        } else {
+          const mx = Math.max(d.at(i), d.at(i + 1), d.at(i + 2));
+          if (mx < 36) { vis.set(Array.of(1), p); q.set(Array.of(p), tail++); }
+          else if (mx < 62) { d.set(Array.of(Math.min(d.at(i + 3), (mx - 34) * 9)), i + 3); }
+        }
+      };
+      for (let x = 0; x < w; x++) { push(x, 0); push(x, h - 1); }
+      for (let y = 0; y < h; y++) { push(0, y); push(w - 1, y); }
+      while (head < tail) {
+        const p = q.at(head++);
+        d.set(Array.of(0), p * 4 + 3);
+        const x = p % w, y = (p - x) / w;
+        push(x + 1, y); push(x - 1, y); push(x, y + 1); push(x, y - 1);
+      }
+      ctx.putImageData(img, 0, 0);
+    }
+    let minX = w, minY = h, maxX = 0, maxY = 0;
+    for (let y = 0; y < h; y++) {
+      for (let x = 0; x < w; x++) {
+        if (d.at((y * w + x) * 4 + 3) > 20) {
+          if (x < minX) minX = x; if (x > maxX) maxX = x;
+          if (y < minY) minY = y; if (y > maxY) maxY = y;
+        }
+      }
+    }
+    if (maxX > minX && maxY > minY) {
+      const cropW = maxX - minX + 1, cropH = maxY - minY + 1;
+      const cropCv = document.createElement("canvas");
+      cropCv.width = cropW; cropCv.height = cropH;
+      cropCv.getContext("2d").drawImage(cv, minX, minY, cropW, cropH, 0, 0, cropW, cropH);
+      imgEl.dataset.cleaned = baseName;
+      imgEl.classList.add("clean-alpha");
+      imgEl.src = cropCv.toDataURL("image/png");
+    }
+  } catch (e) {}
+}
+
 function loadSmartImage(imgEl, baseName, onFail, onSuccess) {
   imgEl.style.display = "none";
   imgEl.classList.remove("clean-alpha");
   imgEl.dataset.cleaned = "";
   imgEl.onload = () => {
-    if (baseName.startsWith("c") && imgEl.dataset.cleaned !== baseName) {
-      cleanImageBg(imgEl, baseName);
-    }
+    if (baseName.startsWith("c") && imgEl.dataset.cleaned !== baseName) cleanImageBg(imgEl, baseName);
     imgEl.style.display = "block";
     if (onSuccess) onSuccess();
   };
@@ -295,6 +458,7 @@ function loadSmartImage(imgEl, baseName, onFail, onSuccess) {
   };
   imgEl.src = `${baseName}.png`;
 }
+
 function getMaxUnlockedStage(lvl) {
   let max = 1;
   STAGE_RULES.forEach(s => { if (lvl >= s.minLevel) max = s.stage; });
@@ -306,7 +470,7 @@ function updateStaggeredCarousel() {
   const idxCurr = (state.carouselIndex + total) % total;
   const idxPrev = (idxCurr - 1 + total) % total;
   const idxNext = (idxCurr + 1) % total;
-  const cPrev = CHARACTERS[idxPrev], cCurr = CHARACTERS[idxCurr], cNext = CHARACTERS[idxNext];
+  const cPrev = CHARACTERS.at(idxPrev), cCurr = CHARACTERS.at(idxCurr), cNext = CHARACTERS.at(idxNext);
 
   document.getElementById("select-power").textContent = state.powerLevel.toLocaleString("de-DE");
   document.getElementById("card-prev").style.background = cPrev.color;
@@ -319,8 +483,9 @@ function updateStaggeredCarousel() {
   document.getElementById("fb-curr").textContent = `#${String(cCurr.id).padStart(2, "0")}`;
   document.getElementById("fb-next").textContent = `#${String(cNext.id).padStart(2, "0")}`;
 
-  ["prev", "curr", "next"].forEach((pos, i) => {
-    const charObj = [cPrev, cCurr, cNext][i];
+  const trio = Array.of(cPrev, cCurr, cNext);
+  Array.of("prev", "curr", "next").forEach((pos, i) => {
+    const charObj = trio.at(i);
     const fb = document.getElementById(`fb-${pos}`);
     const im = document.getElementById(`img-${pos}`);
     fb.style.display = "grid";
@@ -338,13 +503,16 @@ function stepCarousel(dir) {
 let touchStartY = 0, isSwiping = false;
 const carouselEl = document.getElementById("staggered-carousel");
 carouselEl.addEventListener("touchstart", e => {
-  if (e.touches && e.touches.length > 0) { touchStartY = e.touches.clientY; isSwiping = true; }
+  if (e.touches && e.touches.length > 0) {
+    touchStartY = e.touches.item(0).clientY;
+    isSwiping = true;
+  }
 }, { passive: true });
 carouselEl.addEventListener("touchmove", e => { if (isSwiping) e.preventDefault(); }, { passive: false });
 carouselEl.addEventListener("touchend", e => {
   if (!isSwiping || !e.changedTouches || e.changedTouches.length === 0) return;
   isSwiping = false;
-  const diff = touchStartY - e.changedTouches.clientY;
+  const diff = touchStartY - e.changedTouches.item(0).clientY;
   if (Math.abs(diff) > 25) stepCarousel(diff > 0 ? 1 : -1);
 });
 
@@ -352,11 +520,11 @@ document.getElementById("card-prev").addEventListener("click", () => stepCarouse
 document.getElementById("card-next").addEventListener("click", () => stepCarousel(1));
 document.getElementById("card-curr").addEventListener("click", () => {
   playSound("click");
-  openCharacterDetails(CHARACTERS[state.carouselIndex].id);
+  openCharacterDetails(CHARACTERS.at(state.carouselIndex).id);
 });
 
 function openCharacterDetails(charId) {
-  const c = CHARACTERS.find(item => item.id === charId) || CHARACTERS;
+  const c = CHARACTERS.find(item => item.id === charId) || CHARACTERS.at(0);
   state.selectedChar = c.id;
   document.getElementById("detail-num").textContent = String(c.id).padStart(3, "0");
   document.getElementById("detail-name").textContent = c.name;
@@ -370,6 +538,7 @@ function openCharacterDetails(charId) {
   loadSmartImage(imgEl, `c${c.id}_s1`, () => phEl.classList.remove("hidden"));
   showScreen("detail-screen");
 }
+
 function openExerciseModal(ex) {
   activeExercise = ex;
   clearInterval(timerInterval);
@@ -418,11 +587,12 @@ function openExerciseModal(ex) {
 }
 
 function renderWorkouts() {
-  const partData = BODY_WORKOUTS[state.selectedPart] || BODY_WORKOUTS.arms;
-  document.getElementById("selected-part-title").textContent = partData.label;
+  const partData = BODY_WORKOUTS.arms;
+  const activePart = state.selectedPart === "core" ? BODY_WORKOUTS.core : (state.selectedPart === "legs" ? BODY_WORKOUTS.legs : partData);
+  document.getElementById("selected-part-title").textContent = activePart.label;
   const list = document.getElementById("workout-list");
   list.innerHTML = "";
-  const exercises = partData[state.difficulty] || partData.easy;
+  const exercises = state.difficulty === "master" ? activePart.master : (state.difficulty === "advanced" ? activePart.advanced : activePart.easy);
   exercises.forEach(ex => {
     const btn = document.createElement("button");
     btn.className = "workout-card";
@@ -439,13 +609,13 @@ function renderTrophies() {
   const coreLvl = 1 + Math.floor((state.partXP.core || 0) / 60);
   const unlockedMap = {
     t1: state.level >= 2, t2: state.powerLevel >= 10000, t3: (state.bossWins || 0) >= 1,
-    t4: (state.streak || 0) >= 3, t5: coreLvl >= 3, t6: (state.testedChars || []).length >= 5
+    t4: (state.streak || 0) >= 3, t5: coreLvl >= 3, t6: (state.testedChars || Array.of()).length >= 5
   };
   const grid = document.getElementById("trophy-list");
   if (!grid) return;
   grid.innerHTML = "";
   TROPHIES.forEach(t => {
-    const ok = !!unlockedMap[t.id];
+    const ok = !!Reflect.get(unlockedMap, t.id);
     const div = document.createElement("div");
     div.className = `trophy-item ${ok ? "unlocked" : ""}`;
     div.innerHTML = `<div style="font-size:1.3rem;">${ok ? t.icon : "🔒"} ${t.name}</div><div style="font-size:0.75rem;color:#aaa;">${t.desc}</div>`;
@@ -454,7 +624,7 @@ function renderTrophies() {
 }
 
 function triggerKiImpact(intense = false) {
-  const charObj = CHARACTERS.find(c => c.id === state.selectedChar) || CHARACTERS[0];
+  const charObj = CHARACTERS.find(c => c.id === state.selectedChar) || CHARACTERS.at(0);
   const col = charObj.color || "#ff9900";
   const flash = document.createElement("div");
   flash.className = "ki-screen-flash";
@@ -477,6 +647,7 @@ function triggerKiImpact(intense = false) {
     arena.classList.add("mega-shake-active");
   }
 }
+
 function completeExercise(gainedXP, gainedPower) {
   const oldMax = getMaxUnlockedStage(state.level);
   const mult = state.senzuActive ? 2 : 1;
@@ -490,12 +661,13 @@ function completeExercise(gainedXP, gainedPower) {
     state.streak = state.lastTrainDate === yest ? (state.streak || 0) + 1 : 1;
     state.lastTrainDate = today;
   }
-  if (!Array.isArray(state.testedChars)) state.testedChars = [];
+  if (!Array.isArray(state.testedChars)) state.testedChars = Array.of();
   if (!state.testedChars.includes(state.selectedChar)) state.testedChars.push(state.selectedChar);
 
   state.xp += finalXP;
   state.powerLevel += finalPower;
-  state.partXP[state.selectedPart] = (state.partXP[state.selectedPart] || 0) + finalXP;
+  const prevPartXP = Reflect.get(state.partXP, state.selectedPart) || 0;
+  Reflect.set(state.partXP, state.selectedPart, prevPartXP + finalXP);
 
   if (activeExercise && activeExercise.isBoss) {
     state.bossWins = (state.bossWins || 0) + 1;
@@ -544,7 +716,7 @@ function updateUI() {
   const maxUnlocked = getMaxUnlockedStage(state.level);
   if (state.selectedStage > maxUnlocked) state.selectedStage = maxUnlocked;
 
-  const charObj = CHARACTERS.find(c => c.id === state.selectedChar) || CHARACTERS[0];
+  const charObj = CHARACTERS.find(c => c.id === state.selectedChar) || CHARACTERS.at(0);
   const baseFile = `c${state.selectedChar}_s${state.selectedStage}`;
 
   document.getElementById("power-level").textContent = state.powerLevel.toLocaleString("de-DE");
@@ -611,6 +783,7 @@ function updateUI() {
 
   localStorage.setItem("zwarriors_neon_v10", JSON.stringify(state));
 }
+
 document.getElementById("senzu-btn")?.addEventListener("click", () => {
   if (state.senzuDate === getTodayKey() || state.senzuActive) return;
   state.senzuDate = getTodayKey();
@@ -621,7 +794,7 @@ document.getElementById("senzu-btn")?.addEventListener("click", () => {
 });
 
 document.getElementById("boss-btn")?.addEventListener("click", () => {
-  const boss = BOSS_CHALLENGES[(state.bossWins || 0) % BOSS_CHALLENGES.length];
+  const boss = BOSS_CHALLENGES.at((state.bossWins || 0) % BOSS_CHALLENGES.length);
   openExerciseModal(boss);
 });
 
@@ -827,12 +1000,12 @@ loadSmartImage(document.getElementById("intro-hero-img"), "intro_bg", () => {
     }
   };
 
-   let gameTimer = null;
-  let extraTimers = [];
+    let gameTimer = null;
+  let extraTimers = Array.of();
   function stopAllGameLoops() {
     clearInterval(gameTimer);
     extraTimers.forEach(t => clearInterval(t));
-    extraTimers = [];
+    extraTimers = Array.of();
   }
 
   function startDynamicMiniGame() {
@@ -970,14 +1143,14 @@ loadSmartImage(document.getElementById("intro-hero-img"), "intro_bg", () => {
       ctrlEl.innerHTML = `<div class="battle-controls-row"><button class="battle-tap-btn" data-lane="0">⬅️ LINKS</button><button class="battle-tap-btn" data-lane="1">⬆️ MITTE</button><button class="battle-tap-btn" data-lane="2">➡️ RECHTS</button></div>`;
       loadSmartImage(document.getElementById("g-hero"), heroBase);
       loadSmartImage(document.getElementById("g-enemy"), enemyBase);
-      const lanes =;
+      const lanes = Array.of(22, 125, 228);
       let enemyLane = 1, hits = 0, misses = 0;
       const needed = 5;
       timerEl.textContent = `0 / ${needed}`;
       const moveEnemy = () => {
         enemyLane = Math.floor(Math.random() * 3);
         const eEl = document.getElementById("g-enemy");
-        if (eEl) eEl.style.left = `${lanes[enemyLane]}px`;
+        if (eEl) eEl.style.left = `${lanes.at(enemyLane)}px`;
       };
       moveEnemy();
       extraTimers.push(setInterval(moveEnemy, Math.max(850, 1450 - lvl * 50)));
@@ -986,7 +1159,7 @@ loadSmartImage(document.getElementById("intro-hero-img"), "intro_bg", () => {
           const chosen = Number(btn.dataset.lane);
           const hEl = document.getElementById("g-hero");
           const eEl = document.getElementById("g-enemy");
-          if (hEl) hEl.style.left = `${lanes[chosen]}px`;
+          if (hEl) hEl.style.left = `${lanes.at(chosen)}px`;
           if (chosen === enemyLane) {
             playSound("done");
             hits += 1;
@@ -1051,3 +1224,5 @@ loadSmartImage(document.getElementById("intro-hero-img"), "intro_bg", () => {
 updateStaggeredCarousel();
 updateUI();
 renderWorkouts();
+
+
