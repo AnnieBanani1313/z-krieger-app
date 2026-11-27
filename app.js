@@ -268,106 +268,167 @@ function playSound(mode = "click") {
     osc.start(now); osc.stop(now + 0.2);
   } catch (e) {}
 }
+// Animierte Übungs-Figuren (SVG/SMIL) im Stil der bisherigen Comic-Bildchen.
+// Jede Pose pendelt weich zwischen Startpose (a) und Endpose (b).
 function getComicSVG(pose) {
   const cObj = CHARACTERS.find(c => c.id === state.selectedChar) || CHARACTERS.at(0);
   const auraCol = cObj.color || "#ff9900";
+  const LEG = "#1d3557", SKIN = "#f4c095", SKIN_BACK = "#d9a47c", GI = "url(#giGrad)";
+  const EASE = `calcMode="spline" keyTimes="0;0.5;1" keySplines="0.45 0 0.55 1;0.45 0 0.55 1"`;
+
+  const anim = (attr, a, b, dur) => a === b ? "" :
+    `<animate attributeName="${attr}" values="${a};${b};${a}" dur="${dur}" repeatCount="indefinite" ${EASE}/>`;
+  const moveAnim = (a, b, dur) => (a[0] === b[0] && a[1] === b[1]) ? "" :
+    `<animateTransform attributeName="transform" type="translate" values="${a[0]},${a[1]};${b[0]},${b[1]};${a[0]},${a[1]}" dur="${dur}" repeatCount="indefinite" ${EASE}/>`;
+
+  // Körperteil als Linienzug, a/b müssen gleich viele Punkte haben
+  const seg = (a, b, col, w, dur) =>
+    `<polyline points="${a}" stroke="${col}" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round" fill="none">${anim("points", a, b, dur)}</polyline>`;
+  // Gegenstand bewegen (Hantel usw.), Inhalt ist um (0,0) gezeichnet
+  const mover = (a, b, content, dur) =>
+    `<g transform="translate(${a[0]},${a[1]})">${moveAnim(a, b, dur)}${content}</g>`;
+  // Kopf mit Stachelhaaren: a/b = [x, y, drehung]
+  const head = (a, b, dur) => {
+    const ra = a[2] || 0, rb = b[2] || 0;
+    const rot = ra === rb ? "" :
+      `<animateTransform attributeName="transform" type="rotate" values="${ra};${rb};${ra}" dur="${dur}" repeatCount="indefinite" ${EASE}/>`;
+    return `<g transform="translate(${a[0]},${a[1]})">${moveAnim(a, b, dur)}<g transform="rotate(${ra})">${rot}
+      <polygon points="-10,-6 -22,-18 -6,-13 -12,-28 0,-16 6,-30 10,-15 22,-22 12,-8 20,-2 8,2" fill="#141418" stroke="${auraCol}" stroke-width="1.2"/>
+      <circle cx="2" cy="2" r="9" fill="${SKIN}" stroke="#141418" stroke-width="1.5"/>
+    </g></g>`;
+  };
+  // Zittern für Halte-Übungen
+  const tremble = (content) =>
+    `<g><animateTransform attributeName="transform" type="translate" values="0,0;0.8,-0.4;-0.7,0.3;0,0" dur="0.35s" repeatCount="indefinite"/>${content}</g>`;
+  // Aufsteigende Ki-Funken für Halte-Übungen
+  const sparks = Array.of([70, 0], [130, 0.6], [200, 1.2]).map(([x, delay]) =>
+    `<circle cx="${x}" cy="100" r="2.2" fill="${auraCol}" opacity="0">
+      <animate attributeName="cy" values="100;30" dur="1.8s" begin="${delay}s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0;0.9;0" dur="1.8s" begin="${delay}s" repeatCount="indefinite"/>
+    </circle>`).join("");
+
+  const dumbbell = `<line x1="-11" y1="0" x2="11" y2="0" stroke="#adb5bd" stroke-width="5"/>
+    <rect x="-15" y="-8" width="7" height="16" rx="2" fill="${auraCol}"/><rect x="8" y="-8" width="7" height="16" rx="2" fill="${auraCol}"/>`;
+  const barbell = `<line x1="-28" y1="0" x2="28" y2="0" stroke="#adb5bd" stroke-width="5" stroke-linecap="round"/>
+    <rect x="-32" y="-12" width="10" height="24" rx="2" fill="${auraCol}"/><rect x="22" y="-12" width="10" height="24" rx="2" fill="${auraCol}"/>`;
+
   const bg = `<defs>
     <radialGradient id="kiAura" cx="50%" cy="50%" r="50%">
       <stop offset="0%" stop-color="${auraCol}" stop-opacity="0.5"/>
       <stop offset="100%" stop-color="${auraCol}" stop-opacity="0"/>
     </radialGradient>
-    <linearGradient id="giGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+    <linearGradient id="giGrad" gradientUnits="userSpaceOnUse" x1="60" y1="20" x2="200" y2="110">
       <stop offset="0%" stop-color="${auraCol}"/>
       <stop offset="100%" stop-color="#e85d04"/>
     </linearGradient>
   </defs>
-  <ellipse cx="130" cy="70" rx="95" ry="48" fill="url(#kiAura)"/>
+  <ellipse cx="130" cy="70" rx="95" ry="48" fill="url(#kiAura)">
+    <animate attributeName="opacity" values="0.65;1;0.65" dur="2.2s" repeatCount="indefinite"/>
+    <animate attributeName="rx" values="92;102;92" dur="2.2s" repeatCount="indefinite"/>
+  </ellipse>
   <line x1="20" y1="112" x2="240" y2="112" stroke="#3a3a48" stroke-width="3" stroke-linecap="round"/>`;
 
-  const hair = (x, y, rot = 0) => `<g transform="translate(${x},${y}) rotate(${rot})">
-    <polygon points="-10,-6 -22,-18 -6,-13 -12,-28 0,-16 6,-30 10,-15 22,-22 12,-8 20,-2 8,2" fill="#141418" stroke="${auraCol}" stroke-width="1.2"/>
-    <circle cx="2" cy="2" r="9" fill="#f4c095" stroke="#141418" stroke-width="1.5"/>
-  </g>`;
+  // viewBox oben erweitert, damit die Haarspitzen nicht abgeschnitten werden
+  const wrap = (inner) => `<svg viewBox="0 -16 260 141" width="235" height="128" role="img" aria-label="Übungs-Animation">${bg}${inner}</svg>`;
 
-  const svgs = {
-    benchpress: `<svg viewBox="0 0 260 125" width="235" height="120">${bg}
+  const builders = {
+    benchpress: () => { const d = "2s"; return wrap(`
       <rect x="65" y="84" width="115" height="10" rx="4" fill="#4a4e69"/>
       <line x1="80" y1="94" x2="80" y2="112" stroke="#8d99ae" stroke-width="6"/>
       <line x1="165" y1="94" x2="165" y2="112" stroke="#8d99ae" stroke-width="6"/>
-      <polyline points="155,80 185,84 195,110" stroke="#1d3557" stroke-width="12" fill="none" stroke-linecap="round"/>
-      <path d="M95,78 L155,78" stroke="url(#giGrad)" stroke-width="15" stroke-linecap="round"/>
-      <line x1="120" y1="74" x2="120" y2="34" stroke="#f4c095" stroke-width="9" stroke-linecap="round"/>
-      <line x1="88" y1="34" x2="152" y2="34" stroke="#adb5bd" stroke-width="5" stroke-linecap="round"/>
-      <rect x="82" y="22" width="10" height="24" rx="2" fill="${auraCol}"/>
-      <rect x="148" y="22" width="10" height="24" rx="2" fill="${auraCol}"/>
-      ${hair(78, 72, -80)}</svg>`,
-    dumbbellcurl: `<svg viewBox="0 0 260 125" width="235" height="120">${bg}
-      <polyline points="118,76 108,108" stroke="#1d3557" stroke-width="13" stroke-linecap="round"/>
-      <polyline points="134,76 144,108" stroke="#1d3557" stroke-width="13" stroke-linecap="round"/>
-      <path d="M126,40 L126,76" stroke="url(#giGrad)" stroke-width="18" stroke-linecap="round"/>
-      <polyline points="132,46 154,64 166,44" stroke="#f4c095" stroke-width="9" stroke-linecap="round" fill="none"/>
-      <line x1="154" y1="44" x2="178" y2="44" stroke="#adb5bd" stroke-width="5"/>
-      <rect x="150" y="36" width="7" height="16" rx="2" fill="${auraCol}"/>
-      <rect x="175" y="36" width="7" height="16" rx="2" fill="${auraCol}"/>
-      ${hair(126, 23, 0)}</svg>`,
-    pushup: `<svg viewBox="0 0 260 125" width="235" height="120">${bg}
-      <path d="M48,106 L108,88 L164,66" stroke="#1d3557" stroke-width="13" stroke-linecap="round" fill="none"/>
-      <path d="M108,88 L166,65" stroke="url(#giGrad)" stroke-width="16" stroke-linecap="round" fill="none"/>
-      <path d="M162,68 L156,90 L164,108" stroke="#f4c095" stroke-width="9" stroke-linecap="round" fill="none"/>
-      ${hair(182, 58, 18)}</svg>`,
-    kneepushup: `<svg viewBox="0 0 260 125" width="235" height="120">${bg}
-      <polyline points="42,92 84,106 122,82" stroke="#1d3557" stroke-width="13" stroke-linecap="round" fill="none"/>
-      <path d="M122,82 L172,62" stroke="url(#giGrad)" stroke-width="16" stroke-linecap="round"/>
-      <path d="M168,65 L164,90 L170,108" stroke="#f4c095" stroke-width="9" stroke-linecap="round" fill="none"/>
-      ${hair(188, 54, 18)}</svg>`,
-    dips: `<svg viewBox="0 0 260 125" width="235" height="120">${bg}
+      ${seg("155,80 185,84 195,110", "155,80 185,84 195,110", LEG, 12, d)}
+      ${seg("95,78 155,78", "95,78 155,78", GI, 15, d)}
+      ${seg("116,74 121,54 126,36", "116,74 106,62 126,52", SKIN, 9, d)}
+      ${mover([126, 34], [126, 50], barbell, d)}
+      ${head([78, 72, -80], [78, 72, -80], d)}`); },
+
+    dumbbellcurl: () => { const d = "1.6s"; return wrap(`
+      ${seg("120,76 112,108", "120,76 112,108", LEG, 13, d)}
+      ${seg("132,76 140,108", "132,76 140,108", LEG, 13, d)}
+      ${seg("126,40 126,76", "126,40 126,76", GI, 18, d)}
+      ${seg("130,46 134,70 138,92", "130,46 134,70 152,52", SKIN, 9, d)}
+      ${mover([139, 95], [154, 49], dumbbell, d)}
+      ${head([126, 23, 0], [126, 22, 0], d)}`); },
+
+    pushup: () => { const d = "1.8s"; return wrap(`
+      ${seg("48,106 108,84", "48,106 108,98", LEG, 13, d)}
+      ${seg("108,84 166,62", "108,98 168,92", GI, 16, d)}
+      ${seg("164,64 164,86 164,108", "166,92 150,98 164,108", SKIN, 9, d)}
+      ${head([184, 54, 18], [188, 86, 8], d)}`); },
+
+    kneepushup: () => { const d = "1.8s"; return wrap(`
+      ${seg("42,92 84,106 122,80", "42,92 84,106 124,94", LEG, 13, d)}
+      ${seg("122,80 172,60", "124,94 176,90", GI, 16, d)}
+      ${seg("170,62 168,86 170,108", "174,90 156,98 170,108", SKIN, 9, d)}
+      ${head([188, 52, 18], [192, 84, 8], d)}`); },
+
+    dips: () => { const d = "1.8s"; return wrap(`
       <polyline points="55,110 55,64 95,64 95,110" stroke="#555" stroke-width="5" fill="none"/>
-      <polyline points="124,84 162,86 184,108" stroke="#1d3557" stroke-width="13" stroke-linecap="round" fill="none"/>
-      <path d="M116,46 L124,84" stroke="url(#giGrad)" stroke-width="16" stroke-linecap="round"/>
-      <polyline points="116,48 92,62" stroke="#f4c095" stroke-width="8" stroke-linecap="round" fill="none"/>
-      ${hair(116, 30, 0)}</svg>`,
-    plank: `<svg viewBox="0 0 260 125" width="235" height="120">${bg}
-      <path d="M45,104 L112,88 L174,74" stroke="#1d3557" stroke-width="13" stroke-linecap="round" fill="none"/>
-      <path d="M112,88 L176,73" stroke="url(#giGrad)" stroke-width="16" stroke-linecap="round" fill="none"/>
-      <polyline points="172,76 168,104 190,104" stroke="#f4c095" stroke-width="9" stroke-linecap="round" fill="none"/>
-      ${hair(194, 68, 12)}</svg>`,
-    situp: `<svg viewBox="0 0 260 125" width="235" height="120">${bg}
-      <polyline points="126,104 162,74 188,106" stroke="#1d3557" stroke-width="13" stroke-linecap="round" fill="none"/>
-      <path d="M126,104 L104,58" stroke="url(#giGrad)" stroke-width="17" stroke-linecap="round"/>
-      ${hair(98, 42, -18)}</svg>`,
-    legraise: `<svg viewBox="0 0 260 125" width="235" height="120">${bg}
-      <path d="M68,104 L124,104" stroke="url(#giGrad)" stroke-width="16" stroke-linecap="round"/>
-      <path d="M124,104 L176,46" stroke="#1d3557" stroke-width="13" stroke-linecap="round"/>
-      ${hair(52, 98, -75)}</svg>`,
-    squat: `<svg viewBox="0 0 260 125" width="235" height="120">${bg}
-      <polyline points="122,76 154,84 134,108" stroke="#1d3557" stroke-width="13" stroke-linecap="round" fill="none"/>
-      <path d="M128,42 L120,76" stroke="url(#giGrad)" stroke-width="17" stroke-linecap="round"/>
-      ${hair(130, 26, 0)}</svg>`,
-    lunge: `<svg viewBox="0 0 260 125" width="235" height="120">${bg}
-      <polyline points="124,74 162,76 162,108" stroke="#1d3557" stroke-width="13" stroke-linecap="round" fill="none"/>
-      <polyline points="124,74 96,102 72,104" stroke="#1d3557" stroke-width="12" stroke-linecap="round" fill="none"/>
-      <path d="M124,38 L124,74" stroke="url(#giGrad)" stroke-width="17" stroke-linecap="round"/>
-      ${hair(124, 22, 0)}</svg>`,
-    wallsit: `<svg viewBox="0 0 260 125" width="235" height="120">${bg}
+      ${seg("124,84 162,86 184,108", "124,100 160,94 184,108", LEG, 13, d)}
+      ${seg("116,46 124,84", "116,62 124,100", GI, 16, d)}
+      ${seg("116,48 104,56 92,64", "116,64 98,56 92,64", SKIN, 8, d)}
+      ${head([116, 30, 0], [116, 46, 0], d)}`); },
+
+    plank: () => { const d = "2.6s"; return wrap(sparks + tremble(`
+      ${seg("45,104 112,88", "45,104 112,86", LEG, 13, d)}
+      ${seg("112,88 176,73", "112,86 176,72", GI, 16, d)}
+      ${seg("172,76 168,104 190,104", "172,75 168,104 190,104", SKIN, 9, d)}
+      ${head([194, 68, 12], [194, 67, 12], d)}`)); },
+
+    situp: () => { const d = "1.8s"; return wrap(`
+      ${seg("126,104 156,78 182,106", "126,104 156,78 182,106", LEG, 13, d)}
+      ${seg("126,104 88,104", "126,104 106,62", GI, 17, d)}
+      ${head([74, 102, -85], [100, 46, -20], d)}`); },
+
+    legraise: () => { const d = "2s"; return wrap(`
+      ${seg("70,109 110,110", "70,109 110,110", SKIN, 8, d)}
+      ${seg("68,104 124,104", "68,104 124,104", GI, 16, d)}
+      ${seg("124,104 184,102", "124,104 166,46", LEG, 13, d)}
+      ${head([52, 98, -75], [52, 98, -75], d)}`); },
+
+    squat: () => { const d = "1.8s"; return wrap(`
+      ${seg("130,70 132,90 130,110", "116,84 146,88 132,110", LEG, 13, d)}
+      ${seg("130,36 130,70", "124,50 116,84", GI, 17, d)}
+      ${seg("130,44 156,48", "124,56 160,56", SKIN, 9, d)}
+      ${head([130, 20, 0], [127, 34, 8], d)}`); },
+
+    lunge: () => { const d = "1.8s"; return wrap(`
+      ${seg("124,70 108,90 98,110", "122,84 100,104 76,108", LEG, 12, d)}
+      ${seg("124,70 142,90 150,110", "122,84 150,84 150,110", LEG, 13, d)}
+      ${seg("124,38 124,70", "122,52 122,84", GI, 17, d)}
+      ${seg("124,44 118,62", "122,58 116,76", SKIN, 8, d)}
+      ${head([124, 22, 0], [122, 36, 0], d)}`); },
+
+    wallsit: () => { const d = "2.6s"; return wrap(`
       <line x1="94" y1="14" x2="94" y2="112" stroke="${auraCol}" stroke-width="5" stroke-linecap="round"/>
-      <polyline points="104,76 146,76 146,108" stroke="#1d3557" stroke-width="13" stroke-linecap="round" fill="none"/>
-      <path d="M104,38 L104,76" stroke="url(#giGrad)" stroke-width="17" stroke-linecap="round"/>
-      ${hair(106, 22, 0)}</svg>`,
-    punch: `<svg viewBox="0 0 260 125" width="235" height="120">${bg}
-      <polyline points="104,76 86,108" stroke="#1d3557" stroke-width="13" stroke-linecap="round"/>
-      <polyline points="108,76 130,108" stroke="#1d3557" stroke-width="13" stroke-linecap="round"/>
-      <path d="M106,40 L106,76" stroke="url(#giGrad)" stroke-width="18" stroke-linecap="round"/>
-      <line x1="108" y1="48" x2="174" y2="46" stroke="#f4c095" stroke-width="9" stroke-linecap="round"/>
-      <polygon points="188,46 218,36 208,46 218,56" fill="${auraCol}"/>
-      ${hair(106, 24, 0)}</svg>`,
-    jump: `<svg viewBox="0 0 260 125" width="235" height="120">${bg}
-      <polyline points="128,68 108,94" stroke="#1d3557" stroke-width="12" stroke-linecap="round"/>
-      <polyline points="132,68 152,94" stroke="#1d3557" stroke-width="12" stroke-linecap="round"/>
-      <path d="M130,34 L130,68" stroke="url(#giGrad)" stroke-width="17" stroke-linecap="round"/>
-      ${hair(130, 19, 0)}</svg>`
+      ${sparks}${tremble(`
+      ${seg("104,76 146,76 146,108", "104,77 146,77 146,108", LEG, 13, d)}
+      ${seg("104,38 104,76", "104,39 104,77", GI, 17, d)}
+      ${seg("106,46 138,48", "106,47 138,49", SKIN, 9, d)}
+      ${head([106, 22, 0], [106, 23, 0], d)}`)}`); },
+
+    punch: () => { const d = "0.9s"; return wrap(`
+      ${seg("104,76 86,108", "104,76 86,108", LEG, 13, d)}
+      ${seg("108,76 130,108", "108,76 130,108", LEG, 13, d)}
+      ${seg("106,44 140,42 172,40", "106,44 122,54 130,40", SKIN_BACK, 8, d)}
+      ${seg("106,40 106,76", "106,40 106,76", GI, 18, d)}
+      ${seg("108,48 124,58 132,44", "108,48 141,47 174,46", SKIN, 9, d)}
+      <polygon points="188,44 218,34 208,44 218,54" fill="${auraCol}">
+        <animate attributeName="opacity" values="1;0;1;0;1" keyTimes="0;0.25;0.5;0.75;1" dur="${d}" repeatCount="indefinite"/>
+      </polygon>
+      ${head([106, 24, 0], [108, 24, 3], d)}`); },
+
+    jump: () => { const d = "0.9s"; return wrap(`
+      ${seg("130,70 126,90 124,110", "130,64 114,86 104,108", LEG, 12, d)}
+      ${seg("130,70 134,90 136,110", "130,64 146,86 156,108", LEG, 12, d)}
+      ${seg("130,36 130,70", "130,30 130,64", GI, 17, d)}
+      ${seg("130,42 120,58 118,72", "130,36 114,22 104,8", SKIN, 8, d)}
+      ${seg("130,42 140,58 142,72", "130,36 146,22 156,8", SKIN, 8, d)}
+      ${head([130, 20, 0], [130, 14, 0], d)}`); }
   };
-  return Reflect.get(svgs, pose) || svgs.punch;
+  return (Reflect.get(builders, pose) || builders.punch)();
 }
+
 const _croppedCache = new Map();
 
 function cleanImageBg(imgEl, baseName) {
@@ -571,6 +632,10 @@ function openExerciseModal(ex) {
   const imgEl = document.getElementById("ex-comic-img");
   const svgEl = document.getElementById("ex-comic-svg");
   svgEl.innerHTML = getComicSVG(ex.pose || "punch");
+  // Bei "Bewegung reduzieren" die Animation in der Startpose anhalten
+  if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    svgEl.querySelector("svg")?.pauseAnimations();
+  }
   svgEl.style.display = "grid";
   loadSmartImage(imgEl, `ex_${ex.pose || "punch"}`, () => { svgEl.style.display = "grid"; }, () => { svgEl.style.display = "none"; });
 
