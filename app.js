@@ -269,7 +269,7 @@ function playSound(mode = "click") {
   } catch (e) {}
 }
 // Aussehen der Krieger für die Übungs-Animationen (nach den Figuren-Bildern c*_s1)
-// hair: spiky | flame | wild | smooth | bald | ears | turban
+// hair: spiky | flame | wild | smooth | bald | ears | turban | bandana
 // face: Extras am Kopf (dots, thirdEye, beard, shades) · body: Extras am Körper (cape, shell, pads)
 const FIGHTER_LOOKS = {
   1:  { hair: "spiky",  hairCol: "#1a1a1f", top: "#ff8c1a", top2: "#e8650a", belt: "#1d3fa0", pants: "#ff8c1a", shoe: "#2a54c8", band: "#2a54c8" },
@@ -278,9 +278,12 @@ const FIGHTER_LOOKS = {
   4:  { hair: "ears",   skin: "#9b7fd1", top: "#9b7fd1", top2: "#7e64b8", belt: "#2a3f8f", pants: "#3d8fd1", shoe: "#6b4a2b", arm: "#9b7fd1", band: "#d4a72c" },
   5:  { hair: "bald",   face: ["beard", "shades"], body: ["shell"], skin: "#f1c7a0", top: "#ff9a2e", top2: "#e5771a", belt: null, pants: "#e8e8e8", shin: ["#f1c7a0", 42, 46], shoe: "#3aa84a", shoeLen: 10 },
   6:  { hair: "turban", body: ["cape"], skin: "#6fbf4a", top: "#4b2f86", top2: "#3a2370", belt: "#3d8fd1", pants: "#4b2f86", shoe: "#8a5a2b", arm: "#6fbf4a", band: "#c0392b" },
+  8:  { hair: "bandana", hairCol: "#f07a2a", skin: "#3fb8a8", top: "#5a3a2a", top2: "#3d4a63", belt: "#1e1e22", pants: "#2f9e93", shoe: "#1f3a36", shoeLen: 22, arm: "#3fb8a8", band: "#e0782a" },
+  9:  { hair: "bald",   skin: "#d4cfe0", top: "#1c1c22", top2: "#d42a2a", belt: "#1c1c22", pants: "#1c1c22", shoe: "#d42a2a", shoeLen: 24, arm: "#d42a2a", band: "#eeeeee", glove: "#eeeeee" },
   7:  { hair: "bald",   face: ["dots"], top: "#ff8c1a", top2: "#e8650a", belt: "#2a54c8", pants: "#ff8c1a", shoe: "#1a1a22", band: "#2a54c8" },
   10: { hair: "spiky",  hairCol: "#111114", top: "#4b3a9a", top2: "#3a2c80", belt: "#a82a2a", pants: "#4b3a9a", shoe: "#8a5a2b", band: "#7b3fb0" },
   12: { hair: "wild",   hairCol: "#15151a", body: ["pads"], top: "#5a2a7a", top2: "#43205c", belt: "#7bbf3a", beltW: 8, pants: "#5a2a7a", shoe: "#8a9a8a", shoeLen: 22, band: "#c0c0c8" },
+  14: { hair: "wild",   hairCol: "#d9381e", body: ["pads"], padsCol: "#f4a52a", top: "#e9b48a", top2: "#3a2a2a", belt: "#2a54c8", pants: "#e8e8e8", shin: ["#2a54c8", 70, 16], shoe: "#1a1a22", arm: "#7a2a26", band: "#1a1a22" },
   13: { hair: "smooth", hairCol: "#c4a8e8", top: "#3f7ac8", top2: "#2c5ea8", belt: "#d9a441", pants: "#3c434d", shoe: "#e0a830", shoeLen: 22, arm: "#3f7ac8" },
   15: { hair: "bald",   face: ["thirdEye"], top: "#2f8a3e", top2: "#23702f", belt: "#b5382c", pants: "#2f8a3e", shin: ["#eeeeee", 74, 12], shoe: "#1f2f6a", band: "#5a3a8a" }
 };
@@ -341,7 +344,7 @@ function getComicSVG(pose) {
       const bl = 10 + (look.beltW || 0);
       out += seg(a, b, look.belt, w + 1, dur, hipFirst ? 0 : 100 - bl, bl);
     }
-    if (look.body.includes("pads")) out += seg(a, b, "#9ad64a", w + 5, dur, hipFirst ? 86 : 0, 14);
+    if (look.body.includes("pads")) out += seg(a, b, look.padsCol || "#9ad64a", w + 5, dur, hipFirst ? 86 : 0, 14);
     return out;
   };
   // Arm: Ärmel/Haut + Armband + Handschuh/Hand (Hand liegt immer am Linienende)
@@ -380,6 +383,13 @@ function getComicSVG(pose) {
           <polygon points="10,1 19,-5 10,-3" fill="${look.skin}" stroke="${OUT}" stroke-width="1"/>
           ${face}<path d="M-8,-1 C-8,-12 12,-12 12,-1 Z" fill="#f2f2f2" stroke="${OUT}" stroke-width="1"/>
           <circle cx="2" cy="-8.5" r="2.4" fill="#6a3fa0"/>`;
+      case "bandana":
+        return `<path d="M-7,-3 C-15,3 -13,12 -18,17 C-9,15 -7,9 -5,4 Z" fill="${look.hairCol}" stroke="${OUT}" stroke-width="0.8"/>
+          <path d="M11,-3 C19,3 17,12 22,17 C13,15 11,9 9,4 Z" fill="${look.hairCol}" stroke="${OUT}" stroke-width="0.8"/>
+          <polygon points="-6,1 -15,-5 -6,-3" fill="${look.skin}" stroke="${OUT}" stroke-width="1"/>
+          <polygon points="10,1 19,-5 10,-3" fill="${look.skin}" stroke="${OUT}" stroke-width="1"/>
+          ${face}<path d="M-8,-1 C-8,-12 12,-12 12,-1 Z" fill="#eeeeee" stroke="${OUT}" stroke-width="1"/>
+          <path d="M11,-5 L20,-9 L18,-2 Z" fill="#eeeeee" stroke="${OUT}" stroke-width="0.8"/>`;
       case "bald":
         return face;
       default: // spiky
