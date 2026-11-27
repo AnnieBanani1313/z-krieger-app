@@ -1088,3 +1088,21 @@ body {
   box-shadow: none !important;
   cursor: not-allowed;
 }
+/* === ÜBERSCHREIBUNG: GERADE FIGUREN IM KARUSSELL === */
+.card-top {
+  margin-right: -18px !important;
+  transform: scale(0.88) !important;
+  margin-bottom: -14px !important;
+}
+
+.card-bottom {
+  margin-right: -18px !important;
+  transform: scale(0.88) !important;
+  margin-top: -14px !important;
+}
+
+.char-top,
+.char-bottom {
+  right: 8px !important;
+  transform: none !important;
+}
