@@ -141,149 +141,6 @@ const TROPHIES = Array.of(
   { id: "t5", icon: "💪", name: "BAUCH-STAHL", desc: "Bauch Level 3" },
   { id: "t6", icon: "👑", name: "TEAM-LEADER", desc: "5 Krieger trainiert" }
 );
-(function loadAppFonts() {
-  const host = Array.of("fonts", "googleapis", "com").join(".");
-  const link = document.createElement("link");
-  link.rel = "stylesheet";
-  link.href = `https://${host}/css2?family=Anton&family=Rajdhani:wght@600;700&display=swap`;
-  document.head.appendChild(link);
-})();
-
-(function injectGameUI() {
-  const style = document.createElement("style");
-  style.textContent = `
-    @keyframes kiShake {
-      0%, 100% { transform: translate(0, 0); }
-      25% { transform: translate(-6px, 4px); }
-      50% { transform: translate(6px, -4px); }
-      75% { transform: translate(-4px, -2px); }
-    }
-    @keyframes auraPulse {
-      0%, 100% { filter: drop-shadow(0 0 10px var(--aura-color, #ff9900)); }
-      50% { filter: drop-shadow(0 0 26px var(--aura-color, #ff9900)); }
-    }
-    .shake-active { animation: kiShake 0.45s ease; }
-    .aura-active { animation: auraPulse 1.8s infinite; }
-    .comic-stage {
-      background: #101015; border: 2px solid #ff9900;
-      border-radius: 12px; padding: 12px; position: relative; overflow: hidden;
-    }
-    .comic-badge {
-      position: absolute; top: 8px; left: 8px; background: #ff9900; color: #0b0b0d;
-      font-family: 'Anton', sans-serif; font-size: 0.78rem; padding: 2px 8px; border-radius: 5px;
-    }
-    .timer-box {
-      font-family: 'Anton', sans-serif; font-size: 2.2rem; color: #ffb703;
-      letter-spacing: 2px; margin: 4px 0;
-    }
-    .timer-btn {
-      background: #1c1c24; border: 1.5px solid #ff9900; color: #ff9900;
-      font-family: 'Anton', sans-serif; font-size: 1rem; padding: 6px 14px;
-      border-radius: 8px; cursor: pointer;
-    }
-    .hud-strip { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px; }
-    .hud-chip {
-      background: #16161c; border: 1px solid #2e2e3a; color: #fff;
-      font-family: 'Anton', sans-serif; font-size: 0.85rem; padding: 4px 9px;
-      border-radius: 8px; cursor: pointer;
-    }
-    .hud-chip.senzu-ready { border-color: #52e588; color: #52e588; }
-    .hud-chip.senzu-on { background: #52e588; color: #0b0b0d; }
-    .trophy-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; text-align: left; }
-    .trophy-item {
-      background: #101015; border: 1px solid #2c2c38; border-radius: 8px; padding: 8px; opacity: 0.4;
-    }
-    .trophy-item.unlocked { border-color: #ffb703; opacity: 1; }
-  `;
-  document.head.appendChild(style);
-
-  const modal = document.createElement("div");
-  modal.id = "exercise-modal";
-  modal.className = "levelup-overlay hidden";
-  modal.innerHTML = `
-    <div class="levelup-card" style="max-width: 360px;">
-      <span id="ex-modal-tag" class="orange-tag">TECHNIK-GUIDE</span>
-      <h2 id="ex-modal-title" class="tall-orange-title small">ÜBUNG</h2>
-      <div class="comic-stage">
-        <span class="comic-badge">COMIC-VORSCHAU</span>
-        <img id="ex-comic-img" style="width:100%;height:135px;object-fit:contain;display:none;" alt="" />
-        <div id="ex-comic-svg" style="height:135px;display:grid;place-items:center;"></div>
-      </div>
-      <p id="ex-modal-tip" class="poster-copy center" style="color:#fff;"></p>
-      <div id="ex-timer-area" class="hidden">
-        <div id="ex-timer-display" class="timer-box">00:20</div>
-        <button id="ex-timer-start" class="timer-btn">TIMER STARTEN</button>
-      </div>
-      <button id="ex-complete-btn" class="tall-orange-btn">GESCHAFFT (+25 XP)</button>
-      <button id="ex-close-btn" class="reset-link">Abbrechen</button>
-    </div>
-  `;
-  document.body.appendChild(modal);
-
-  const trophyModal = document.createElement("div");
-  trophyModal.id = "trophy-modal";
-  trophyModal.className = "levelup-overlay hidden";
-  trophyModal.innerHTML = `
-    <div class="levelup-card" style="max-width: 360px;">
-      <span class="orange-tag">RUHMESHALLE</span>
-      <h2 class="tall-orange-title small">TROPHÄEN</h2>
-      <div id="trophy-list" class="trophy-grid"></div>
-      <button id="close-trophy" class="tall-orange-btn">SCHLIESSEN</button>
-    </div>
-  `;
-  document.body.appendChild(trophyModal);
-
-  const stage = document.querySelector(".arena-poster-stage");
-  if (stage) {
-    const hud = document.createElement("div");
-    hud.className = "hud-strip";
-    hud.innerHTML = `
-      <span id="streak-chip" class="hud-chip">🔥 0 TAGE</span>
-      <button id="senzu-btn" class="hud-chip senzu-ready">🌱 SENZU (2x KI)</button>
-      <button id="boss-btn" class="hud-chip">👹 BOSS-KAMPF</button>
-      <button id="trophy-btn" class="hud-chip">🏆 TROPHÄEN</button>
-    `;
-    stage.prepend(hud);
-  }
-})();
-
-const CHARACTERS = Array.of(
-  { id: 1, name: "SON-BLITZ", attack: "SONNEN-KAMEHA", focus: "GANZKÖRPER", bio: "Furchtloser Saiyajin-Krieger.", color: "#ffb703" },
-  { id: 2, name: "PRINZ-KI", attack: "FINALER BLITZ", focus: "ARME & BRUST", bio: "Meister der Schwerkraft.", color: "#5ce1e6" },
-  { id: 3, name: "CYBER-RED", attack: "FLAMMEN-HIEB", focus: "REAKTION & BAUCH", bio: "High-Tech-Rüstung & Reflexe.", color: "#ff5c77" },
-  { id: 4, name: "SHADOW-X", attack: "PHANTOM-SALVE", focus: "BAUCH & BALANCE", bio: "Lautlos wie der Wind.", color: "#c77dff" },
-  { id: 5, name: "NOVA-GOLD", attack: "SUPERNOVA", focus: "GANZKÖRPER", bio: "Seine goldene Energie strahlt.", color: "#ffe66d" },
-  { id: 6, name: "TITAN-FORCE", attack: "TITANEN-WALL", focus: "ARME & BAUCH", bio: "Verteidiger mit Ki-Schild.", color: "#48cae4" },
-  { id: 7, name: "BLITZ-KID", attack: "DONNER-SPRINT", focus: "BEINE & SPEED", bio: "Extrem wendig & schnell.", color: "#ff9e5e" },
-  { id: 8, name: "FROST-ZEN", attack: "GLETSCHER-STRAHL", focus: "BAUCH-KRAFT", bio: "Bleibt unter Druck eiskalt.", color: "#72efdd" },
-  { id: 9, name: "FLAME-REX", attack: "MAGMA-FAUST", focus: "BRUST & SCHULTERN", bio: "Glühende Kampf-Aura.", color: "#ff6b6b" },
-  { id: 10, name: "ULTRA-VEX", attack: "KOMETEN-REGEN", focus: "GANZKÖRPER", bio: "Kosmische Sprungkraft.", color: "#b8c0ff" },
-  { id: 11, name: "SOLAR-KAI", attack: "HELIOS-WELLE", focus: "AUSDAUER", bio: "Zieht Kraft aus der Sonne.", color: "#ffd166" },
-  { id: 12, name: "DARK-ORION", attack: "ECLIPSE-SCHLAG", focus: "ARME & RÜCKEN", bio: "Einzelgänger mit Wucht.", color: "#80ffdb" },
-  { id: 13, name: "AERO-DASH", attack: "WIRBELSTURM", focus: "BEINE & AGILITÄT", bio: "Beherrscht den Himmel.", color: "#64dfdf" },
-  { id: 14, name: "OMEGA-GOD", attack: "OMEGA-URKNALL", focus: "ALLE BEREICHE", bio: "Meister aller Techniken.", color: "#ff758f" },
-  { id: 15, name: "STURM-GREEN", attack: "OMEGA-STURM", focus: "BEINE & KRAFT", bio: "Smaragdgrüne Natur-Energie.", color: "#52e588" }
-);
-
-const STAGE_RULES = Array.of(
-  { stage: 1, minLevel: 1 }, { stage: 2, minLevel: 2 },
-  { stage: 3, minLevel: 4 }, { stage: 4, minLevel: 6 }, { stage: 5, minLevel: 8 }
-);
-
-const BOSS_CHALLENGES = Array.of(
-  { title: "BOSS: SCHWERKRAFT 50x G", sub: "Kombi-Prüfung · Doppel-XP", xp: 120, power: 3000, pose: "plank", sec: 30, isBoss: true, tip: "10 Kniebeugen + 30 Sek. Plank!" },
-  { title: "BOSS: MEISTER-PRÜFUNG", sub: "Endboss · Doppel-XP", xp: 140, power: 3500, pose: "benchpress", sec: 25, isBoss: true, tip: "10x Hantelbank-Drücken + 25s Boxen!" },
-  { title: "BOSS: GALAXIE-TURNIER", sub: "Finale · Doppel-XP", xp: 160, power: 4000, pose: "jump", sec: 30, isBoss: true, tip: "15 Ausfallschritte + 30s Sprünge!" }
-);
-
-const TROPHIES = Array.of(
-  { id: "t1", icon: "⚡", name: "ERWACHEN", desc: "Stufe 2 erreicht" },
-  { id: "t2", icon: "🔥", name: "10.000 KI", desc: "10.000 Ki gesammelt" },
-  { id: "t3", icon: "👹", name: "BOSS-JÄGER", desc: "Ersten Boss besiegt" },
-  { id: "t4", icon: "📅", name: "DISZIPLIN", desc: "3 Tage Streak" },
-  { id: "t5", icon: "💪", name: "BAUCH-STAHL", desc: "Bauch Level 3" },
-  { id: "t6", icon: "👑", name: "TEAM-LEADER", desc: "5 Krieger trainiert" }
-);
 const BODY_WORKOUTS = {
   arms: {
     label: "TRAINING: ARME & HANTELBANK",
@@ -416,7 +273,7 @@ function playSound(mode = "click") {
     osc.connect(gain); gain.connect(ctx.destination);
     osc.start(now); osc.stop(now + 0.2);
   } catch (e) {}
-      }
+}
 function getComicSVG(pose) {
   const cObj = CHARACTERS.find(c => c.id === state.selectedChar) || CHARACTERS.at(0);
   const auraCol = cObj.color || "#ff9900";
@@ -517,7 +374,6 @@ function getComicSVG(pose) {
   };
   return Reflect.get(svgs, pose) || svgs.punch;
 }
-
 const _croppedCache = new Map();
 
 function cleanImageBg(imgEl, baseName) {
@@ -625,6 +481,7 @@ setTimeout(() => {
     loadSmartImage(pre, `c${c.id}_s1`);
   });
 }, 350);
+
 function getMaxUnlockedStage(lvl) {
   let max = 1;
   STAGE_RULES.forEach(s => { if (lvl >= s.minLevel) max = s.stage; });
@@ -809,7 +666,7 @@ function triggerKiImpact(intense = false) {
   }
 }
 
-                  function completeExercise(gainedXP, gainedPower) {
+function completeExercise(gainedXP, gainedPower) {
   const oldMax = getMaxUnlockedStage(state.level);
   const mult = state.senzuActive ? 2 : 1;
   const finalXP = gainedXP * mult;
@@ -1446,4 +1303,4 @@ updateUI();
 renderWorkouts();
 
 
-  
+
