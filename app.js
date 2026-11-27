@@ -141,6 +141,149 @@ const TROPHIES = Array.of(
   { id: "t5", icon: "💪", name: "BAUCH-STAHL", desc: "Bauch Level 3" },
   { id: "t6", icon: "👑", name: "TEAM-LEADER", desc: "5 Krieger trainiert" }
 );
+(function loadAppFonts() {
+  const host = Array.of("fonts", "googleapis", "com").join(".");
+  const link = document.createElement("link");
+  link.rel = "stylesheet";
+  link.href = `https://${host}/css2?family=Anton&family=Rajdhani:wght@600;700&display=swap`;
+  document.head.appendChild(link);
+})();
+
+(function injectGameUI() {
+  const style = document.createElement("style");
+  style.textContent = `
+    @keyframes kiShake {
+      0%, 100% { transform: translate(0, 0); }
+      25% { transform: translate(-6px, 4px); }
+      50% { transform: translate(6px, -4px); }
+      75% { transform: translate(-4px, -2px); }
+    }
+    @keyframes auraPulse {
+      0%, 100% { filter: drop-shadow(0 0 10px var(--aura-color, #ff9900)); }
+      50% { filter: drop-shadow(0 0 26px var(--aura-color, #ff9900)); }
+    }
+    .shake-active { animation: kiShake 0.45s ease; }
+    .aura-active { animation: auraPulse 1.8s infinite; }
+    .comic-stage {
+      background: #101015; border: 2px solid #ff9900;
+      border-radius: 12px; padding: 12px; position: relative; overflow: hidden;
+    }
+    .comic-badge {
+      position: absolute; top: 8px; left: 8px; background: #ff9900; color: #0b0b0d;
+      font-family: 'Anton', sans-serif; font-size: 0.78rem; padding: 2px 8px; border-radius: 5px;
+    }
+    .timer-box {
+      font-family: 'Anton', sans-serif; font-size: 2.2rem; color: #ffb703;
+      letter-spacing: 2px; margin: 4px 0;
+    }
+    .timer-btn {
+      background: #1c1c24; border: 1.5px solid #ff9900; color: #ff9900;
+      font-family: 'Anton', sans-serif; font-size: 1rem; padding: 6px 14px;
+      border-radius: 8px; cursor: pointer;
+    }
+    .hud-strip { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px; }
+    .hud-chip {
+      background: #16161c; border: 1px solid #2e2e3a; color: #fff;
+      font-family: 'Anton', sans-serif; font-size: 0.85rem; padding: 4px 9px;
+      border-radius: 8px; cursor: pointer;
+    }
+    .hud-chip.senzu-ready { border-color: #52e588; color: #52e588; }
+    .hud-chip.senzu-on { background: #52e588; color: #0b0b0d; }
+    .trophy-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; text-align: left; }
+    .trophy-item {
+      background: #101015; border: 1px solid #2c2c38; border-radius: 8px; padding: 8px; opacity: 0.4;
+    }
+    .trophy-item.unlocked { border-color: #ffb703; opacity: 1; }
+  `;
+  document.head.appendChild(style);
+
+  const modal = document.createElement("div");
+  modal.id = "exercise-modal";
+  modal.className = "levelup-overlay hidden";
+  modal.innerHTML = `
+    <div class="levelup-card" style="max-width: 360px;">
+      <span id="ex-modal-tag" class="orange-tag">TECHNIK-GUIDE</span>
+      <h2 id="ex-modal-title" class="tall-orange-title small">ÜBUNG</h2>
+      <div class="comic-stage">
+        <span class="comic-badge">COMIC-VORSCHAU</span>
+        <img id="ex-comic-img" style="width:100%;height:135px;object-fit:contain;display:none;" alt="" />
+        <div id="ex-comic-svg" style="height:135px;display:grid;place-items:center;"></div>
+      </div>
+      <p id="ex-modal-tip" class="poster-copy center" style="color:#fff;"></p>
+      <div id="ex-timer-area" class="hidden">
+        <div id="ex-timer-display" class="timer-box">00:20</div>
+        <button id="ex-timer-start" class="timer-btn">TIMER STARTEN</button>
+      </div>
+      <button id="ex-complete-btn" class="tall-orange-btn">GESCHAFFT (+25 XP)</button>
+      <button id="ex-close-btn" class="reset-link">Abbrechen</button>
+    </div>
+  `;
+  document.body.appendChild(modal);
+
+  const trophyModal = document.createElement("div");
+  trophyModal.id = "trophy-modal";
+  trophyModal.className = "levelup-overlay hidden";
+  trophyModal.innerHTML = `
+    <div class="levelup-card" style="max-width: 360px;">
+      <span class="orange-tag">RUHMESHALLE</span>
+      <h2 class="tall-orange-title small">TROPHÄEN</h2>
+      <div id="trophy-list" class="trophy-grid"></div>
+      <button id="close-trophy" class="tall-orange-btn">SCHLIESSEN</button>
+    </div>
+  `;
+  document.body.appendChild(trophyModal);
+
+  const stage = document.querySelector(".arena-poster-stage");
+  if (stage) {
+    const hud = document.createElement("div");
+    hud.className = "hud-strip";
+    hud.innerHTML = `
+      <span id="streak-chip" class="hud-chip">🔥 0 TAGE</span>
+      <button id="senzu-btn" class="hud-chip senzu-ready">🌱 SENZU (2x KI)</button>
+      <button id="boss-btn" class="hud-chip">👹 BOSS-KAMPF</button>
+      <button id="trophy-btn" class="hud-chip">🏆 TROPHÄEN</button>
+    `;
+    stage.prepend(hud);
+  }
+})();
+
+const CHARACTERS = Array.of(
+  { id: 1, name: "SON-BLITZ", attack: "SONNEN-KAMEHA", focus: "GANZKÖRPER", bio: "Furchtloser Saiyajin-Krieger.", color: "#ffb703" },
+  { id: 2, name: "PRINZ-KI", attack: "FINALER BLITZ", focus: "ARME & BRUST", bio: "Meister der Schwerkraft.", color: "#5ce1e6" },
+  { id: 3, name: "CYBER-RED", attack: "FLAMMEN-HIEB", focus: "REAKTION & BAUCH", bio: "High-Tech-Rüstung & Reflexe.", color: "#ff5c77" },
+  { id: 4, name: "SHADOW-X", attack: "PHANTOM-SALVE", focus: "BAUCH & BALANCE", bio: "Lautlos wie der Wind.", color: "#c77dff" },
+  { id: 5, name: "NOVA-GOLD", attack: "SUPERNOVA", focus: "GANZKÖRPER", bio: "Seine goldene Energie strahlt.", color: "#ffe66d" },
+  { id: 6, name: "TITAN-FORCE", attack: "TITANEN-WALL", focus: "ARME & BAUCH", bio: "Verteidiger mit Ki-Schild.", color: "#48cae4" },
+  { id: 7, name: "BLITZ-KID", attack: "DONNER-SPRINT", focus: "BEINE & SPEED", bio: "Extrem wendig & schnell.", color: "#ff9e5e" },
+  { id: 8, name: "FROST-ZEN", attack: "GLETSCHER-STRAHL", focus: "BAUCH-KRAFT", bio: "Bleibt unter Druck eiskalt.", color: "#72efdd" },
+  { id: 9, name: "FLAME-REX", attack: "MAGMA-FAUST", focus: "BRUST & SCHULTERN", bio: "Glühende Kampf-Aura.", color: "#ff6b6b" },
+  { id: 10, name: "ULTRA-VEX", attack: "KOMETEN-REGEN", focus: "GANZKÖRPER", bio: "Kosmische Sprungkraft.", color: "#b8c0ff" },
+  { id: 11, name: "SOLAR-KAI", attack: "HELIOS-WELLE", focus: "AUSDAUER", bio: "Zieht Kraft aus der Sonne.", color: "#ffd166" },
+  { id: 12, name: "DARK-ORION", attack: "ECLIPSE-SCHLAG", focus: "ARME & RÜCKEN", bio: "Einzelgänger mit Wucht.", color: "#80ffdb" },
+  { id: 13, name: "AERO-DASH", attack: "WIRBELSTURM", focus: "BEINE & AGILITÄT", bio: "Beherrscht den Himmel.", color: "#64dfdf" },
+  { id: 14, name: "OMEGA-GOD", attack: "OMEGA-URKNALL", focus: "ALLE BEREICHE", bio: "Meister aller Techniken.", color: "#ff758f" },
+  { id: 15, name: "STURM-GREEN", attack: "OMEGA-STURM", focus: "BEINE & KRAFT", bio: "Smaragdgrüne Natur-Energie.", color: "#52e588" }
+);
+
+const STAGE_RULES = Array.of(
+  { stage: 1, minLevel: 1 }, { stage: 2, minLevel: 2 },
+  { stage: 3, minLevel: 4 }, { stage: 4, minLevel: 6 }, { stage: 5, minLevel: 8 }
+);
+
+const BOSS_CHALLENGES = Array.of(
+  { title: "BOSS: SCHWERKRAFT 50x G", sub: "Kombi-Prüfung · Doppel-XP", xp: 120, power: 3000, pose: "plank", sec: 30, isBoss: true, tip: "10 Kniebeugen + 30 Sek. Plank!" },
+  { title: "BOSS: MEISTER-PRÜFUNG", sub: "Endboss · Doppel-XP", xp: 140, power: 3500, pose: "benchpress", sec: 25, isBoss: true, tip: "10x Hantelbank-Drücken + 25s Boxen!" },
+  { title: "BOSS: GALAXIE-TURNIER", sub: "Finale · Doppel-XP", xp: 160, power: 4000, pose: "jump", sec: 30, isBoss: true, tip: "15 Ausfallschritte + 30s Sprünge!" }
+);
+
+const TROPHIES = Array.of(
+  { id: "t1", icon: "⚡", name: "ERWACHEN", desc: "Stufe 2 erreicht" },
+  { id: "t2", icon: "🔥", name: "10.000 KI", desc: "10.000 Ki gesammelt" },
+  { id: "t3", icon: "👹", name: "BOSS-JÄGER", desc: "Ersten Boss besiegt" },
+  { id: "t4", icon: "📅", name: "DISZIPLIN", desc: "3 Tage Streak" },
+  { id: "t5", icon: "💪", name: "BAUCH-STAHL", desc: "Bauch Level 3" },
+  { id: "t6", icon: "👑", name: "TEAM-LEADER", desc: "5 Krieger trainiert" }
+);
 const BODY_WORKOUTS = {
   arms: {
     label: "TRAINING: ARME & HANTELBANK",
@@ -273,7 +416,7 @@ function playSound(mode = "click") {
     osc.connect(gain); gain.connect(ctx.destination);
     osc.start(now); osc.stop(now + 0.2);
   } catch (e) {}
-}
+      }
 function getComicSVG(pose) {
   const cObj = CHARACTERS.find(c => c.id === state.selectedChar) || CHARACTERS.at(0);
   const auraCol = cObj.color || "#ff9900";
@@ -372,11 +515,19 @@ function getComicSVG(pose) {
       <path d="M130,34 L130,68" stroke="url(#giGrad)" stroke-width="17" stroke-linecap="round"/>
       ${hair(130, 19, 0)}</svg>`
   };
-  return svgs[pose] || svgs.punch;
+  return Reflect.get(svgs, pose) || svgs.punch;
 }
+
+const _croppedCache = new Map();
 
 function cleanImageBg(imgEl, baseName) {
   try {
+    if (_croppedCache.has(baseName)) {
+      imgEl.dataset.cleaned = baseName;
+      imgEl.classList.add("clean-alpha");
+      imgEl.src = _croppedCache.get(baseName);
+      return;
+    }
     const w = imgEl.naturalWidth;
     const h = imgEl.naturalHeight;
     if (!w || !h) return;
@@ -432,15 +583,24 @@ function cleanImageBg(imgEl, baseName) {
       const cropCv = document.createElement("canvas");
       cropCv.width = cropW; cropCv.height = cropH;
       cropCv.getContext("2d").drawImage(cv, minX, minY, cropW, cropH, 0, 0, cropW, cropH);
+      const dataUrl = cropCv.toDataURL("image/png");
+      _croppedCache.set(baseName, dataUrl);
       imgEl.dataset.cleaned = baseName;
       imgEl.classList.add("clean-alpha");
-      imgEl.src = cropCv.toDataURL("image/png");
+      imgEl.src = dataUrl;
     }
   } catch (e) {}
 }
 
 function loadSmartImage(imgEl, baseName, onFail, onSuccess) {
-  imgEl.style.display = "none";
+  if (_croppedCache.has(baseName)) {
+    imgEl.dataset.cleaned = baseName;
+    imgEl.classList.add("clean-alpha");
+    imgEl.src = _croppedCache.get(baseName);
+    imgEl.style.display = "block";
+    if (onSuccess) onSuccess();
+    return;
+  }
   imgEl.classList.remove("clean-alpha");
   imgEl.dataset.cleaned = "";
   imgEl.onload = () => {
@@ -459,6 +619,12 @@ function loadSmartImage(imgEl, baseName, onFail, onSuccess) {
   imgEl.src = `${baseName}.png`;
 }
 
+setTimeout(() => {
+  CHARACTERS.forEach(c => {
+    const pre = new Image();
+    loadSmartImage(pre, `c${c.id}_s1`);
+  });
+}, 350);
 function getMaxUnlockedStage(lvl) {
   let max = 1;
   STAGE_RULES.forEach(s => { if (lvl >= s.minLevel) max = s.stage; });
@@ -503,10 +669,7 @@ function stepCarousel(dir) {
 let touchStartY = 0, isSwiping = false;
 const carouselEl = document.getElementById("staggered-carousel");
 carouselEl.addEventListener("touchstart", e => {
-  if (e.touches && e.touches.length > 0) {
-    touchStartY = e.touches.item(0).clientY;
-    isSwiping = true;
-  }
+  if (e.touches && e.touches.length > 0) { touchStartY = e.touches.item(0).clientY; isSwiping = true; }
 }, { passive: true });
 carouselEl.addEventListener("touchmove", e => { if (isSwiping) e.preventDefault(); }, { passive: false });
 carouselEl.addEventListener("touchend", e => {
@@ -538,7 +701,6 @@ function openCharacterDetails(charId) {
   loadSmartImage(imgEl, `c${c.id}_s1`, () => phEl.classList.remove("hidden"));
   showScreen("detail-screen");
 }
-
 function openExerciseModal(ex) {
   activeExercise = ex;
   clearInterval(timerInterval);
@@ -587,8 +749,7 @@ function openExerciseModal(ex) {
 }
 
 function renderWorkouts() {
-  const partData = BODY_WORKOUTS.arms;
-  const activePart = state.selectedPart === "core" ? BODY_WORKOUTS.core : (state.selectedPart === "legs" ? BODY_WORKOUTS.legs : partData);
+  const activePart = state.selectedPart === "core" ? BODY_WORKOUTS.core : (state.selectedPart === "legs" ? BODY_WORKOUTS.legs : BODY_WORKOUTS.arms);
   document.getElementById("selected-part-title").textContent = activePart.label;
   const list = document.getElementById("workout-list");
   list.innerHTML = "";
@@ -648,7 +809,7 @@ function triggerKiImpact(intense = false) {
   }
 }
 
-function completeExercise(gainedXP, gainedPower) {
+                  function completeExercise(gainedXP, gainedPower) {
   const oldMax = getMaxUnlockedStage(state.level);
   const mult = state.senzuActive ? 2 : 1;
   const finalXP = gainedXP * mult;
@@ -878,7 +1039,7 @@ document.getElementById("reset-btn").addEventListener("click", () => {
 loadSmartImage(document.getElementById("intro-hero-img"), "intro_bg", () => {
   loadSmartImage(document.getElementById("intro-hero-img"), "c1_s1", () => {});
 });
-(function initKidsCampaignSystem() {
+(function initLegendsBattleSystem() {
   const MIN_EXERCISE_SEC = 20;
   const EXERCISES_PER_TICKET = 3;
   const MAX_TICKETS_PER_DAY = 2;
@@ -895,19 +1056,52 @@ loadSmartImage(document.getElementById("intro-hero-img"), "intro_bg", () => {
     if (typeof state.battleTickets !== "number") state.battleTickets = 0;
   }
 
+  const ticketModal = document.createElement("div");
+  ticketModal.id = "ticket-unlock-modal";
+  ticketModal.className = "levelup-overlay hidden";
+  ticketModal.innerHTML = `
+    <div class="levelup-card" style="max-width: 350px;">
+      <span class="orange-tag">🐉 KAMPF-PORTAL GEÖFFNET</span>
+      <h2 id="ticket-modal-title" class="tall-orange-title small">WELT-LEVEL 1</h2>
+      <p id="ticket-modal-desc" class="poster-copy center" style="color:#fff;">
+        3 Übungen geschafft! Dein Kämpfer ist bereit für das Echtzeit-Duell!
+      </p>
+      <button id="ticket-play-now" class="tall-orange-btn">⚔️ JETZT KÄMPFEN!</button>
+      <button id="ticket-later-btn" class="reset-link">Später spielen</button>
+    </div>
+  `;
+  document.body.appendChild(ticketModal);
+
   const battleModal = document.createElement("div");
   battleModal.id = "battle-modal";
   battleModal.className = "levelup-overlay hidden";
   battleModal.innerHTML = `
-    <div class="levelup-card" style="max-width: 375px;">
-      <span id="battle-stage-tag" class="orange-tag">WELT-LEVEL 1</span>
-      <h2 id="battle-game-title" class="tall-orange-title small">KI-STRAHL-DUELL</h2>
-      <div id="battle-timer" class="timer-box">15.0s</div>
-      <div id="battle-stage" class="battle-stage"></div>
-      <div id="battle-extra-ui"></div>
-      <p id="battle-status-text" class="poster-copy center" style="color:#fff;"></p>
-      <div id="battle-controls"></div>
-      <button id="battle-close-btn" class="reset-link">Schließen</button>
+    <div class="levelup-card" style="max-width: 385px; padding: 16px;">
+      <div class="legends-hud">
+        <div>
+          <div id="lg-hero-name" class="legends-name">SON-BLITZ</div>
+          <div class="hp-wrap"><div id="lg-hero-hp" class="hp-fill"></div></div>
+        </div>
+        <span id="battle-stage-tag" class="orange-tag">LVL 1</span>
+        <div style="text-align:right;">
+          <div id="lg-enemy-name" class="legends-name">GEGNER</div>
+          <div class="hp-wrap"><div id="lg-enemy-hp" class="hp-fill enemy"></div></div>
+        </div>
+      </div>
+      <canvas id="legends-canvas" width="350" height="235"></canvas>
+      <div class="ki-charge-row">
+        <span style="font-family:'Anton';font-size:0.8rem;color:#ffb703;">KI</span>
+        <div class="ki-charge-track"><div id="lg-ki-fill" class="ki-charge-fill"></div></div>
+        <span id="lg-ki-num" style="font-family:'Anton';font-size:0.8rem;color:#fff;">40</span>
+      </div>
+      <div class="legends-cards">
+        <button id="lg-card-strike" class="l-card">⚔️ STRIKE<span>20 KI</span></button>
+        <button id="lg-card-blast" class="l-card">🔥 BLAST<span>25 KI</span></button>
+        <button id="lg-card-special" class="l-card special">💥 ULTIMATE<span>60 KI</span></button>
+        <button id="lg-card-vanish" class="l-card vanish">⚡ AUSWEICHEN<span>TELEPORT</span></button>
+      </div>
+      <button id="lg-charge-btn" class="timer-btn" style="width:100%;margin-top:4px;">🔋 KI AUFLADEN (+30 KI)</button>
+      <button id="battle-close-btn" class="reset-link">Arena verlassen</button>
     </div>
   `;
   document.body.appendChild(battleModal);
@@ -930,7 +1124,7 @@ loadSmartImage(document.getElementById("intro-hero-img"), "intro_bg", () => {
     completeBtn.disabled = true;
 
     if (ex.sec) {
-      completeBtn.textContent = `⏳ ERST TIMER BEENDEN (${ex.sec}s)`;
+      completeBtn.textContent = "⏳ ERST TIMER BEENDEN";
       const timerBtn = document.getElementById("ex-timer-start");
       const origClick = timerBtn.onclick;
       timerBtn.onclick = function () {
@@ -938,8 +1132,7 @@ loadSmartImage(document.getElementById("intro-hero-img"), "intro_bg", () => {
         let left = ex.sec;
         window._paceGuardInterval = setInterval(() => {
           left -= 1;
-          if (left > 0) completeBtn.textContent = `⏳ NOCH ${left} SEK. HALTEN...`;
-          else {
+          if (left <= 0) {
             clearInterval(window._paceGuardInterval);
             completeBtn.disabled = false;
             completeBtn.textContent = finalLabel;
@@ -973,7 +1166,10 @@ loadSmartImage(document.getElementById("intro-hero-img"), "intro_bg", () => {
       state.battleTickets += 1;
       setTimeout(() => {
         playSound("stageup");
-        alert(`🎉 3 Übungen geschafft! Neues Spiel-Level (${state.campaignStage}) freigeschaltet!`);
+        document.getElementById("ticket-modal-title").textContent = `WELT-LEVEL ${state.campaignStage}`;
+        document.getElementById("ticket-modal-desc").textContent = "3 Übungen geschafft! Dein Kämpfer ist bereit für das Echtzeit-Duell!";
+        document.getElementById("ticket-play-now").classList.remove("hidden");
+        ticketModal.classList.remove("hidden");
       }, 450);
     }
     origCompleteExercise(gainedXP, gainedPower);
@@ -988,7 +1184,7 @@ loadSmartImage(document.getElementById("intro-hero-img"), "intro_bg", () => {
     const progress = state.dailyExerciseCount % EXERCISES_PER_TICKET;
     if (state.battleTickets > 0) {
       campBtn.className = "hud-chip senzu-on";
-      campBtn.textContent = `🐉 SPIELEN! (${state.battleTickets}x)`;
+      campBtn.textContent = `🐉 KAMPF! (${state.battleTickets}x)`;
     } else if (state.dailyTicketsEarned >= MAX_TICKETS_PER_DAY) {
       campBtn.className = "hud-chip";
       campBtn.style.opacity = "0.5";
@@ -996,228 +1192,252 @@ loadSmartImage(document.getElementById("intro-hero-img"), "intro_bg", () => {
     } else {
       campBtn.className = "hud-chip";
       campBtn.style.opacity = "1";
-      campBtn.textContent = `🐉 SPIEL (${progress}/${EXERCISES_PER_TICKET})`;
+      campBtn.textContent = `🐉 KAMPF (${progress}/${EXERCISES_PER_TICKET})`;
     }
   };
+    let animFrameId = null;
 
-    let gameTimer = null;
-  let extraTimers = Array.of();
-  function stopAllGameLoops() {
-    clearInterval(gameTimer);
-    extraTimers.forEach(t => clearInterval(t));
-    extraTimers = Array.of();
-  }
-
-  function startDynamicMiniGame() {
+  function startLegendsBattle() {
     ensureCampaignState();
     if (state.battleTickets <= 0) {
-      if (state.dailyTicketsEarned >= MAX_TICKETS_PER_DAY) alert("Tageslimit erreicht (2/2)! Morgen warten neue Level auf dich.");
-      else alert(`Mach noch ${EXERCISES_PER_TICKET - (state.dailyExerciseCount % EXERCISES_PER_TICKET)} Übung(en), um Welt-Level ${state.campaignStage} zu starten!`);
+      document.getElementById("ticket-modal-title").textContent =
+        state.dailyTicketsEarned >= MAX_TICKETS_PER_DAY ? "TAGESLIMIT ERREICHT" : "KAMPF GESPERRT";
+      document.getElementById("ticket-modal-desc").textContent =
+        state.dailyTicketsEarned >= MAX_TICKETS_PER_DAY
+          ? "Du hast heute schon beide Kämpfe absolviert. Morgen gibt es neue Tickets!"
+          : `Absolviere noch ${EXERCISES_PER_TICKET - (state.dailyExerciseCount % EXERCISES_PER_TICKET)} Übung(en), um Welt-Level ${state.campaignStage} zu öffnen!`;
+      document.getElementById("ticket-play-now").classList.add("hidden");
+      ticketModal.classList.remove("hidden");
       return;
     }
+
+    document.getElementById("ticket-play-now").classList.remove("hidden");
     state.battleTickets -= 1;
     updateUI();
-    stopAllGameLoops();
+    cancelAnimationFrame(animFrameId);
 
     const lvl = state.campaignStage;
-    const mode = (lvl - 1) % 4;
-    const heroBase = `c${state.selectedChar}_s${state.selectedStage}`;
+    const heroObj = CHARACTERS.find(c => c.id === state.selectedChar) || CHARACTERS.at(0);
     const enemyId = ((state.selectedChar + lvl + 1) % CHARACTERS.length) + 1;
-    const enemyBase = `c${enemyId}_s${Math.min(5, Math.ceil(lvl / 2))}`;
+    const enemyObj = CHARACTERS.find(c => c.id === enemyId) || CHARACTERS.at(1);
 
-    const stageEl = document.getElementById("battle-stage");
-    const extraEl = document.getElementById("battle-extra-ui");
-    const ctrlEl = document.getElementById("battle-controls");
-    const titleEl = document.getElementById("battle-game-title");
-    const timerEl = document.getElementById("battle-timer");
-    const statusEl = document.getElementById("battle-status-text");
-
+    document.getElementById("lg-hero-name").textContent = heroObj.name;
+    document.getElementById("lg-enemy-name").textContent = enemyObj.name;
     document.getElementById("battle-stage-tag").textContent = `WELT-LEVEL ${lvl}`;
-    stageEl.innerHTML = "";
-    extraEl.innerHTML = "";
-    ctrlEl.innerHTML = "";
-    battleModal.classList.remove("hidden");
+    document.getElementById("lg-card-special").innerHTML = `💥 ${heroObj.attack.slice(0, 10)}<span>60 KI</span>`;
 
-    const finishGame = (won, msg) => {
-      stopAllGameLoops();
-      ctrlEl.innerHTML = "";
-      if (won) {
-        playSound("stageup");
-        triggerKiImpact(true);
-        state.campaignStage += 1;
-        state.powerLevel += 1500;
-        statusEl.textContent = `🏆 ${msg} Welt-Level ${state.campaignStage} frei (+1.500 KI)!`;
-      } else {
-        playSound("done");
-        statusEl.textContent = `💥 ${msg} Trainiere 3 Übungen für den nächsten Versuch!`;
-      }
-      updateUI();
+    const heroSprite = new Image();
+    const enemySprite = new Image();
+    loadSmartImage(heroSprite, `c${heroObj.id}_s${state.selectedStage}`);
+    loadSmartImage(enemySprite, `c${enemyObj.id}_s${Math.min(5, Math.ceil(lvl / 2))}`);
+
+    const canvas = document.getElementById("legends-canvas");
+    const ctx = canvas.getContext("2d");
+
+    const sim = {
+      heroHp: 100, enemyHp: 100 + (lvl - 1) * 20, maxEnemyHp: 100 + (lvl - 1) * 20,
+      ki: 50, heroX: 68, heroY: 135, enemyX: 282, enemyY: 135,
+      vanishReady: true, enemyWarnTimer: 0, enemyAttackCooldown: 110,
+      projectiles: Array.of(), floatTexts: Array.of(), over: false, beamTimer: 0
     };
 
-    if (mode === 0) {
-      titleEl.textContent = "KI-STRAHL-DUELL";
-      statusEl.textContent = "Tippe schnell, um deinen Kämpfer vorzuschieben!";
-      stageEl.innerHTML = `<img id="g-hero" class="battle-fighter hover-hero" style="left:10px; top:52px;" /><div class="beam-clash-track"><div id="g-beam" class="beam-player"></div></div><div id="g-spark" class="beam-spark-core"></div><img id="g-enemy" class="battle-fighter battle-enemy hover-enemy" style="right:10px; top:52px;" />`;
-      ctrlEl.innerHTML = `<button id="g-tap" class="battle-tap-btn">⚡ KAMEHAMEHA FEUERN!</button>`;
-      loadSmartImage(document.getElementById("g-hero"), heroBase);
-      loadSmartImage(document.getElementById("g-enemy"), enemyBase);
-      let pos = 45, time = 15.0;
-      const push = 0.4 + lvl * 0.04;
-      const updatePos = () => {
-        const c = Math.max(0, Math.min(100, pos));
-        document.getElementById("g-beam").style.width = `${c}%`;
-        document.getElementById("g-spark").style.left = `${c}%`;
-        document.getElementById("g-hero").style.left = `${8 + c * 0.25}px`;
-      };
-      document.getElementById("g-tap").onclick = () => {
-        pos += 5.0;
-        updatePos();
-        if (pos >= 100) finishGame(true, "VOLLTREFFER!");
-      };
-      gameTimer = setInterval(() => {
-        time -= 0.1;
-        pos -= push;
-        timerEl.textContent = `${Math.max(0, time).toFixed(1)}s`;
-        updatePos();
-        if (pos <= 0) finishGame(false, "Überwältigt!");
-        else if (time <= 0) finishGame(pos >= 50, pos >= 50 ? "STRAHL GEWONNEN!" : "Knapp verloren!");
-      }, 100);
-    } else if (mode === 1) {
-      titleEl.textContent = "ENERGIEBALL-ABWEHR";
-      statusEl.textContent = "Tippe auf die fliegenden Energiebälle, bevor sie landen!";
-      stageEl.innerHTML = `<img id="g-hero" class="battle-fighter hover-hero" style="left:125px; top:95px;" />`;
-      loadSmartImage(document.getElementById("g-hero"), heroBase);
-      let score = 0, hits = 0, time = 16.0;
-      const targetScore = 8 + Math.min(6, lvl);
-      timerEl.textContent = `0 / ${targetScore}`;
-      const spawnOrb = () => {
-        const orb = document.createElement("div");
-        orb.className = "ki-orb-target";
-        orb.textContent = "🔥";
-        const xPct = 18 + Math.random() * 64;
-        let yPct = 8;
-        orb.style.left = `${xPct}%`;
-        orb.style.top = `${yPct}%`;
-        stageEl.appendChild(orb);
-        const fall = setInterval(() => {
-          yPct += 2.6 + lvl * 0.2;
-          orb.style.top = `${yPct}%`;
-          if (yPct >= 88) {
-            clearInterval(fall);
-            orb.remove();
-            hits += 1;
-            const hEl = document.getElementById("g-hero");
-            if (hEl) {
-              hEl.classList.add("hit-flash");
-              setTimeout(() => hEl.classList.remove("hit-flash"), 280);
-            }
-            if (hits >= 3) finishGame(false, "3 Einschläge kassiert!");
-          }
-        }, 50);
-        extraTimers.push(fall);
-        orb.onclick = () => {
-          clearInterval(fall);
-          orb.remove();
-          playSound("click");
-          score += 1;
-          timerEl.textContent = `${score} / ${targetScore}`;
-          const hEl = document.getElementById("g-hero");
-          if (hEl) {
-            hEl.style.left = `${Math.max(10, Math.min(240, (xPct / 100) * 280 - 30))}px`;
-            hEl.classList.add("dash-hit");
-            setTimeout(() => hEl.classList.remove("dash-hit"), 320);
-          }
-          if (score >= targetScore) finishGame(true, "ALLE BÄLLE ZERSTÖRT!");
-        };
-      };
-      spawnOrb();
-      extraTimers.push(setInterval(spawnOrb, Math.max(650, 1150 - lvl * 45)));
-      gameTimer = setInterval(() => {
-        time -= 0.2;
-        if (time <= 0) finishGame(score >= targetScore, "Zeit abgelaufen!");
-      }, 200);
-          } else if (mode === 2) {
-      titleEl.textContent = "ULTRA-INSTINKT KONTER";
-      statusEl.textContent = "Springe auf die Seite, wo der Gegner auftaucht!";
-      stageEl.innerHTML = `<img id="g-enemy" class="battle-fighter battle-enemy hover-enemy" style="left:125px; top:10px;" /><img id="g-hero" class="battle-fighter hover-hero" style="left:125px; top:100px;" />`;
-      ctrlEl.innerHTML = `<div class="battle-controls-row"><button class="battle-tap-btn" data-lane="0">⬅️ LINKS</button><button class="battle-tap-btn" data-lane="1">⬆️ MITTE</button><button class="battle-tap-btn" data-lane="2">➡️ RECHTS</button></div>`;
-      loadSmartImage(document.getElementById("g-hero"), heroBase);
-      loadSmartImage(document.getElementById("g-enemy"), enemyBase);
-      const lanes = Array.of(22, 125, 228);
-      let enemyLane = 1, hits = 0, misses = 0;
-      const needed = 5;
-      timerEl.textContent = `0 / ${needed}`;
-      const moveEnemy = () => {
-        enemyLane = Math.floor(Math.random() * 3);
-        const eEl = document.getElementById("g-enemy");
-        if (eEl) eEl.style.left = `${lanes.at(enemyLane)}px`;
-      };
-      moveEnemy();
-      extraTimers.push(setInterval(moveEnemy, Math.max(850, 1450 - lvl * 50)));
-      ctrlEl.querySelectorAll("button").forEach(btn => {
-        btn.onclick = () => {
-          const chosen = Number(btn.dataset.lane);
-          const hEl = document.getElementById("g-hero");
-          const eEl = document.getElementById("g-enemy");
-          if (hEl) hEl.style.left = `${lanes.at(chosen)}px`;
-          if (chosen === enemyLane) {
-            playSound("done");
-            hits += 1;
-            timerEl.textContent = `${hits} / ${needed}`;
-            if (hEl) { hEl.classList.add("dash-hit"); setTimeout(() => hEl.classList.remove("dash-hit"), 300); }
-            if (eEl) { eEl.classList.add("hit-flash"); setTimeout(() => eEl.classList.remove("hit-flash"), 280); }
-            moveEnemy();
-            if (hits >= needed) finishGame(true, "5x PERFEKT GEKONTERT!");
-          } else {
-            misses += 1;
-            if (hEl) { hEl.classList.add("hit-flash"); setTimeout(() => hEl.classList.remove("hit-flash"), 280); }
-            if (misses >= 3) finishGame(false, "Zu oft daneben gesprungen!");
-          }
-        };
-      });
-    } else {
-      titleEl.textContent = "SUPER-FINISHER";
-      statusEl.textContent = "Stoppe den Ki-Zeiger im grünen Bereich (3 Treffer)!";
-      stageEl.innerHTML = `<img id="g-hero" class="battle-fighter hover-hero" style="left:25px; top:55px;" /><img id="g-enemy" class="battle-fighter battle-enemy hover-enemy" style="right:25px; top:55px;" />`;
-      extraEl.innerHTML = `<div class="gauge-track"><div class="gauge-sweetspot"></div><div id="g-needle" class="gauge-needle" style="left:0%;"></div></div>`;
-      ctrlEl.innerHTML = `<button id="g-stop" class="battle-tap-btn">💥 JETZT ZUSCHLAGEN!</button>`;
-      loadSmartImage(document.getElementById("g-hero"), heroBase);
-      loadSmartImage(document.getElementById("g-enemy"), enemyBase);
-      let needle = 0, dir = 1, hits = 0, tries = 0;
-      timerEl.textContent = `0 / 3 TREFFER`;
-      const speed = 2.6 + lvl * 0.25;
-      gameTimer = setInterval(() => {
-        needle += dir * speed;
-        if (needle >= 98) { needle = 98; dir = -1; }
-        if (needle <= 0) { needle = 0; dir = 1; }
-        const nEl = document.getElementById("g-needle");
-        if (nEl) nEl.style.left = `${needle}%`;
-      }, 25);
-      document.getElementById("g-stop").onclick = () => {
-        tries += 1;
-        const hEl = document.getElementById("g-hero");
-        const eEl = document.getElementById("g-enemy");
-        if (needle >= 38 && needle <= 62) {
-          playSound("done");
-          hits += 1;
-          timerEl.textContent = `${hits} / 3 TREFFER`;
-          if (hEl) { hEl.classList.add("dash-hit"); setTimeout(() => hEl.classList.remove("dash-hit"), 320); }
-          if (eEl) { eEl.classList.add("hit-flash"); setTimeout(() => eEl.classList.remove("hit-flash"), 280); }
-          if (hits >= 3) finishGame(true, "3x VOLLTREFFER!");
+    const spawnFloat = (x, y, txt, col) => sim.floatTexts.push({ x, y, txt, col, life: 45 });
+
+    const updateBars = () => {
+      document.getElementById("lg-hero-hp").style.width = `${Math.max(0, sim.heroHp)}%`;
+      document.getElementById("lg-enemy-hp").style.width = `${Math.max(0, (sim.enemyHp / sim.maxEnemyHp) * 100)}%`;
+      document.getElementById("lg-ki-fill").style.width = `${Math.min(100, sim.ki)}%`;
+      document.getElementById("lg-ki-num").textContent = Math.floor(sim.ki);
+      document.getElementById("lg-card-strike").disabled = sim.ki < 20 || sim.over;
+      document.getElementById("lg-card-blast").disabled = sim.ki < 25 || sim.over;
+      document.getElementById("lg-card-special").disabled = sim.ki < 60 || sim.over;
+      document.getElementById("lg-card-vanish").disabled = !sim.vanishReady || sim.over;
+    };
+
+    const endBattle = (won) => {
+      if (sim.over) return;
+      sim.over = true;
+      updateBars();
+      setTimeout(() => {
+        cancelAnimationFrame(animFrameId);
+        battleModal.classList.add("hidden");
+        if (won) {
+          playSound("stageup");
+          triggerKiImpact(true);
+          state.campaignStage += 1;
+          state.powerLevel += 1500;
+          document.getElementById("levelup-badge").textContent = "🏆 KAMPF GEWONNEN!";
+          document.getElementById("levelup-title").textContent = `WELT-LEVEL ${state.campaignStage}`;
+          document.getElementById("levelup-desc").textContent = `Du hast ${enemyObj.name} besiegt! (+1.500 KI)`;
         } else {
-          playSound("click");
-          if (hEl) { hEl.classList.add("hit-flash"); setTimeout(() => hEl.classList.remove("hit-flash"), 280); }
-          if (tries >= 5) finishGame(false, "Zu viele Fehlversuche!");
+          playSound("done");
+          document.getElementById("levelup-badge").textContent = "💥 KNAPP VERLOREN";
+          document.getElementById("levelup-title").textContent = "WEITER TRAINIEREN";
+          document.getElementById("levelup-desc").textContent = "Absolviere 3 neue Übungen für den Rückkampf!";
         }
-      };
+        document.getElementById("levelup-overlay").classList.remove("hidden");
+        updateUI();
+      }, 650);
+    };
+
+    document.getElementById("lg-card-strike").onclick = () => {
+      if (sim.ki < 20 || sim.over) return;
+      sim.ki -= 20;
+      sim.heroX = 215;
+      playSound("done");
+      const dmg = 18 + state.selectedStage * 3;
+      sim.enemyHp -= dmg;
+      spawnFloat(270, 95, `-${dmg} KOMBO!`, "#ffb703");
+      setTimeout(() => { sim.heroX = 68; }, 220);
+      if (sim.enemyHp <= 0) endBattle(true);
+    };
+
+    document.getElementById("lg-card-blast").onclick = () => {
+      if (sim.ki < 25 || sim.over) return;
+      sim.ki -= 25;
+      playSound("click");
+      Array.of(0, 1, 2).forEach(i => {
+        sim.projectiles.push({ x: 105 - i * 18, y: 115 + (i - 1) * 16, vx: 8.5, fromHero: true, col: heroObj.color });
+      });
+    };
+
+    document.getElementById("lg-card-special").onclick = () => {
+      if (sim.ki < 60 || sim.over) return;
+      sim.ki -= 60;
+      sim.beamTimer = 28;
+      playSound("stageup");
+      const dmg = 42 + state.selectedStage * 6;
+      sim.enemyHp -= dmg;
+      spawnFloat(255, 80, `${heroObj.attack}! -${dmg}`, "#ff5c77");
+      if (sim.enemyHp <= 0) endBattle(true);
+    };
+
+    document.getElementById("lg-card-vanish").onclick = () => {
+      if (!sim.vanishReady || sim.over) return;
+      sim.vanishReady = false;
+      sim.enemyWarnTimer = 0;
+      sim.heroY = 75;
+      playSound("select");
+      spawnFloat(70, 85, "VANISH STEP!", "#5ce1e6");
+      setTimeout(() => { sim.heroY = 135; }, 350);
+      setTimeout(() => { sim.vanishReady = true; }, 3800);
+    };
+
+    document.getElementById("lg-charge-btn").onclick = () => {
+      if (sim.over) return;
+      sim.ki = Math.min(100, sim.ki + 28);
+      playSound("click");
+      spawnFloat(68, 95, "+28 KI", "#52e588");
+    };
+        battleModal.classList.remove("hidden");
+
+    function loop(t) {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      ctx.strokeStyle = "rgba(255, 153, 0, 0.16)";
+      ctx.lineWidth = 1;
+      Array.of(165, 190, 218).forEach(y => {
+        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(350, y); ctx.stroke();
+      });
+
+      if (!sim.over) {
+        sim.ki = Math.min(100, sim.ki + 0.08);
+        sim.enemyAttackCooldown -= 1;
+        if (sim.enemyAttackCooldown <= 0 && sim.enemyWarnTimer === 0) {
+          sim.enemyWarnTimer = 42;
+        }
+        if (sim.enemyWarnTimer > 0) {
+          sim.enemyWarnTimer -= 1;
+          if (sim.enemyWarnTimer === 0) {
+            sim.projectiles.push({ x: 245, y: 120, vx: -(6.2 + lvl * 0.45), fromHero: false, col: "#ff4d6d" });
+            sim.enemyAttackCooldown = Math.max(65, 130 - lvl * 8);
+          }
+        }
+      }
+
+      const hover = Math.sin(t / 180) * 5;
+
+      if (heroSprite.complete && heroSprite.naturalWidth) {
+        ctx.drawImage(heroSprite, sim.heroX - 42, sim.heroY - 75 + hover, 84, 115);
+      }
+
+      if (enemySprite.complete && enemySprite.naturalWidth) {
+        ctx.save();
+        ctx.translate(sim.enemyX, sim.enemyY - hover);
+        ctx.scale(-1, 1);
+        ctx.drawImage(enemySprite, -42, -75, 84, 115);
+        ctx.restore();
+      }
+
+      if (sim.enemyWarnTimer > 0) {
+        ctx.fillStyle = "#ff4d6d";
+        ctx.font = "bold 34px Anton, sans-serif";
+        ctx.fillText("!", sim.enemyX - 8, 45);
+      }
+
+      if (sim.beamTimer > 0) {
+        sim.beamTimer -= 1;
+        const grad = ctx.createLinearGradient(95, 0, 285, 0);
+        grad.addColorStop(0, heroObj.color);
+        grad.addColorStop(1, "#ffffff");
+        ctx.fillStyle = grad;
+        ctx.fillRect(95, 102, 190, 26);
+      }
+
+      sim.projectiles = sim.projectiles.filter(p => {
+        p.x += p.vx;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 11, 0, Math.PI * 2);
+        ctx.fillStyle = p.col;
+        ctx.fill();
+        if (p.fromHero && p.x >= sim.enemyX - 25) {
+          const dmg = 8 + state.selectedStage;
+          sim.enemyHp -= dmg;
+          spawnFloat(sim.enemyX - 20, 95, `-${dmg}`, p.col);
+          if (sim.enemyHp <= 0) endBattle(true);
+          return false;
+        }
+        if (!p.fromHero && p.x <= sim.heroX + 25) {
+          if (sim.heroY < 100) {
+            spawnFloat(sim.heroX, 85, "AUSGEWICHEN!", "#5ce1e6");
+          } else {
+            const dmg = 16 + lvl * 2;
+            sim.heroHp -= dmg;
+            spawnFloat(sim.heroX - 15, 95, `-${dmg}`, "#ff4d6d");
+            if (sim.heroHp <= 0) endBattle(false);
+          }
+          return false;
+        }
+        return p.x > 0 && p.x < 350;
+      });
+
+      sim.floatTexts = sim.floatTexts.filter(ft => {
+        ft.y -= 0.7;
+        ft.life -= 1;
+        ctx.fillStyle = ft.col;
+        ctx.font = "bold 16px Anton, sans-serif";
+        ctx.fillText(ft.txt, ft.x, ft.y);
+        return ft.life > 0;
+      });
+
+      updateBars();
+      animFrameId = requestAnimationFrame(loop);
     }
+
+    animFrameId = requestAnimationFrame(loop);
   }
 
-  document.getElementById("campaign-btn")?.addEventListener("click", startDynamicMiniGame);
+  document.getElementById("campaign-btn")?.addEventListener("click", startLegendsBattle);
+  document.getElementById("ticket-play-now").addEventListener("click", () => {
+    ticketModal.classList.add("hidden");
+    startLegendsBattle();
+  });
+  document.getElementById("ticket-later-btn").addEventListener("click", () => ticketModal.classList.add("hidden"));
   document.getElementById("battle-close-btn").addEventListener("click", () => {
-    stopAllGameLoops();
+    cancelAnimationFrame(animFrameId);
     battleModal.classList.add("hidden");
   });
+
   updateUI();
 })();
 
@@ -1226,3 +1446,4 @@ updateUI();
 renderWorkouts();
 
 
+  
