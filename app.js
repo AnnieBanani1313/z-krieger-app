@@ -1590,28 +1590,38 @@ loadSmartImage(document.getElementById("intro-hero-img"), "intro_bg", () => {
           }
         battleModal.classList.remove("hidden");
 
+    // Delta-Time: alle Werte sind auf "pro 60-Hz-Frame" ausgelegt, dt = 1 entspricht 16,67 ms.
+    // Auf 120-Hz-Geräten ist dt ≈ 0,5, bei Rucklern max. 3 (verhindert Sprünge nach Tab-Wechsel).
+    const FRAME_MS = 1000 / 60;
+    let lastFrameT = null;
+
     function loop(t) {
-      if (sim.hitStop > 0) { sim.hitStop -= 1; animFrameId = requestAnimationFrame(loop); return; }
+      const dt = lastFrameT === null ? 1 : Math.min(3, Math.max(0, (t - lastFrameT) / FRAME_MS));
+      lastFrameT = t;
+
+      if (sim.hitStop > 0) { sim.hitStop -= dt; animFrameId = requestAnimationFrame(loop); return; }
 
       ctx.save();
       if (sim.shake > 0) {
         ctx.translate((Math.random() - 0.5) * sim.shake, (Math.random() - 0.5) * sim.shake);
-        sim.shake *= 0.82;
+        sim.shake *= Math.pow(0.82, dt);
+        if (sim.shake < 0.2) sim.shake = 0;
       }
 
-      sim.scroll += mode === 1 ? 5.5 : 1.2;
+      sim.scroll += (mode === 1 ? 5.5 : 1.2) * dt;
       drawStageBackground(ctx, 356, 245, sim.scroll, lvl - 1, t);
 
       const hover = Math.sin(t / 170) * 4;
 
       if (mode === 0) {
         if (!sim.over) {
-          sim.ki = Math.min(100, sim.ki + 0.09);
-          sim.attackCd -= 1;
-          if (sim.attackCd <= 0 && sim.warnTimer === 0) sim.warnTimer = 40;
+          sim.ki = Math.min(100, sim.ki + 0.09 * dt);
+          sim.attackCd -= dt;
+          if (sim.attackCd <= 0 && sim.warnTimer <= 0) sim.warnTimer = 40;
           if (sim.warnTimer > 0) {
-            sim.warnTimer -= 1;
-            if (sim.warnTimer === 0) {
+            sim.warnTimer -= dt;
+            if (sim.warnTimer <= 0) {
+              sim.warnTimer = 0;
               sim.projectiles.push({ x: 245, y: 125, vx: -(6.5 + lvl * 0.4), fromHero: false, col: "#ff0055" });
               sim.attackCd = Math.max(60, 120 - lvl * 7);
             }
@@ -1622,13 +1632,13 @@ loadSmartImage(document.getElementById("intro-hero-img"), "intro_bg", () => {
           ctx.fillText("!", sim.enemyX - 8, 52);
         }
         if (sim.beamTimer > 0) {
-          sim.beamTimer -= 1;
+          sim.beamTimer = Math.max(0, sim.beamTimer - dt);
           drawBeam(ctx, 95, 290, 120, 28 * Math.min(1, sim.beamTimer / 8), heroObj.color, t);
         }
       } else if (mode === 1) {
         sim.heroY = sim.lane === 0 ? 105 : 178;
         if (!sim.over) {
-          sim.attackCd -= 1;
+          sim.attackCd -= dt;
           if (sim.attackCd <= 0) {
             const isOrb = Math.random() < 0.35;
             const spawnLane = Math.random() < 0.5 ? 105 : 178;
@@ -1637,9 +1647,9 @@ loadSmartImage(document.getElementById("intro-hero-img"), "intro_bg", () => {
           }
         }
       } else {
-        sim.ringAngle += 0.075 + lvl * 0.006;
+        sim.ringAngle += (0.075 + lvl * 0.006) * dt;
         if (!sim.over) {
-          sim.beamPos -= 0.16 + lvl * 0.02;
+          sim.beamPos -= (0.16 + lvl * 0.02) * dt;
           if (sim.beamPos <= 0) { sim.heroHp = 0; finishMission(false); }
         }
         const clashX = 75 + (sim.beamPos / 100) * 205;
@@ -1657,7 +1667,7 @@ loadSmartImage(document.getElementById("intro-hero-img"), "intro_bg", () => {
       drawFighterUnstretched(ctx, enemySprite, sim.enemyX, sim.enemyY + 40 - hover, { color: "#ff0055", flip: true, t: t + 900 });
 
       sim.projectiles = sim.projectiles.filter(p => {
-        p.x += p.vx;
+        p.x += p.vx * dt;
         ctx.beginPath(); ctx.arc(p.x, p.y, p.isOrb ? 13 : 11, 0, Math.PI * 2);
         ctx.fillStyle = p.col; ctx.fill();
         if (p.fromHero && p.x >= sim.enemyX - 25) {
@@ -1687,13 +1697,13 @@ loadSmartImage(document.getElementById("intro-hero-img"), "intro_bg", () => {
       });
 
       sim.sparks = sim.sparks.filter(s => {
-        s.x += s.vx; s.y += s.vy; s.life -= 1;
+        s.x += s.vx * dt; s.y += s.vy * dt; s.life -= dt;
         ctx.fillStyle = s.col; ctx.fillRect(s.x, s.y, 4, 4);
         return s.life > 0;
       });
 
       sim.floats = sim.floats.filter(ft => {
-        ft.y -= 0.8; ft.life -= 1;
+        ft.y -= 0.8 * dt; ft.life -= dt;
         ctx.fillStyle = "#000"; ctx.font = "bold 17px Anton, sans-serif";
         ctx.fillText(ft.txt, ft.x + 2, ft.y + 2);
         ctx.fillStyle = ft.col; ctx.fillText(ft.txt, ft.x, ft.y);
