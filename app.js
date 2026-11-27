@@ -141,7 +141,7 @@ const TROPHIES = Array.of(
   { id: "t5", icon: "💪", name: "BAUCH-STAHL", desc: "Bauch Level 3" },
   { id: "t6", icon: "👑", name: "TEAM-LEADER", desc: "5 Krieger trainiert" }
 );
-const BODY_WORKOUTS = {
+   const BODY_WORKOUTS = {
   arms: {
     label: "TRAINING: ARME & HANTELBANK",
     easy: Array.of(
@@ -451,7 +451,6 @@ function cleanImageBg(imgEl, baseName) {
 function loadSmartImage(imgEl, baseName, onFail, onSuccess) {
   if (!imgEl) return;
   imgEl.dataset.targetBase = baseName;
-
   if (_croppedCache.has(baseName)) {
     imgEl.dataset.cleaned = baseName;
     imgEl.classList.add("clean-alpha");
@@ -460,21 +459,16 @@ function loadSmartImage(imgEl, baseName, onFail, onSuccess) {
     if (onSuccess) onSuccess();
     return;
   }
-
   imgEl.removeAttribute("src");
   imgEl.style.display = "none";
   imgEl.classList.remove("clean-alpha");
   imgEl.dataset.cleaned = "";
-
   imgEl.onload = () => {
     if (imgEl.dataset.targetBase !== baseName) return;
-    if (baseName.startsWith("c") && imgEl.dataset.cleaned !== baseName) {
-      cleanImageBg(imgEl, baseName);
-    }
+    if (baseName.startsWith("c") && imgEl.dataset.cleaned !== baseName) cleanImageBg(imgEl, baseName);
     imgEl.style.display = "block";
     if (onSuccess) onSuccess();
   };
-
   imgEl.onerror = () => {
     if (imgEl.dataset.targetBase !== baseName) return;
     imgEl.onerror = () => {
@@ -485,10 +479,8 @@ function loadSmartImage(imgEl, baseName, onFail, onSuccess) {
     };
     imgEl.src = `${baseName}.jpg`;
   };
-
   imgEl.src = `${baseName}.png`;
 }
-
 
 setTimeout(() => {
   CHARACTERS.forEach(c => {
@@ -496,7 +488,6 @@ setTimeout(() => {
     loadSmartImage(pre, `c${c.id}_s1`);
   });
 }, 350);
-
 function getMaxUnlockedStage(lvl) {
   let max = 1;
   STAGE_RULES.forEach(s => { if (lvl >= s.minLevel) max = s.stage; });
@@ -680,7 +671,6 @@ function triggerKiImpact(intense = false) {
     arena.classList.add("mega-shake-active");
   }
 }
-
 function completeExercise(gainedXP, gainedPower) {
   const oldMax = getMaxUnlockedStage(state.level);
   const mult = state.senzuActive ? 2 : 1;
@@ -816,7 +806,6 @@ function updateUI() {
 
   localStorage.setItem("zwarriors_neon_v10", JSON.stringify(state));
 }
-
 document.getElementById("senzu-btn")?.addEventListener("click", () => {
   if (state.senzuDate === getTodayKey() || state.senzuActive) return;
   state.senzuDate = getTodayKey();
@@ -911,10 +900,10 @@ document.getElementById("reset-btn").addEventListener("click", () => {
 loadSmartImage(document.getElementById("intro-hero-img"), "intro_bg", () => {
   loadSmartImage(document.getElementById("intro-hero-img"), "c1_s1", () => {});
 });
-(function initLegendsBattleSystem() {
-  const MIN_EXERCISE_SEC = 20;
-  const EXERCISES_PER_TICKET = 3;
-  const MAX_TICKETS_PER_DAY = 2;
+(function initDbzLegendsSystem() {
+  const MIN_EXERCISE_SEC = 15;
+  const EXERCISES_PER_TICKET = 2;
+  const MAX_TICKETS_PER_DAY = 4;
 
   function ensureCampaignState() {
     const today = getTodayKey();
@@ -932,11 +921,11 @@ loadSmartImage(document.getElementById("intro-hero-img"), "intro_bg", () => {
   ticketModal.id = "ticket-unlock-modal";
   ticketModal.className = "levelup-overlay hidden";
   ticketModal.innerHTML = `
-    <div class="levelup-card" style="max-width: 350px;">
-      <span class="orange-tag">🐉 KAMPF-PORTAL GEÖFFNET</span>
+    <div class="levelup-card" style="max-width: 350px; border-color:#ffb703;">
+      <span class="orange-tag">🐉 TURNIER-PORTAL GEÖFFNET</span>
       <h2 id="ticket-modal-title" class="tall-orange-title small">WELT-LEVEL 1</h2>
       <p id="ticket-modal-desc" class="poster-copy center" style="color:#fff;">
-        3 Übungen geschafft! Dein Kämpfer ist bereit für das Echtzeit-Duell!
+        Training erledigt! Starte jetzt deinen HD-Kampf!
       </p>
       <button id="ticket-play-now" class="tall-orange-btn">⚔️ JETZT KÄMPFEN!</button>
       <button id="ticket-later-btn" class="reset-link">Später spielen</button>
@@ -948,7 +937,11 @@ loadSmartImage(document.getElementById("intro-hero-img"), "intro_bg", () => {
   battleModal.id = "battle-modal";
   battleModal.className = "levelup-overlay hidden";
   battleModal.innerHTML = `
-    <div class="levelup-card" style="max-width: 385px; padding: 16px;">
+    <div class="levelup-card" style="max-width: 390px; padding: 14px; border-color:#ffb703;">
+      <div class="gta-wanted-bar">
+        <span id="gta-mode-label" class="gta-mode-tag">TURNIER DER KRAFT</span>
+        <span id="gta-stars-label" class="gta-stars">★☆☆☆☆</span>
+      </div>
       <div class="legends-hud">
         <div>
           <div id="lg-hero-name" class="legends-name">SON-BLITZ</div>
@@ -960,19 +953,14 @@ loadSmartImage(document.getElementById("intro-hero-img"), "intro_bg", () => {
           <div class="hp-wrap"><div id="lg-enemy-hp" class="hp-fill enemy"></div></div>
         </div>
       </div>
-      <canvas id="legends-canvas" width="350" height="235"></canvas>
+      <canvas id="legends-canvas" width="356" height="245"></canvas>
       <div class="ki-charge-row">
         <span style="font-family:'Anton';font-size:0.8rem;color:#ffb703;">KI</span>
         <div class="ki-charge-track"><div id="lg-ki-fill" class="ki-charge-fill"></div></div>
-        <span id="lg-ki-num" style="font-family:'Anton';font-size:0.8rem;color:#fff;">40</span>
+        <span id="lg-ki-num" style="font-family:'Anton';font-size:0.8rem;color:#fff;">55</span>
       </div>
-      <div class="legends-cards">
-        <button id="lg-card-strike" class="l-card">⚔️ STRIKE<span>20 KI</span></button>
-        <button id="lg-card-blast" class="l-card">🔥 BLAST<span>25 KI</span></button>
-        <button id="lg-card-special" class="l-card special">💥 ULTIMATE<span>60 KI</span></button>
-        <button id="lg-card-vanish" class="l-card vanish">⚡ AUSWEICHEN<span>TELEPORT</span></button>
-      </div>
-      <button id="lg-charge-btn" class="timer-btn" style="width:100%;margin-top:4px;">🔋 KI AUFLADEN (+30 KI)</button>
+      <div id="lg-controls-area" class="legends-cards"></div>
+      <button id="lg-charge-btn" class="timer-btn" style="width:100%;margin-top:4px;">⚡ KI AUFLADEN (+30 KI)</button>
       <button id="battle-close-btn" class="reset-link">Arena verlassen</button>
     </div>
   `;
@@ -1039,7 +1027,7 @@ loadSmartImage(document.getElementById("intro-hero-img"), "intro_bg", () => {
       setTimeout(() => {
         playSound("stageup");
         document.getElementById("ticket-modal-title").textContent = `WELT-LEVEL ${state.campaignStage}`;
-        document.getElementById("ticket-modal-desc").textContent = "3 Übungen geschafft! Dein Kämpfer ist bereit für das Echtzeit-Duell!";
+        document.getElementById("ticket-modal-desc").textContent = `Ticket ${state.dailyTicketsEarned}/${MAX_TICKETS_PER_DAY} heute frei! Starte den Kampf!`;
         document.getElementById("ticket-play-now").classList.remove("hidden");
         ticketModal.classList.remove("hidden");
       }, 450);
@@ -1060,24 +1048,148 @@ loadSmartImage(document.getElementById("intro-hero-img"), "intro_bg", () => {
     } else if (state.dailyTicketsEarned >= MAX_TICKETS_PER_DAY) {
       campBtn.className = "hud-chip";
       campBtn.style.opacity = "0.5";
-      campBtn.textContent = `🐉 TAGESLIMIT (2/2)`;
+      campBtn.textContent = `🐉 LIMIT (4/4)`;
     } else {
       campBtn.className = "hud-chip";
       campBtn.style.opacity = "1";
       campBtn.textContent = `🐉 KAMPF (${progress}/${EXERCISES_PER_TICKET})`;
     }
   };
+    function drawDbzEnvironment(ctx, w, h, scrollX, worldIdx) {
+    const world = worldIdx % 3;
+
+    if (world === 0) {
+      const space = ctx.createRadialGradient(w * 0.5, h * 0.35, 15, w * 0.5, h * 0.4, w * 0.85);
+      space.addColorStop(0, "#3b1d5e");
+      space.addColorStop(0.45, "#191030");
+      space.addColorStop(1, "#07070c");
+      ctx.fillStyle = space;
+      ctx.fillRect(0, 0, w, h);
+
+      ctx.fillStyle = "rgba(180, 120, 255, 0.14)";
+      ctx.beginPath(); ctx.ellipse(w * 0.3, h * 0.25, 110, 32, -0.25, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = "rgba(0, 220, 255, 0.12)";
+      ctx.beginPath(); ctx.ellipse(w * 0.72, h * 0.3, 95, 26, 0.2, 0, Math.PI * 2); ctx.fill();
+
+      ctx.fillStyle = "#ffffff";
+      for (let i = 0; i < 38; i++) {
+        const sx = ((i * 73 + scrollX * 0.12) % w);
+        const sy = (i * 41) % (h * 0.65);
+        ctx.globalAlpha = 0.35 + (i % 4) * 0.18;
+        ctx.fillRect(sx, sy, (i % 3 === 0 ? 2 : 1.2), (i % 3 === 0 ? 2 : 1.2));
+      }
+      ctx.globalAlpha = 1;
+
+      Array.of(0.18, 0.48, 0.82).forEach((rx, idx) => {
+        const fx = ((w * rx - scrollX * (0.2 + idx * 0.08) + w) % w);
+        const fy = h * (0.24 + idx * 0.09) + Math.sin(scrollX * 0.03 + idx) * 5;
+        ctx.fillStyle = "#251c38";
+        ctx.beginPath();
+        ctx.moveTo(fx - 18, fy); ctx.lineTo(fx - 6, fy - 14);
+        ctx.lineTo(fx + 15, fy - 8); ctx.lineTo(fx + 10, fy + 12); ctx.lineTo(fx - 12, fy + 9);
+        ctx.closePath(); ctx.fill();
+      });
+
+      const floor = ctx.createLinearGradient(0, h * 0.68, 0, h);
+      floor.addColorStop(0, "#2c283d");
+      floor.addColorStop(0.25, "#1b1926");
+      floor.addColorStop(1, "#0b0a10");
+      ctx.fillStyle = floor;
+      ctx.fillRect(0, h * 0.68, w, h * 0.32);
+
+      ctx.strokeStyle = "#9d4edd";
+      ctx.lineWidth = 2.5;
+      ctx.beginPath(); ctx.moveTo(0, h * 0.68); ctx.lineTo(w, h * 0.68); ctx.stroke();
+
+    } else if (world === 1) {
+      const sky = ctx.createLinearGradient(0, 0, 0, h * 0.72);
+      sky.addColorStop(0, "#1d3557");
+      sky.addColorStop(0.55, "#457b9d");
+      sky.addColorStop(0.88, "#f4a261");
+      sky.addColorStop(1, "#e76f51");
+      ctx.fillStyle = sky;
+      ctx.fillRect(0, 0, w, h);
+
+      ctx.save();
+      ctx.fillStyle = "rgba(255, 240, 200, 0.07)";
+      Array.of(0.2, 0.5, 0.78).forEach(rx => {
+        ctx.beginPath();
+        ctx.moveTo(w * rx, 0); ctx.lineTo(w * rx + 55, 0);
+        ctx.lineTo(w * rx + 120, h * 0.7); ctx.lineTo(w * rx - 25, h * 0.7);
+        ctx.closePath(); ctx.fill();
+      });
+      ctx.restore();
+
+      const peaks = Array.of(
+        { x: 0.12, w: 54, h: 92 }, { x: 0.34, w: 42, h: 68 },
+        { x: 0.64, w: 62, h: 102 }, { x: 0.88, w: 48, h: 78 }
+      );
+      peaks.forEach(pk => {
+        const px = ((w * pk.x - scrollX * 0.25 + w) % (w + 60)) - 30;
+        const baseY = h * 0.69;
+        ctx.fillStyle = "#5c3a21";
+        ctx.beginPath();
+        ctx.moveTo(px - pk.w * 0.5, baseY);
+        ctx.lineTo(px - pk.w * 0.15, baseY - pk.h);
+        ctx.lineTo(px + pk.w * 0.18, baseY - pk.h * 0.92);
+        ctx.lineTo(px + pk.w * 0.5, baseY);
+        ctx.closePath(); ctx.fill();
+        ctx.fillStyle = "#8d5b3c";
+        ctx.beginPath();
+        ctx.moveTo(px - pk.w * 0.15, baseY - pk.h);
+        ctx.lineTo(px + pk.w * 0.18, baseY - pk.h * 0.92);
+        ctx.lineTo(px + pk.w * 0.5, baseY);
+        ctx.lineTo(px + 4, baseY);
+        ctx.closePath(); ctx.fill();
+      });
+
+      const ground = ctx.createLinearGradient(0, h * 0.68, 0, h);
+      ground.addColorStop(0, "#9c6644");
+      ground.addColorStop(0.3, "#6f452c");
+      ground.addColorStop(1, "#2b1910");
+      ctx.fillStyle = ground;
+      ctx.fillRect(0, h * 0.68, w, h * 0.32);
+
+    } else {
+      const namekSky = ctx.createLinearGradient(0, 0, 0, h * 0.66);
+      namekSky.addColorStop(0, "#0b525b");
+      namekSky.addColorStop(0.6, "#1b9aaa");
+      namekSky.addColorStop(1, "#72efdd");
+      ctx.fillStyle = namekSky;
+      ctx.fillRect(0, 0, w, h);
+
+      ctx.fillStyle = "rgba(255, 255, 220, 0.85)";
+      ctx.beginPath(); ctx.arc(w * 0.25, h * 0.2, 22, 0, Math.PI * 2); ctx.fill();
+      ctx.beginPath(); ctx.arc(w * 0.78, h * 0.16, 15, 0, Math.PI * 2); ctx.fill();
+
+      ctx.fillStyle = "#118ab2";
+      ctx.fillRect(0, h * 0.56, w, h * 0.14);
+
+      const grass = ctx.createLinearGradient(0, h * 0.68, 0, h);
+      grass.addColorStop(0, "#2ec4b6");
+      grass.addColorStop(0.35, "#1b7a6e");
+      grass.addColorStop(1, "#0a2e2a");
+      ctx.fillStyle = grass;
+      ctx.fillRect(0, h * 0.68, w, h * 0.32);
+    }
+
+    ctx.strokeStyle = "rgba(255, 255, 255, 0.14)";
+    ctx.lineWidth = 1;
+    Array.of(0.75, 0.84, 0.93).forEach(ry => {
+      ctx.beginPath(); ctx.moveTo(0, h * ry); ctx.lineTo(w, h * ry); ctx.stroke();
+    });
+          }
     let animFrameId = null;
 
-  function startLegendsBattle() {
+  function startDbzMission() {
     ensureCampaignState();
     if (state.battleTickets <= 0) {
       document.getElementById("ticket-modal-title").textContent =
-        state.dailyTicketsEarned >= MAX_TICKETS_PER_DAY ? "TAGESLIMIT ERREICHT" : "KAMPF GESPERRT";
+        state.dailyTicketsEarned >= MAX_TICKETS_PER_DAY ? "TAGESLIMIT (4/4)" : "ARENA GESPERRT";
       document.getElementById("ticket-modal-desc").textContent =
         state.dailyTicketsEarned >= MAX_TICKETS_PER_DAY
-          ? "Du hast heute schon beide Kämpfe absolviert. Morgen gibt es neue Tickets!"
-          : `Absolviere noch ${EXERCISES_PER_TICKET - (state.dailyExerciseCount % EXERCISES_PER_TICKET)} Übung(en), um Welt-Level ${state.campaignStage} zu öffnen!`;
+          ? "Alle 4 Kämpfe für heute geschafft! Morgen warten neue Gegner auf dich."
+          : `Mach noch ${EXERCISES_PER_TICKET - (state.dailyExerciseCount % EXERCISES_PER_TICKET)} Übung(en), um Welt-Level ${state.campaignStage} zu starten!`;
       document.getElementById("ticket-play-now").classList.add("hidden");
       ticketModal.classList.remove("hidden");
       return;
@@ -1089,14 +1201,17 @@ loadSmartImage(document.getElementById("intro-hero-img"), "intro_bg", () => {
     cancelAnimationFrame(animFrameId);
 
     const lvl = state.campaignStage;
+    const mode = (lvl - 1) % 3;
+    const stars = Math.min(5, Math.ceil(lvl / 2));
+    document.getElementById("gta-stars-label").textContent = "★".repeat(stars) + "☆".repeat(5 - stars);
+
     const heroObj = CHARACTERS.find(c => c.id === state.selectedChar) || CHARACTERS.at(0);
     const enemyId = ((state.selectedChar + lvl + 1) % CHARACTERS.length) + 1;
     const enemyObj = CHARACTERS.find(c => c.id === enemyId) || CHARACTERS.at(1);
 
     document.getElementById("lg-hero-name").textContent = heroObj.name;
     document.getElementById("lg-enemy-name").textContent = enemyObj.name;
-    document.getElementById("battle-stage-tag").textContent = `WELT-LEVEL ${lvl}`;
-    document.getElementById("lg-card-special").innerHTML = `💥 ${heroObj.attack.slice(0, 10)}<span>60 KI</span>`;
+    document.getElementById("battle-stage-tag").textContent = `LVL ${lvl}`;
 
     const heroSprite = new Image();
     const enemySprite = new Image();
@@ -1105,204 +1220,300 @@ loadSmartImage(document.getElementById("intro-hero-img"), "intro_bg", () => {
 
     const canvas = document.getElementById("legends-canvas");
     const ctx = canvas.getContext("2d");
+    const dpr = Math.min(2, window.devicePixelRatio || 1);
+    canvas.width = 356 * dpr;
+    canvas.height = 245 * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+    const ctrlArea = document.getElementById("lg-controls-area");
+    const chargeBtn = document.getElementById("lg-charge-btn");
 
     const sim = {
-      heroHp: 100, enemyHp: 100 + (lvl - 1) * 20, maxEnemyHp: 100 + (lvl - 1) * 20,
-      ki: 50, heroX: 68, heroY: 135, enemyX: 282, enemyY: 135,
-      vanishReady: true, enemyWarnTimer: 0, enemyAttackCooldown: 110,
-      projectiles: Array.of(), floatTexts: Array.of(), over: false, beamTimer: 0
+      heroHp: 100, enemyHp: 100 + (lvl - 1) * 22, maxEnemyHp: 100 + (lvl - 1) * 22,
+      ki: 55, heroX: 68, heroY: 145, enemyX: 288, enemyY: 145,
+      vanishReady: true, warnTimer: 0, attackCd: 95, hitStop: 0, shake: 0,
+      scroll: 0, projectiles: Array.of(), sparks: Array.of(), floats: Array.of(),
+      beamTimer: 0, over: false, koBanner: "", lane: 1, ringAngle: 0, beamPos: 50
     };
 
-    const spawnFloat = (x, y, txt, col) => sim.floatTexts.push({ x, y, txt, col, life: 45 });
-
-    const updateBars = () => {
-      document.getElementById("lg-hero-hp").style.width = `${Math.max(0, sim.heroHp)}%`;
-      document.getElementById("lg-enemy-hp").style.width = `${Math.max(0, (sim.enemyHp / sim.maxEnemyHp) * 100)}%`;
-      document.getElementById("lg-ki-fill").style.width = `${Math.min(100, sim.ki)}%`;
-      document.getElementById("lg-ki-num").textContent = Math.floor(sim.ki);
-      document.getElementById("lg-card-strike").disabled = sim.ki < 20 || sim.over;
-      document.getElementById("lg-card-blast").disabled = sim.ki < 25 || sim.over;
-      document.getElementById("lg-card-special").disabled = sim.ki < 60 || sim.over;
-      document.getElementById("lg-card-vanish").disabled = !sim.vanishReady || sim.over;
+    const spawnSparks = (x, y, col) => {
+      for (let i = 0; i < 16; i++) {
+        const ang = Math.random() * Math.PI * 2;
+        const spd = 2 + Math.random() * 5.5;
+        sim.sparks.push({ x, y, vx: Math.cos(ang) * spd, vy: Math.sin(ang) * spd, col, life: 24 });
+      }
     };
+    const spawnFloat = (x, y, txt, col) => sim.floats.push({ x, y, txt, col, life: 42 });
 
-    const endBattle = (won) => {
+    const finishMission = (won) => {
       if (sim.over) return;
       sim.over = true;
-      updateBars();
+      sim.koBanner = won ? "SIEG · K.O.!" : "NIEDERLAGE";
+      playSound(won ? "stageup" : "done");
       setTimeout(() => {
         cancelAnimationFrame(animFrameId);
         battleModal.classList.add("hidden");
         if (won) {
-          playSound("stageup");
           triggerKiImpact(true);
           state.campaignStage += 1;
           state.powerLevel += 1500;
-          document.getElementById("levelup-badge").textContent = "🏆 KAMPF GEWONNEN!";
+          document.getElementById("levelup-badge").textContent = "🏆 SIEG +1.500 KI";
           document.getElementById("levelup-title").textContent = `WELT-LEVEL ${state.campaignStage}`;
-          document.getElementById("levelup-desc").textContent = `Du hast ${enemyObj.name} besiegt! (+1.500 KI)`;
+          document.getElementById("levelup-desc").textContent = `Du hast ${enemyObj.name} besiegt!`;
         } else {
-          playSound("done");
           document.getElementById("levelup-badge").textContent = "💥 KNAPP VERLOREN";
           document.getElementById("levelup-title").textContent = "WEITER TRAINIEREN";
-          document.getElementById("levelup-desc").textContent = "Absolviere 3 neue Übungen für den Rückkampf!";
+          document.getElementById("levelup-desc").textContent = "Absolviere 2 Übungen für den nächsten Kampf!";
         }
         document.getElementById("levelup-overlay").classList.remove("hidden");
         updateUI();
-      }, 650);
+      }, 1150);
     };
 
-    document.getElementById("lg-card-strike").onclick = () => {
-      if (sim.ki < 20 || sim.over) return;
-      sim.ki -= 20;
-      sim.heroX = 215;
-      playSound("done");
-      const dmg = 18 + state.selectedStage * 3;
-      sim.enemyHp -= dmg;
-      spawnFloat(270, 95, `-${dmg} KOMBO!`, "#ffb703");
-      setTimeout(() => { sim.heroX = 68; }, 220);
-      if (sim.enemyHp <= 0) endBattle(true);
-    };
-
-    document.getElementById("lg-card-blast").onclick = () => {
-      if (sim.ki < 25 || sim.over) return;
-      sim.ki -= 25;
-      playSound("click");
-      Array.of(0, 1, 2).forEach(i => {
-        sim.projectiles.push({ x: 105 - i * 18, y: 115 + (i - 1) * 16, vx: 8.5, fromHero: true, col: heroObj.color });
-      });
-    };
-
-    document.getElementById("lg-card-special").onclick = () => {
-      if (sim.ki < 60 || sim.over) return;
-      sim.ki -= 60;
-      sim.beamTimer = 28;
-      playSound("stageup");
-      const dmg = 42 + state.selectedStage * 6;
-      sim.enemyHp -= dmg;
-      spawnFloat(255, 80, `${heroObj.attack}! -${dmg}`, "#ff5c77");
-      if (sim.enemyHp <= 0) endBattle(true);
-    };
-
-    document.getElementById("lg-card-vanish").onclick = () => {
-      if (!sim.vanishReady || sim.over) return;
-      sim.vanishReady = false;
-      sim.enemyWarnTimer = 0;
-      sim.heroY = 75;
-      playSound("select");
-      spawnFloat(70, 85, "VANISH STEP!", "#5ce1e6");
-      setTimeout(() => { sim.heroY = 135; }, 350);
-      setTimeout(() => { sim.vanishReady = true; }, 3800);
-    };
-
-    document.getElementById("lg-charge-btn").onclick = () => {
-      if (sim.over) return;
-      sim.ki = Math.min(100, sim.ki + 28);
-      playSound("click");
-      spawnFloat(68, 95, "+28 KI", "#52e588");
-    };
+    if (mode === 0) {
+      document.getElementById("gta-mode-label").textContent = "TURNIER · 1V1 DUELL";
+      chargeBtn.style.display = "block";
+      ctrlArea.innerHTML = `
+        <button id="btn-m1" class="l-card">⚔️ STRIKE<span>20 KI</span></button>
+        <button id="btn-m2" class="l-card">🔥 BLAST<span>25 KI</span></button>
+        <button id="btn-m3" class="l-card special">💥 ULTIMATE<span>60 KI</span></button>
+        <button id="btn-m4" class="l-card vanish">⚡ VANISH<span>TELEPORT</span></button>
+      `;
+      document.getElementById("btn-m1").onclick = () => {
+        if (sim.ki < 20 || sim.over) return;
+        sim.ki -= 20; sim.heroX = 225; sim.hitStop = 4; sim.shake = 8;
+        playSound("done");
+        const dmg = 20 + state.selectedStage * 3;
+        sim.enemyHp -= dmg;
+        spawnSparks(275, 115, heroObj.color);
+        spawnFloat(265, 90, `-${dmg} KOMBO!`, "#ffe66d");
+        setTimeout(() => { sim.heroX = 68; }, 210);
+        if (sim.enemyHp <= 0) finishMission(true);
+      };
+      document.getElementById("btn-m2").onclick = () => {
+        if (sim.ki < 25 || sim.over) return;
+        sim.ki -= 25; playSound("click");
+        Array.of(0, 1, 2).forEach(i => sim.projectiles.push({ x: 105 - i * 18, y: 118 + (i - 1) * 16, vx: 9, fromHero: true, col: heroObj.color }));
+      };
+      document.getElementById("btn-m3").onclick = () => {
+        if (sim.ki < 60 || sim.over) return;
+        sim.ki -= 60; sim.beamTimer = 28; sim.hitStop = 5; sim.shake = 12;
+        playSound("stageup");
+        const dmg = 46 + state.selectedStage * 6;
+        sim.enemyHp -= dmg;
+        spawnSparks(275, 115, "#ff0055");
+        spawnFloat(245, 78, `${heroObj.attack}! -${dmg}`, "#ff0055");
+        if (sim.enemyHp <= 0) finishMission(true);
+      };
+      document.getElementById("btn-m4").onclick = () => {
+        if (!sim.vanishReady || sim.over) return;
+        sim.vanishReady = false; sim.warnTimer = 0; sim.heroY = 72;
+        playSound("select"); spawnFloat(70, 82, "VANISH STEP!", "#00f5d4");
+        setTimeout(() => { sim.heroY = 145; }, 380);
+        setTimeout(() => { sim.vanishReady = true; }, 3400);
+      };
+      chargeBtn.onclick = () => {
+        if (sim.over) return;
+        sim.ki = Math.min(100, sim.ki + 30); playSound("click");
+        spawnSparks(68, 125, "#52e588"); spawnFloat(68, 95, "+30 KI", "#52e588");
+      };
+    } else if (mode === 1) {
+      document.getElementById("gta-mode-label").textContent = "CANYON · KI-RUSH";
+      chargeBtn.style.display = "none";
+      ctrlArea.innerHTML = `
+        <button id="btn-up" class="l-card vanish" style="grid-column: span 2;">⬆️ OBEN AUSWEICHEN<span>FLUG-SPUR</span></button>
+        <button id="btn-down" class="l-card" style="grid-column: span 2;">⬇️ UNTEN AUSWEICHEN<span>BODEN-SPUR</span></button>
+      `;
+      document.getElementById("btn-up").onclick = () => { sim.lane = 0; playSound("click"); };
+      document.getElementById("btn-down").onclick = () => { sim.lane = 1; playSound("click"); };
+    } else {
+      document.getElementById("gta-mode-label").textContent = "NAMEK · KAMEHA-CLASH";
+      chargeBtn.style.display = "none";
+      ctrlArea.innerHTML = `
+        <button id="btn-lock" class="l-card special" style="grid-column: span 4; padding: 12px;">
+          🎯 BEI GRÜNEM RING FEUERN!<span>PRÄZISIONS-TREFFER DRÜCKT DEN STRAHL</span>
+        </button>
+      `;
+      document.getElementById("btn-lock").onclick = () => {
+        if (sim.over) return;
+        const hitZone = Math.abs(Math.sin(sim.ringAngle)) < 0.38;
+        if (hitZone) {
+          sim.beamPos += 16; sim.shake = 9; sim.hitStop = 3;
+          playSound("stageup"); spawnSparks(180, 125, "#00f5d4");
+          spawnFloat(175, 85, "PERFEKT! +16%", "#00f5d4");
+          if (sim.beamPos >= 100) { sim.enemyHp = 0; finishMission(true); }
+        } else {
+          sim.beamPos -= 9; playSound("click");
+          spawnFloat(150, 95, "DANEBEN!", "#ff0055");
+        }
+      };
+          }
         battleModal.classList.remove("hidden");
 
     function loop(t) {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      if (sim.hitStop > 0) { sim.hitStop -= 1; animFrameId = requestAnimationFrame(loop); return; }
 
-      ctx.strokeStyle = "rgba(255, 153, 0, 0.16)";
-      ctx.lineWidth = 1;
-      Array.of(165, 190, 218).forEach(y => {
-        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(350, y); ctx.stroke();
-      });
-
-      if (!sim.over) {
-        sim.ki = Math.min(100, sim.ki + 0.08);
-        sim.enemyAttackCooldown -= 1;
-        if (sim.enemyAttackCooldown <= 0 && sim.enemyWarnTimer === 0) {
-          sim.enemyWarnTimer = 42;
-        }
-        if (sim.enemyWarnTimer > 0) {
-          sim.enemyWarnTimer -= 1;
-          if (sim.enemyWarnTimer === 0) {
-            sim.projectiles.push({ x: 245, y: 120, vx: -(6.2 + lvl * 0.45), fromHero: false, col: "#ff4d6d" });
-            sim.enemyAttackCooldown = Math.max(65, 130 - lvl * 8);
-          }
-        }
+      ctx.save();
+      if (sim.shake > 0) {
+        ctx.translate((Math.random() - 0.5) * sim.shake, (Math.random() - 0.5) * sim.shake);
+        sim.shake *= 0.82;
       }
 
-      const hover = Math.sin(t / 180) * 5;
+      sim.scroll += mode === 1 ? 5.5 : 1.2;
+      drawDbzEnvironment(ctx, 356, 245, sim.scroll, lvl - 1);
+
+      const hover = Math.sin(t / 170) * 4;
+
+      if (mode === 0) {
+        if (!sim.over) {
+          sim.ki = Math.min(100, sim.ki + 0.09);
+          sim.attackCd -= 1;
+          if (sim.attackCd <= 0 && sim.warnTimer === 0) sim.warnTimer = 40;
+          if (sim.warnTimer > 0) {
+            sim.warnTimer -= 1;
+            if (sim.warnTimer === 0) {
+              sim.projectiles.push({ x: 245, y: 125, vx: -(6.5 + lvl * 0.4), fromHero: false, col: "#ff0055" });
+              sim.attackCd = Math.max(60, 120 - lvl * 7);
+            }
+          }
+        }
+        if (sim.warnTimer > 0) {
+          ctx.fillStyle = "#ff0055"; ctx.font = "bold 36px Anton, sans-serif";
+          ctx.fillText("!", sim.enemyX - 8, 52);
+        }
+        if (sim.beamTimer > 0) {
+          sim.beamTimer -= 1;
+          const grad = ctx.createLinearGradient(95, 0, 290, 0);
+          grad.addColorStop(0, heroObj.color); grad.addColorStop(1, "#ffffff");
+          ctx.fillStyle = grad; ctx.fillRect(95, 106, 195, 28);
+        }
+      } else if (mode === 1) {
+        sim.heroY = sim.lane === 0 ? 105 : 178;
+        if (!sim.over) {
+          sim.attackCd -= 1;
+          if (sim.attackCd <= 0) {
+            const isOrb = Math.random() < 0.35;
+            const spawnLane = Math.random() < 0.5 ? 105 : 178;
+            sim.projectiles.push({ x: 350, y: spawnLane - 20, vx: -(5.8 + lvl * 0.45), fromHero: false, isOrb, col: isOrb ? "#00f5d4" : "#ff0055" });
+            sim.attackCd = Math.max(36, 68 - lvl * 3);
+          }
+        }
+      } else {
+        sim.ringAngle += 0.075 + lvl * 0.006;
+        if (!sim.over) {
+          sim.beamPos -= 0.16 + lvl * 0.02;
+          if (sim.beamPos <= 0) { sim.heroHp = 0; finishMission(false); }
+        }
+        const clashX = 75 + (sim.beamPos / 100) * 205;
+        ctx.fillStyle = heroObj.color; ctx.fillRect(75, 118, clashX - 75, 20);
+        ctx.fillStyle = "#ff0055"; ctx.fillRect(clashX, 118, 280 - clashX, 20);
+        const pulseR = 24 + Math.abs(Math.sin(sim.ringAngle)) * 28;
+        ctx.strokeStyle = "#52e588"; ctx.lineWidth = 3;
+        ctx.beginPath(); ctx.arc(178, 65, 25, 0, Math.PI * 2); ctx.stroke();
+        ctx.strokeStyle = "#ffe66d"; ctx.lineWidth = 2.5;
+        ctx.beginPath(); ctx.arc(178, 65, pulseR, 0, Math.PI * 2); ctx.stroke();
+      }
+
+      // Glühende Super-Saiyajin-Aura hinter dem Helden
+      const auraPulse = 36 + Math.sin(t / 90) * 6;
+      const hAura = ctx.createRadialGradient(sim.heroX, sim.heroY - 22, 6, sim.heroX, sim.heroY - 22, auraPulse);
+      hAura.addColorStop(0, "rgba(255, 255, 255, 0.75)");
+      hAura.addColorStop(0.5, heroObj.color + "88");
+      hAura.addColorStop(1, "transparent");
+      ctx.fillStyle = hAura;
+      ctx.beginPath(); ctx.arc(sim.heroX, sim.heroY - 22, auraPulse, 0, Math.PI * 2); ctx.fill();
+
+      // Glühende Gegner-Aura
+      const eAura = ctx.createRadialGradient(sim.enemyX, sim.enemyY - 22, 6, sim.enemyX, sim.enemyY - 22, auraPulse);
+      eAura.addColorStop(0, "rgba(255, 255, 255, 0.55)");
+      eAura.addColorStop(0.5, "rgba(255, 0, 85, 0.5)");
+      eAura.addColorStop(1, "transparent");
+      ctx.fillStyle = eAura;
+      ctx.beginPath(); ctx.arc(sim.enemyX, sim.enemyY - 22, auraPulse, 0, Math.PI * 2); ctx.fill();
 
       if (heroSprite.complete && heroSprite.naturalWidth) {
         ctx.drawImage(heroSprite, sim.heroX - 42, sim.heroY - 75 + hover, 84, 115);
       }
-
       if (enemySprite.complete && enemySprite.naturalWidth) {
-        ctx.save();
-        ctx.translate(sim.enemyX, sim.enemyY - hover);
-        ctx.scale(-1, 1);
-        ctx.drawImage(enemySprite, -42, -75, 84, 115);
-        ctx.restore();
-      }
-
-      if (sim.enemyWarnTimer > 0) {
-        ctx.fillStyle = "#ff4d6d";
-        ctx.font = "bold 34px Anton, sans-serif";
-        ctx.fillText("!", sim.enemyX - 8, 45);
-      }
-
-      if (sim.beamTimer > 0) {
-        sim.beamTimer -= 1;
-        const grad = ctx.createLinearGradient(95, 0, 285, 0);
-        grad.addColorStop(0, heroObj.color);
-        grad.addColorStop(1, "#ffffff");
-        ctx.fillStyle = grad;
-        ctx.fillRect(95, 102, 190, 26);
+        ctx.save(); ctx.translate(sim.enemyX, sim.enemyY - hover); ctx.scale(-1, 1);
+        ctx.drawImage(enemySprite, -42, -75, 84, 115); ctx.restore();
       }
 
       sim.projectiles = sim.projectiles.filter(p => {
         p.x += p.vx;
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, 11, 0, Math.PI * 2);
-        ctx.fillStyle = p.col;
-        ctx.fill();
+        ctx.beginPath(); ctx.arc(p.x, p.y, p.isOrb ? 13 : 11, 0, Math.PI * 2);
+        ctx.fillStyle = p.col; ctx.fill();
         if (p.fromHero && p.x >= sim.enemyX - 25) {
-          const dmg = 8 + state.selectedStage;
-          sim.enemyHp -= dmg;
-          spawnFloat(sim.enemyX - 20, 95, `-${dmg}`, p.col);
-          if (sim.enemyHp <= 0) endBattle(true);
+          const dmg = 9 + state.selectedStage;
+          sim.enemyHp -= dmg; spawnSparks(sim.enemyX - 15, p.y, p.col);
+          spawnFloat(sim.enemyX - 20, 90, `-${dmg}`, p.col);
+          if (sim.enemyHp <= 0) finishMission(true);
           return false;
         }
-        if (!p.fromHero && p.x <= sim.heroX + 25) {
-          if (sim.heroY < 100) {
-            spawnFloat(sim.heroX, 85, "AUSGEWICHEN!", "#5ce1e6");
+        if (!p.fromHero && Math.abs(p.x - sim.heroX) < 26) {
+          if (mode === 0 && sim.heroY < 100) {
+            spawnFloat(sim.heroX, 85, "VANISH!", "#00f5d4"); return false;
+          }
+          if (mode === 1 && Math.abs(p.y - (sim.heroY - 20)) > 28) return true;
+          if (p.isOrb) {
+            const dmg = 22; sim.enemyHp -= dmg; playSound("stageup");
+            spawnSparks(sim.heroX, p.y, "#00f5d4"); spawnFloat(sim.heroX, 85, `KONTER -${dmg}!`, "#00f5d4");
+            if (sim.enemyHp <= 0) finishMission(true);
           } else {
-            const dmg = 16 + lvl * 2;
-            sim.heroHp -= dmg;
-            spawnFloat(sim.heroX - 15, 95, `-${dmg}`, "#ff4d6d");
-            if (sim.heroHp <= 0) endBattle(false);
+            const dmg = 18 + lvl * 2; sim.heroHp -= dmg; sim.shake = 10; playSound("done");
+            spawnSparks(sim.heroX, p.y, "#ff0055"); spawnFloat(sim.heroX - 10, 85, `-${dmg}`, "#ff0055");
+            if (sim.heroHp <= 0) finishMission(false);
           }
           return false;
         }
-        return p.x > 0 && p.x < 350;
+        return p.x > -20 && p.x < 375;
       });
 
-      sim.floatTexts = sim.floatTexts.filter(ft => {
-        ft.y -= 0.7;
-        ft.life -= 1;
-        ctx.fillStyle = ft.col;
-        ctx.font = "bold 16px Anton, sans-serif";
-        ctx.fillText(ft.txt, ft.x, ft.y);
+      sim.sparks = sim.sparks.filter(s => {
+        s.x += s.vx; s.y += s.vy; s.life -= 1;
+        ctx.fillStyle = s.col; ctx.fillRect(s.x, s.y, 4, 4);
+        return s.life > 0;
+      });
+
+      sim.floats = sim.floats.filter(ft => {
+        ft.y -= 0.8; ft.life -= 1;
+        ctx.fillStyle = "#000"; ctx.font = "bold 17px Anton, sans-serif";
+        ctx.fillText(ft.txt, ft.x + 2, ft.y + 2);
+        ctx.fillStyle = ft.col; ctx.fillText(ft.txt, ft.x, ft.y);
         return ft.life > 0;
       });
 
-      updateBars();
+      if (sim.koBanner) {
+        ctx.fillStyle = "rgba(0, 0, 0, 0.68)";
+        ctx.fillRect(0, 92, 356, 58);
+        ctx.fillStyle = sim.koBanner === "NIEDERLAGE" ? "#ff0055" : "#ffe66d";
+        ctx.font = "bold 36px Anton, sans-serif";
+        ctx.textAlign = "center";
+        ctx.fillText(sim.koBanner, 178, 133);
+        ctx.textAlign = "left";
+      }
+
+      ctx.restore();
+      document.getElementById("lg-hero-hp").style.width = `${Math.max(0, sim.heroHp)}%`;
+      document.getElementById("lg-enemy-hp").style.width = `${Math.max(0, (sim.enemyHp / sim.maxEnemyHp) * 100)}%`;
+      document.getElementById("lg-ki-fill").style.width = `${Math.min(100, sim.ki)}%`;
+      document.getElementById("lg-ki-num").textContent = Math.floor(sim.ki);
+      if (mode === 0) {
+        document.getElementById("btn-m1").disabled = sim.ki < 20 || sim.over;
+        document.getElementById("btn-m2").disabled = sim.ki < 25 || sim.over;
+        document.getElementById("btn-m3").disabled = sim.ki < 60 || sim.over;
+        document.getElementById("btn-m4").disabled = !sim.vanishReady || sim.over;
+      }
       animFrameId = requestAnimationFrame(loop);
     }
 
     animFrameId = requestAnimationFrame(loop);
   }
 
-  document.getElementById("campaign-btn")?.addEventListener("click", startLegendsBattle);
+  document.getElementById("campaign-btn")?.addEventListener("click", startDbzMission);
   document.getElementById("ticket-play-now").addEventListener("click", () => {
     ticketModal.classList.add("hidden");
-    startLegendsBattle();
+    startDbzMission();
   });
   document.getElementById("ticket-later-btn").addEventListener("click", () => ticketModal.classList.add("hidden"));
   document.getElementById("battle-close-btn").addEventListener("click", () => {
@@ -1316,6 +1527,3 @@ loadSmartImage(document.getElementById("intro-hero-img"), "intro_bg", () => {
 updateStaggeredCarousel();
 updateUI();
 renderWorkouts();
-
-
-
