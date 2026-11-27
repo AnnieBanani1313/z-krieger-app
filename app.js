@@ -38,14 +38,7 @@
       font-family: 'Anton', sans-serif; font-size: 1rem; padding: 6px 14px;
       border-radius: 8px; cursor: pointer;
     }
-    .hud-strip { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px; }
-    .hud-chip {
-      background: #16161c; border: 1px solid #2e2e3a; color: #fff;
-      font-family: 'Anton', sans-serif; font-size: 0.85rem; padding: 4px 9px;
-      border-radius: 8px; cursor: pointer;
-    }
-    .hud-chip.senzu-ready { border-color: #52e588; color: #52e588; }
-    .hud-chip.senzu-on { background: #52e588; color: #0b0b0d; }
+    /* .hud-strip / .hud-chip: Styles stehen jetzt in style.css */
     .trophy-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; text-align: left; }
     .trophy-item {
       background: #101015; border: 1px solid #2c2c38; border-radius: 8px; padding: 8px; opacity: 0.4;
@@ -90,8 +83,9 @@
   `;
   document.body.appendChild(trophyModal);
 
+  // HUD (Streak, Senzu, Boss, Trophäen) steht jetzt direkt in index.html.
   const stage = document.querySelector(".arena-poster-stage");
-  if (stage) {
+  if (stage && !document.getElementById("senzu-btn")) {
     const hud = document.createElement("div");
     hud.className = "hud-strip";
     hud.innerHTML = `
@@ -611,6 +605,13 @@ function openExerciseModal(ex) {
   document.getElementById("exercise-modal").classList.remove("hidden");
 }
 
+// Nur Anzeige: Emoji-Symbol pro Übungsart (pose)
+const WORKOUT_ICONS = {
+  dumbbellcurl: "🏋️", benchpress: "🏋️", pushup: "💪", kneepushup: "💪",
+  dips: "🪑", punch: "🥊", plank: "⏱️", situp: "🌀", legraise: "🦵",
+  squat: "🦵", lunge: "🚶", jump: "🤸", wallsit: "🧱"
+};
+
 function renderWorkouts() {
   const activePart = state.selectedPart === "core" ? BODY_WORKOUTS.core : (state.selectedPart === "legs" ? BODY_WORKOUTS.legs : BODY_WORKOUTS.arms);
   document.getElementById("selected-part-title").textContent = activePart.label;
@@ -620,7 +621,8 @@ function renderWorkouts() {
   exercises.forEach(ex => {
     const btn = document.createElement("button");
     btn.className = "workout-card";
-    btn.innerHTML = `<div><div class="workout-title">${ex.title}</div><div class="workout-sub">${ex.sub}</div></div><span class="xp-tag">+${ex.xp} XP</span>`;
+    const icon = WORKOUT_ICONS[ex.pose] || "⭐";
+    btn.innerHTML = `<span class="workout-ico" aria-hidden="true">${icon}</span><div class="workout-text"><div class="workout-title">${ex.title}</div><div class="workout-sub">${ex.sub}</div></div><span class="xp-tag">+${ex.xp} XP</span>`;
     btn.addEventListener("click", () => openExerciseModal(ex));
     list.appendChild(btn);
   });
@@ -764,16 +766,17 @@ function updateUI() {
   if (senzuBtn) {
     const usedToday = state.senzuDate === getTodayKey();
     senzuBtn.className = "hud-chip";
+    const senzuHtml = (lbl) => `<span class="hud-ico">🌱</span><span class="hud-lbl">${lbl}</span>`;
     if (state.senzuActive) {
       senzuBtn.classList.add("senzu-on");
-      senzuBtn.textContent = "🌱 2x AKTIV!";
+      senzuBtn.innerHTML = senzuHtml("2x AKTIV");
     } else if (usedToday) {
       senzuBtn.style.opacity = "0.45";
-      senzuBtn.textContent = "🌱 LEER";
+      senzuBtn.innerHTML = senzuHtml("LEER");
     } else {
       senzuBtn.style.opacity = "1";
       senzuBtn.classList.add("senzu-ready");
-      senzuBtn.textContent = "🌱 SENZU (2x)";
+      senzuBtn.innerHTML = senzuHtml("SENZU 2x");
     }
   }
 
@@ -969,13 +972,16 @@ loadSmartImage(document.getElementById("intro-hero-img"), "intro_bg", () => {
   `;
   document.body.appendChild(battleModal);
 
-  const hud = document.querySelector(".hud-strip");
-  if (hud) {
+  const campDock = document.getElementById("campaign-dock") || document.querySelector(".hud-strip");
+  if (campDock) {
     const campBtn = document.createElement("button");
     campBtn.id = "campaign-btn";
     campBtn.className = "hud-chip";
-    hud.appendChild(campBtn);
+    campDock.appendChild(campBtn);
   }
+  // Nur Anzeige: Fortschrittspunkte statt "(x/y)"
+  const campDots = (filled, total) =>
+    `<span class="camp-dots">${Array.from({ length: total }, (_, i) => `<i class="${i < filled ? "on" : ""}"></i>`).join("")}</span>`;
 
   const origOpenExerciseModal = openExerciseModal;
   openExerciseModal = function (ex) {
@@ -1046,17 +1052,21 @@ loadSmartImage(document.getElementById("intro-hero-img"), "intro_bg", () => {
     if (!campBtn) return;
     const progress = state.dailyExerciseCount % EXERCISES_PER_TICKET;
     if (state.battleTickets > 0) {
-      campBtn.className = "hud-chip senzu-on";
-      campBtn.textContent = `🐉 KAMPF! (${state.battleTickets}x)`;
-    } else if (state.dailyTicketsEarned >= MAX_TICKETS_PER_DAY) {
-      campBtn.className = "hud-chip";
-      campBtn.style.opacity = "0.5";
-      campBtn.textContent = `🐉 LIMIT (4/4)`;
-    } else {
-      campBtn.className = "hud-chip";
+      campBtn.className = "hud-chip senzu-on camp-ready";
       campBtn.style.opacity = "1";
-      campBtn.textContent = `🐉 KAMPF (${progress}/${EXERCISES_PER_TICKET})`;
+      campBtn.innerHTML = `<span class="camp-label">🐉 KAMPF STARTEN</span><span class="camp-count">${state.battleTickets}×</span>`;
+    } else if (state.dailyTicketsEarned >= MAX_TICKETS_PER_DAY) {
+      campBtn.className = "hud-chip camp-limit";
+      campBtn.style.opacity = "0.5";
+      campBtn.innerHTML = `<span class="camp-label">🐉 TAGESLIMIT</span>${campDots(MAX_TICKETS_PER_DAY, MAX_TICKETS_PER_DAY)}`;
+    } else {
+      campBtn.className = "hud-chip camp-progress";
+      campBtn.style.opacity = "1";
+      campBtn.innerHTML = `<span class="camp-label">🐉 KAMPF</span>${campDots(progress, EXERCISES_PER_TICKET)}`;
     }
+    campBtn.setAttribute("aria-label", state.battleTickets > 0
+      ? `Kampf starten, ${state.battleTickets} Ticket bereit`
+      : `Kampf: ${progress} von ${EXERCISES_PER_TICKET} Übungen bis zum nächsten Ticket`);
   };
   // ===== KAMPF-GRAFIK (Parallax-Hintergrund, Aura, Energiestrahlen) =====
   const TAU = Math.PI * 2;
