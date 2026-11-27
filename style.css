@@ -1165,3 +1165,576 @@ body {
   color: #ffb703;
   text-transform: uppercase;
 }
+
+/* =========================================================
+   TRAININGSSCREEN – REDESIGN (design-training)
+   Orange nur für Haupt-Aktion + aktive Zustände, sonst Grau/Weiß
+   ========================================================= */
+:root {
+  --ink: #f4f4f7;
+  --ink-2: #b9b9c6;
+  --ink-3: #777786;
+  --line: rgba(255, 255, 255, 0.08);
+  --panel: #15151a;
+  --panel-2: #1d1d24;
+  --easy: #3ddc84;
+  --pro: #ff9900;
+  --master: #ff4d5e;
+}
+
+/* ---------- 1. Fixierter Kampf-Button ---------- */
+.campaign-dock {
+  position: fixed;
+  left: 50%;
+  bottom: 0;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 430px;
+  padding: 12px 16px calc(10px + env(safe-area-inset-bottom));
+  background: linear-gradient(to top, #0b0b0d 60%, rgba(11, 11, 13, 0));
+  z-index: 40;
+  pointer-events: none;
+}
+
+#arena-screen.hidden + .campaign-dock {
+  display: none;
+}
+
+.campaign-dock #campaign-btn {
+  pointer-events: auto;
+  width: 100%;
+  min-height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  padding: 0 20px;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 153, 0, 0.55);
+  background: linear-gradient(180deg, #2a1d0c 0%, #1a1309 100%);
+  color: var(--orange-bright);
+  font-family: 'Anton', sans-serif;
+  font-size: 1.2rem;
+  letter-spacing: 1.4px;
+  cursor: pointer;
+  box-shadow: 0 0 22px rgba(255, 153, 0, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  transition: transform 0.12s ease, box-shadow 0.2s ease;
+}
+
+.campaign-dock #campaign-btn:active {
+  transform: scale(0.97);
+}
+
+.campaign-dock #campaign-btn.camp-ready {
+  background: linear-gradient(180deg, #ffbe2e 0%, #ff8a00 100%);
+  border-color: #ffd27a;
+  color: #120c02;
+  box-shadow: 0 10px 34px rgba(255, 145, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  animation: campPulse 2.2s ease-in-out infinite;
+}
+
+.campaign-dock #campaign-btn.camp-limit {
+  background: var(--panel);
+  border-color: var(--line);
+  color: var(--ink-3);
+  box-shadow: none;
+}
+
+@keyframes campPulse {
+  0%, 100% { box-shadow: 0 8px 26px rgba(255, 145, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.5); transform: scale(1); }
+  50% { box-shadow: 0 10px 44px rgba(255, 160, 20, 0.85), inset 0 1px 0 rgba(255, 255, 255, 0.5); transform: scale(1.02); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .campaign-dock #campaign-btn.camp-ready { animation: none; }
+}
+
+.camp-dots {
+  display: inline-flex;
+  gap: 7px;
+}
+
+.camp-dots i {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 183, 3, 0.55);
+  background: transparent;
+}
+
+.camp-dots i.on {
+  background: var(--orange-bright);
+  border-color: var(--orange-bright);
+  box-shadow: 0 0 8px rgba(255, 183, 3, 0.8);
+}
+
+.camp-limit .camp-dots i,
+.camp-limit .camp-dots i.on {
+  background: var(--ink-3);
+  border-color: var(--ink-3);
+  box-shadow: none;
+}
+
+.camp-count {
+  background: rgba(0, 0, 0, 0.18);
+  border-radius: 99px;
+  padding: 1px 10px;
+  font-size: 1.05rem;
+}
+
+/* Trainingsscreen: eigener vertikaler Scroll-Container (andere Screens unberührt).
+   Höhe = Bildschirmhöhe, Inhalt darf länger sein und wird gescrollt. */
+#arena-screen {
+  --dock-h: 78px; /* Höhe des fixierten Kampf-Buttons inkl. Rand */
+  height: 100vh;
+  height: 100dvh;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-y: contain;
+  justify-content: flex-start;
+  /* unten: Button-Höhe + Sicherheitsabstand + iPhone-Home-Leiste */
+  padding: 12px 16px calc(var(--dock-h) + 20px + env(safe-area-inset-bottom));
+}
+
+#arena-screen > * {
+  flex-shrink: 0;
+}
+
+/* ---------- 2. Obere Leiste ---------- */
+.arena-nav {
+  gap: 10px;
+  justify-content: flex-start;
+}
+
+.arena-nav .dark-square-btn {
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  background: transparent;
+  border: none;
+  color: var(--ink-2);
+  font-size: 1.9rem;
+}
+
+.arena-nav .avatar-thumb {
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: var(--panel-2);
+}
+
+.arena-stats {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  line-height: 1.1;
+}
+
+.streak-chip {
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+  color: var(--ink-2);
+  white-space: nowrap;
+}
+
+.arena-nav .ki-badge {
+  background: none;
+  border: none;
+  padding: 0;
+  font-family: 'Anton', sans-serif;
+  font-size: 1.15rem;
+  letter-spacing: 0.6px;
+  color: var(--ink-3);
+  white-space: nowrap;
+}
+
+.arena-nav .ki-badge span {
+  color: var(--ink);
+}
+
+.hud-strip {
+  display: flex;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.hud-chip {
+  background: none;
+  border: none;
+  color: var(--ink-2);
+  font-family: 'Rajdhani', sans-serif;
+  cursor: pointer;
+}
+
+.hud-strip .hud-chip {
+  width: 50px;
+  padding: 4px 0;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+  transition: background 0.15s ease;
+}
+
+.hud-strip .hud-chip:active {
+  background: var(--panel-2);
+}
+
+.hud-ico {
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--panel-2);
+  font-size: 1.1rem;
+  line-height: 1;
+}
+
+.hud-lbl {
+  font-size: 0.58rem;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  color: var(--ink-3);
+  white-space: nowrap;
+}
+
+.hud-chip.senzu-ready .hud-ico {
+  box-shadow: inset 0 0 0 1.5px rgba(61, 220, 132, 0.7);
+}
+
+.hud-chip.senzu-on .hud-ico {
+  background: var(--easy);
+  box-shadow: 0 0 12px rgba(61, 220, 132, 0.6);
+}
+
+.hud-chip.senzu-on .hud-lbl {
+  color: var(--easy);
+}
+
+/* ---------- 3. Bühne, große Figur, Körperteil-Kacheln ---------- */
+.arena-mode {
+  gap: 12px;
+}
+
+#arena-screen .arena-poster-stage {
+  background: radial-gradient(ellipse 70% 60% at 50% 42%, #1c1c23 0%, #0b0b0d 75%);
+  border: none;
+  border-radius: 0;
+  margin: 0 -16px;
+  padding: 4px 16px 0;
+  overflow: hidden;
+}
+
+#arena-screen .arena-top-info {
+  justify-content: center;
+}
+
+#arena-screen .orange-pill {
+  background: var(--panel-2);
+  color: var(--ink-3);
+  font-size: 0.8rem;
+}
+
+#arena-screen #fighter-title {
+  font-size: 1.15rem;
+  color: var(--ink);
+  letter-spacing: 1px;
+}
+
+#arena-screen .arena-bg-word {
+  top: 26%;
+  font-size: 5.6rem;
+  color: #ffffff;
+  opacity: 0.045;
+}
+
+/* Figur: max. ca. 32 % der Bildschirmhöhe */
+#arena-screen .fighter-scanner {
+  width: 100%;
+  height: 32vh;
+  height: 32dvh;
+  margin: 0 auto 6px;
+}
+
+#arena-screen .arena-char-img {
+  max-width: 100%;
+  max-height: 32vh;
+  max-height: 32dvh;
+  object-fit: contain;
+}
+
+#arena-screen .body-stats-grid {
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+#arena-screen .stat-box {
+  padding: 0;
+  background: var(--panel);
+  border: 1.5px solid transparent;
+  border-radius: 14px;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+#arena-screen .stat-box.active-box {
+  border-color: var(--orange);
+  background: linear-gradient(180deg, rgba(255, 153, 0, 0.12), rgba(255, 153, 0, 0.03));
+}
+
+/* Hotspot ist jetzt die Kachel selbst */
+#arena-screen .body-hotspot,
+#arena-screen .body-hotspot.active {
+  position: static;
+  transform: none;
+  width: 100%;
+  background: none;
+  border: none;
+  border-radius: 14px;
+  padding: 10px 4px 9px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  color: var(--ink);
+}
+
+#arena-screen .part-ico {
+  font-size: 1.35rem;
+  line-height: 1.2;
+  filter: grayscale(1) brightness(1.2);
+  opacity: 0.7;
+}
+
+#arena-screen .active-box .part-ico {
+  filter: none;
+  opacity: 1;
+}
+
+#arena-screen .stat-box .part-name {
+  font-family: 'Anton', sans-serif;
+  font-size: 0.95rem;
+  letter-spacing: 0.8px;
+  color: var(--ink-2);
+}
+
+#arena-screen .stat-box.active-box .part-name {
+  color: var(--ink);
+}
+
+#arena-screen .stat-box strong {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--ink-3);
+}
+
+#arena-screen .stat-box.active-box strong {
+  color: var(--orange-bright);
+}
+
+/* ---------- 4a. Stufen als Fortschrittsleiste ---------- */
+#arena-screen .stage-pills {
+  gap: 4px;
+  margin: 0 0 14px;
+}
+
+#arena-screen .stage-pill {
+  position: relative;
+  background: none;
+  border: none;
+  border-radius: 0;
+  padding: 12px 0 0;
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  color: var(--ink-2);
+  opacity: 1;
+  white-space: nowrap;
+}
+
+/* Balkensegment über dem Text */
+#arena-screen .stage-pill::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 6px;
+  background: #cfcfd8;
+}
+
+#arena-screen .stage-pill:first-child::before { border-radius: 99px 0 0 99px; }
+#arena-screen .stage-pill:last-child::before { border-radius: 0 99px 99px 0; }
+
+#arena-screen .stage-pill.active {
+  background: none;
+  color: var(--ink);
+}
+
+#arena-screen .stage-pill.active::before {
+  background: var(--orange);
+  box-shadow: 0 0 10px rgba(255, 153, 0, 0.6);
+}
+
+#arena-screen .stage-pill.locked {
+  color: var(--ink-3);
+  cursor: default;
+}
+
+#arena-screen .stage-pill.locked::before {
+  background: #26262e;
+}
+
+/* XP-Leiste neutral */
+#arena-screen .xp-row {
+  margin-bottom: 4px;
+}
+
+#arena-screen .xp-track {
+  height: 6px;
+  background: #26262e;
+}
+
+#arena-screen .xp-fill {
+  background: var(--ink);
+}
+
+#arena-screen #level-label {
+  font-family: 'Anton', sans-serif;
+  font-size: 0.9rem;
+  letter-spacing: 0.6px;
+  color: var(--ink);
+}
+
+#arena-screen #xp-text {
+  color: var(--ink-3);
+}
+
+/* ---------- 4b. Schwierigkeit als farbiger Schalter ---------- */
+#arena-screen .training-head {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+#arena-screen #selected-part-title {
+  font-size: 1.05rem;
+  letter-spacing: 1px;
+  color: var(--ink-2);
+}
+
+#arena-screen .diff-switch {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  background: var(--panel);
+  border-radius: 12px;
+  padding: 4px;
+  gap: 4px;
+}
+
+#arena-screen .diff-tab {
+  padding: 9px 4px;
+  border-radius: 9px;
+  font-size: 0.95rem;
+  letter-spacing: 0.8px;
+  color: var(--ink-3);
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+#arena-screen .diff-tab::before {
+  content: "";
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  margin-right: 6px;
+  vertical-align: 2px;
+  background: currentColor;
+  opacity: 0.6;
+}
+
+#arena-screen .diff-tab[data-diff="easy"] { --diff: var(--easy); }
+#arena-screen .diff-tab[data-diff="advanced"] { --diff: var(--pro); }
+#arena-screen .diff-tab[data-diff="master"] { --diff: var(--master); }
+
+#arena-screen .diff-tab::before { background: var(--diff); }
+
+#arena-screen .diff-tab.active {
+  background: var(--diff);
+  color: #0b0b0d;
+}
+
+#arena-screen .diff-tab.active::before {
+  background: #0b0b0d;
+  opacity: 0.5;
+}
+
+/* ---------- 4c. Übungen als Karten mit Symbol ---------- */
+#arena-screen .workout-list {
+  gap: 8px;
+}
+
+#arena-screen .workout-card {
+  justify-content: flex-start;
+  gap: 12px;
+  width: 100%;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 10px 12px;
+  font-family: 'Rajdhani', sans-serif;
+  transition: background 0.15s ease, transform 0.1s ease;
+}
+
+#arena-screen .workout-card:active {
+  background: var(--panel-2);
+  transform: scale(0.985);
+}
+
+.workout-ico {
+  width: 42px;
+  height: 42px;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  border-radius: 12px;
+  background: var(--panel-2);
+  font-size: 1.35rem;
+  line-height: 1;
+}
+
+.workout-text {
+  flex: 1;
+  min-width: 0;
+}
+
+#arena-screen .workout-title {
+  font-size: 1rem;
+  color: var(--ink);
+  line-height: 1.15;
+}
+
+#arena-screen .workout-sub {
+  color: var(--ink-3);
+  margin-top: 1px;
+}
+
+#arena-screen .xp-tag {
+  flex-shrink: 0;
+  font-family: 'Rajdhani', sans-serif;
+  font-weight: 700;
+  font-size: 0.8rem;
+  color: var(--ink-2);
+  background: var(--panel-2);
+  border-radius: 99px;
+  padding: 3px 9px;
+}

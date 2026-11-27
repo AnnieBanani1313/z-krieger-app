@@ -38,14 +38,7 @@
       font-family: 'Anton', sans-serif; font-size: 1rem; padding: 6px 14px;
       border-radius: 8px; cursor: pointer;
     }
-    .hud-strip { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px; }
-    .hud-chip {
-      background: #16161c; border: 1px solid #2e2e3a; color: #fff;
-      font-family: 'Anton', sans-serif; font-size: 0.85rem; padding: 4px 9px;
-      border-radius: 8px; cursor: pointer;
-    }
-    .hud-chip.senzu-ready { border-color: #52e588; color: #52e588; }
-    .hud-chip.senzu-on { background: #52e588; color: #0b0b0d; }
+    /* .hud-strip / .hud-chip: Styles stehen jetzt in style.css */
     .trophy-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; text-align: left; }
     .trophy-item {
       background: #101015; border: 1px solid #2c2c38; border-radius: 8px; padding: 8px; opacity: 0.4;
@@ -90,8 +83,9 @@
   `;
   document.body.appendChild(trophyModal);
 
+  // HUD (Streak, Senzu, Boss, Trophäen) steht jetzt direkt in index.html.
   const stage = document.querySelector(".arena-poster-stage");
-  if (stage) {
+  if (stage && !document.getElementById("senzu-btn")) {
     const hud = document.createElement("div");
     hud.className = "hud-strip";
     hud.innerHTML = `
@@ -274,106 +268,266 @@ function playSound(mode = "click") {
     osc.start(now); osc.stop(now + 0.2);
   } catch (e) {}
 }
+// Aussehen der Krieger für die Übungs-Animationen (nach den Figuren-Bildern c*_s1)
+// hair: spiky | flame | wild | smooth | bald | ears | turban
+// face: Extras am Kopf (dots, thirdEye, beard, shades) · body: Extras am Körper (cape, shell, pads)
+const FIGHTER_LOOKS = {
+  1:  { hair: "spiky",  hairCol: "#1a1a1f", top: "#ff8c1a", top2: "#e8650a", belt: "#1d3fa0", pants: "#ff8c1a", shoe: "#2a54c8", band: "#2a54c8" },
+  2:  { hair: "flame",  hairCol: "#15151c", top: "#24357a", top2: "#16204d", belt: "#d9b450", pants: "#24357a", shoe: "#f2f2f2", shoeLen: 24, arm: "#24357a", glove: "#f4f4f4" },
+  3:  { hair: "spiky",  hairCol: "#cfc6ee", top: "#b01e35", top2: "#6b1020", belt: "#2a2a33", pants: "#b01e35", shoe: "#eeeeee", shoeLen: 20, arm: "#2a2a33", glove: "#2a2a33", band: "#eeeeee" },
+  4:  { hair: "ears",   skin: "#9b7fd1", top: "#9b7fd1", top2: "#7e64b8", belt: "#2a3f8f", pants: "#3d8fd1", shoe: "#6b4a2b", arm: "#9b7fd1", band: "#d4a72c" },
+  5:  { hair: "bald",   face: ["beard", "shades"], body: ["shell"], skin: "#f1c7a0", top: "#ff9a2e", top2: "#e5771a", belt: null, pants: "#e8e8e8", shin: ["#f1c7a0", 42, 46], shoe: "#3aa84a", shoeLen: 10 },
+  6:  { hair: "turban", body: ["cape"], skin: "#6fbf4a", top: "#4b2f86", top2: "#3a2370", belt: "#3d8fd1", pants: "#4b2f86", shoe: "#8a5a2b", arm: "#6fbf4a", band: "#c0392b" },
+  7:  { hair: "bald",   face: ["dots"], top: "#ff8c1a", top2: "#e8650a", belt: "#2a54c8", pants: "#ff8c1a", shoe: "#1a1a22", band: "#2a54c8" },
+  10: { hair: "spiky",  hairCol: "#111114", top: "#4b3a9a", top2: "#3a2c80", belt: "#a82a2a", pants: "#4b3a9a", shoe: "#8a5a2b", band: "#7b3fb0" },
+  12: { hair: "wild",   hairCol: "#15151a", body: ["pads"], top: "#5a2a7a", top2: "#43205c", belt: "#7bbf3a", beltW: 8, pants: "#5a2a7a", shoe: "#8a9a8a", shoeLen: 22, band: "#c0c0c8" },
+  13: { hair: "smooth", hairCol: "#c4a8e8", top: "#3f7ac8", top2: "#2c5ea8", belt: "#d9a441", pants: "#3c434d", shoe: "#e0a830", shoeLen: 22, arm: "#3f7ac8" },
+  15: { hair: "bald",   face: ["thirdEye"], top: "#2f8a3e", top2: "#23702f", belt: "#b5382c", pants: "#2f8a3e", shin: ["#eeeeee", 74, 12], shoe: "#1f2f6a", band: "#5a3a8a" }
+};
+
+function getFighterLook(charObj) {
+  const base = {
+    hair: "spiky", hairCol: "#1a1a1f", skin: "#f4c095",
+    top: charObj.color || "#ff9900", top2: "#e85d04", belt: "#1d3557",
+    pants: "#1d3557", shoe: "#141418", shoeLen: 15, beltW: 0,
+    face: Array.of(), body: Array.of()
+  };
+  const look = Object.assign(base, Reflect.get(FIGHTER_LOOKS, charObj.id) || {});
+  if (!look.arm) look.arm = look.skin;
+  return look;
+}
+
+// Animierte Übungs-Figuren (SVG/SMIL) im Stil der bisherigen Comic-Bildchen.
+// Jede Pose pendelt weich zwischen Startpose (a) und Endpose (b).
+// Aussehen (Haare, Haut, Kleidung) richtet sich nach dem gewählten Krieger.
 function getComicSVG(pose) {
   const cObj = CHARACTERS.find(c => c.id === state.selectedChar) || CHARACTERS.at(0);
   const auraCol = cObj.color || "#ff9900";
+  const look = getFighterLook(cObj);
+  const OUT = "#141418";
+  const EASE = `calcMode="spline" keyTimes="0;0.5;1" keySplines="0.45 0 0.55 1;0.45 0 0.55 1"`;
+
+  const anim = (attr, a, b, dur) => a === b ? "" :
+    `<animate attributeName="${attr}" values="${a};${b};${a}" dur="${dur}" repeatCount="indefinite" ${EASE}/>`;
+  const moveAnim = (a, b, dur) => (a[0] === b[0] && a[1] === b[1]) ? "" :
+    `<animateTransform attributeName="transform" type="translate" values="${a[0]},${a[1]};${b[0]},${b[1]};${a[0]},${a[1]}" dur="${dur}" repeatCount="indefinite" ${EASE}/>`;
+
+  // Linienzug, a/b müssen gleich viele Punkte haben.
+  // Optional nur ein Abschnitt (in % der Länge) – für Schuhe, Gürtel, Handschuhe usw.
+  const seg = (a, b, col, w, dur, from = null, len = null, cap = null) => {
+    const part = from === null ? "" : ` pathLength="100" stroke-dasharray="${len} 200" stroke-dashoffset="${-from}"`;
+    const lc = cap || (from === null ? "round" : "butt");
+    return `<polyline points="${a}" stroke="${col}" stroke-width="${w}" stroke-linecap="${lc}" stroke-linejoin="round" fill="none"${part}>${anim("points", a, b, dur)}</polyline>`;
+  };
+  // Bein: Hose + Schuh (+ optional Unterschenkel-Farbe). footFirst = Linie beginnt am Fuß.
+  const leg = (a, b, w, dur, footFirst = false) => {
+    const sl = look.shoeLen;
+    let out = seg(a, b, look.pants, w, dur);
+    if (look.shin) {
+      const [col, from, len] = look.shin;
+      out += seg(a, b, col, w - 2, dur, footFirst ? 100 - from - len : from, len);
+    }
+    // Schuh mit runder Spitze: am Fußende runden Abschluss nachzeichnen
+    return out + seg(a, b, look.shoe, w + 1, dur, footFirst ? 0 : 100 - sl, sl)
+      + seg(a, b, look.shoe, w + 1, dur, footFirst ? 0 : 99.5, 0.5, "round");
+  };
+  // Oberkörper: Oberteil + Gürtel (+ Umhang/Panzer/Schulterpolster). hipFirst = Linie beginnt an der Hüfte.
+  const torso = (a, b, w, dur, hipFirst = false) => {
+    let out = "";
+    if (look.body.includes("cape")) out += seg(a, b, "#e8eef5", w + 7, dur);
+    if (look.body.includes("shell")) out += seg(a, b, "#7b4bb0", w + 9, dur);
+    out += seg(a, b, "url(#giGrad)", w, dur);
+    if (look.belt) {
+      const bl = 10 + (look.beltW || 0);
+      out += seg(a, b, look.belt, w + 1, dur, hipFirst ? 0 : 100 - bl, bl);
+    }
+    if (look.body.includes("pads")) out += seg(a, b, "#9ad64a", w + 5, dur, hipFirst ? 86 : 0, 14);
+    return out;
+  };
+  // Arm: Ärmel/Haut + Armband + Handschuh/Hand (Hand liegt immer am Linienende)
+  const arm = (a, b, w, dur, dim = false) => {
+    let out = seg(a, b, look.arm, w, dur);
+    if (look.band) out += seg(a, b, look.band, w + 1, dur, 68, 10);
+    out += seg(a, b, look.glove || look.skin, w, dur, 82, 18)
+      + seg(a, b, look.glove || look.skin, w, dur, 99.5, 0.5, "round");
+    return dim ? `<g opacity="0.78">${out}</g>` : out;
+  };
+
+  const faceFx = () => {
+    let fx = "";
+    if (look.face.includes("dots")) fx += Array.of(-1.5, 2, 5.5).map(x => `<circle cx="${x}" cy="-4" r="0.9" fill="#b5652e"/>`).join("");
+    if (look.face.includes("thirdEye")) fx += `<ellipse cx="2" cy="-3.5" rx="2.2" ry="1.4" fill="#ffffff" stroke="${OUT}" stroke-width="0.6"/><circle cx="2" cy="-3.5" r="0.8" fill="${OUT}"/>`;
+    if (look.face.includes("beard")) fx += `<path d="M-5,5 Q2,22 9,5 Z" fill="#e6e6e6" stroke="#9a9a9a" stroke-width="0.6"/><path d="M-5,-3 L-1,-4 M5,-4 L9,-3" stroke="#e6e6e6" stroke-width="1.6" stroke-linecap="round"/>`;
+    if (look.face.includes("shades")) fx += `<rect x="-5" y="-0.5" width="14" height="4" rx="1" fill="#2a4fb0" stroke="#d62828" stroke-width="1.2"/>`;
+    return fx;
+  };
+  const headShape = () => {
+    const face = `<circle cx="2" cy="2" r="9" fill="${look.skin}" stroke="${OUT}" stroke-width="1.5"/>`;
+    const hairPoly = (pts) => `<polygon points="${pts}" fill="${look.hairCol}" stroke="${auraCol}" stroke-width="1.2" stroke-linejoin="round"/>`;
+    switch (look.hair) {
+      case "flame":
+        return hairPoly("-9,-2 -13,-18 -6,-13 -7,-31 0,-19 4,-36 8,-20 13,-28 13,-4") + face;
+      case "wild":
+        return hairPoly("-11,8 -21,-2 -13,-7 -23,-19 -9,-15 -11,-30 0,-18 6,-32 10,-17 23,-24 15,-7 23,3 13,6") + face;
+      case "smooth":
+        return face + `<path d="M-8,7 C-12,-7 -6,-11 2,-11 C11,-11 16,-6 12,7 L9,1 L3,-5 L-2,1 Z" fill="${look.hairCol}" stroke="${OUT}" stroke-width="1"/>`;
+      case "ears":
+        return `<polygon points="-7,-2 -12,-25 0,-6" fill="${look.skin}" stroke="${OUT}" stroke-width="1.2" stroke-linejoin="round"/>
+          <polygon points="4,-6 15,-25 11,-1" fill="${look.skin}" stroke="${OUT}" stroke-width="1.2" stroke-linejoin="round"/>
+          ${face}<circle cx="13.5" cy="-14" r="1.4" fill="#d4a72c"/>`;
+      case "turban":
+        return `<polygon points="-6,1 -15,-5 -6,-3" fill="${look.skin}" stroke="${OUT}" stroke-width="1"/>
+          <polygon points="10,1 19,-5 10,-3" fill="${look.skin}" stroke="${OUT}" stroke-width="1"/>
+          ${face}<path d="M-8,-1 C-8,-12 12,-12 12,-1 Z" fill="#f2f2f2" stroke="${OUT}" stroke-width="1"/>
+          <circle cx="2" cy="-8.5" r="2.4" fill="#6a3fa0"/>`;
+      case "bald":
+        return face;
+      default: // spiky
+        return hairPoly("-10,-6 -22,-18 -6,-13 -12,-28 0,-16 6,-30 10,-15 22,-22 12,-8 20,-2 8,2") + face;
+    }
+  };
+  // Kopf: a/b = [x, y, drehung]
+  const head = (a, b, dur) => {
+    const ra = a[2] || 0, rb = b[2] || 0;
+    const rot = ra === rb ? "" :
+      `<animateTransform attributeName="transform" type="rotate" values="${ra};${rb};${ra}" dur="${dur}" repeatCount="indefinite" ${EASE}/>`;
+    return `<g transform="translate(${a[0]},${a[1]})">${moveAnim(a, b, dur)}<g transform="rotate(${ra})">${rot}${headShape()}${faceFx()}</g></g>`;
+  };
+  // Gegenstand bewegen (Hantel usw.), Inhalt ist um (0,0) gezeichnet
+  const mover = (a, b, content, dur) =>
+    `<g transform="translate(${a[0]},${a[1]})">${moveAnim(a, b, dur)}${content}</g>`;
+  // Zittern für Halte-Übungen
+  const tremble = (content) =>
+    `<g><animateTransform attributeName="transform" type="translate" values="0,0;0.8,-0.4;-0.7,0.3;0,0" dur="0.35s" repeatCount="indefinite"/>${content}</g>`;
+  // Aufsteigende Ki-Funken für Halte-Übungen
+  const sparks = Array.of([70, 0], [130, 0.6], [200, 1.2]).map(([x, delay]) =>
+    `<circle cx="${x}" cy="100" r="2.2" fill="${auraCol}" opacity="0">
+      <animate attributeName="cy" values="100;30" dur="1.8s" begin="${delay}s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0;0.9;0" dur="1.8s" begin="${delay}s" repeatCount="indefinite"/>
+    </circle>`).join("");
+
+  const dumbbell = `<line x1="-11" y1="0" x2="11" y2="0" stroke="#adb5bd" stroke-width="5"/>
+    <rect x="-15" y="-8" width="7" height="16" rx="2" fill="${auraCol}"/><rect x="8" y="-8" width="7" height="16" rx="2" fill="${auraCol}"/>`;
+  const barbell = `<line x1="-28" y1="0" x2="28" y2="0" stroke="#adb5bd" stroke-width="5" stroke-linecap="round"/>
+    <rect x="-32" y="-12" width="10" height="24" rx="2" fill="${auraCol}"/><rect x="22" y="-12" width="10" height="24" rx="2" fill="${auraCol}"/>`;
+
   const bg = `<defs>
     <radialGradient id="kiAura" cx="50%" cy="50%" r="50%">
       <stop offset="0%" stop-color="${auraCol}" stop-opacity="0.5"/>
       <stop offset="100%" stop-color="${auraCol}" stop-opacity="0"/>
     </radialGradient>
-    <linearGradient id="giGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="${auraCol}"/>
-      <stop offset="100%" stop-color="#e85d04"/>
+    <linearGradient id="giGrad" gradientUnits="userSpaceOnUse" x1="60" y1="20" x2="200" y2="110">
+      <stop offset="0%" stop-color="${look.top}"/>
+      <stop offset="100%" stop-color="${look.top2}"/>
     </linearGradient>
   </defs>
-  <ellipse cx="130" cy="70" rx="95" ry="48" fill="url(#kiAura)"/>
+  <ellipse cx="130" cy="70" rx="95" ry="48" fill="url(#kiAura)">
+    <animate attributeName="opacity" values="0.65;1;0.65" dur="2.2s" repeatCount="indefinite"/>
+    <animate attributeName="rx" values="92;102;92" dur="2.2s" repeatCount="indefinite"/>
+  </ellipse>
   <line x1="20" y1="112" x2="240" y2="112" stroke="#3a3a48" stroke-width="3" stroke-linecap="round"/>`;
 
-  const hair = (x, y, rot = 0) => `<g transform="translate(${x},${y}) rotate(${rot})">
-    <polygon points="-10,-6 -22,-18 -6,-13 -12,-28 0,-16 6,-30 10,-15 22,-22 12,-8 20,-2 8,2" fill="#141418" stroke="${auraCol}" stroke-width="1.2"/>
-    <circle cx="2" cy="2" r="9" fill="#f4c095" stroke="#141418" stroke-width="1.5"/>
-  </g>`;
+  // viewBox oben erweitert, damit die Haarspitzen nicht abgeschnitten werden
+  const wrap = (inner) => `<svg viewBox="0 -16 260 141" width="235" height="128" role="img" aria-label="Übungs-Animation">${bg}${inner}</svg>`;
 
-  const svgs = {
-    benchpress: `<svg viewBox="0 0 260 125" width="235" height="120">${bg}
+  const builders = {
+    benchpress: () => { const d = "2s"; return wrap(`
       <rect x="65" y="84" width="115" height="10" rx="4" fill="#4a4e69"/>
       <line x1="80" y1="94" x2="80" y2="112" stroke="#8d99ae" stroke-width="6"/>
       <line x1="165" y1="94" x2="165" y2="112" stroke="#8d99ae" stroke-width="6"/>
-      <polyline points="155,80 185,84 195,110" stroke="#1d3557" stroke-width="12" fill="none" stroke-linecap="round"/>
-      <path d="M95,78 L155,78" stroke="url(#giGrad)" stroke-width="15" stroke-linecap="round"/>
-      <line x1="120" y1="74" x2="120" y2="34" stroke="#f4c095" stroke-width="9" stroke-linecap="round"/>
-      <line x1="88" y1="34" x2="152" y2="34" stroke="#adb5bd" stroke-width="5" stroke-linecap="round"/>
-      <rect x="82" y="22" width="10" height="24" rx="2" fill="${auraCol}"/>
-      <rect x="148" y="22" width="10" height="24" rx="2" fill="${auraCol}"/>
-      ${hair(78, 72, -80)}</svg>`,
-    dumbbellcurl: `<svg viewBox="0 0 260 125" width="235" height="120">${bg}
-      <polyline points="118,76 108,108" stroke="#1d3557" stroke-width="13" stroke-linecap="round"/>
-      <polyline points="134,76 144,108" stroke="#1d3557" stroke-width="13" stroke-linecap="round"/>
-      <path d="M126,40 L126,76" stroke="url(#giGrad)" stroke-width="18" stroke-linecap="round"/>
-      <polyline points="132,46 154,64 166,44" stroke="#f4c095" stroke-width="9" stroke-linecap="round" fill="none"/>
-      <line x1="154" y1="44" x2="178" y2="44" stroke="#adb5bd" stroke-width="5"/>
-      <rect x="150" y="36" width="7" height="16" rx="2" fill="${auraCol}"/>
-      <rect x="175" y="36" width="7" height="16" rx="2" fill="${auraCol}"/>
-      ${hair(126, 23, 0)}</svg>`,
-    pushup: `<svg viewBox="0 0 260 125" width="235" height="120">${bg}
-      <path d="M48,106 L108,88 L164,66" stroke="#1d3557" stroke-width="13" stroke-linecap="round" fill="none"/>
-      <path d="M108,88 L166,65" stroke="url(#giGrad)" stroke-width="16" stroke-linecap="round" fill="none"/>
-      <path d="M162,68 L156,90 L164,108" stroke="#f4c095" stroke-width="9" stroke-linecap="round" fill="none"/>
-      ${hair(182, 58, 18)}</svg>`,
-    kneepushup: `<svg viewBox="0 0 260 125" width="235" height="120">${bg}
-      <polyline points="42,92 84,106 122,82" stroke="#1d3557" stroke-width="13" stroke-linecap="round" fill="none"/>
-      <path d="M122,82 L172,62" stroke="url(#giGrad)" stroke-width="16" stroke-linecap="round"/>
-      <path d="M168,65 L164,90 L170,108" stroke="#f4c095" stroke-width="9" stroke-linecap="round" fill="none"/>
-      ${hair(188, 54, 18)}</svg>`,
-    dips: `<svg viewBox="0 0 260 125" width="235" height="120">${bg}
+      ${leg("155,80 185,84 195,110", "155,80 185,84 195,110", 12, d)}
+      ${torso("95,78 155,78", "95,78 155,78", 15, d)}
+      ${arm("116,74 121,54 126,36", "116,74 106,62 126,52", 9, d)}
+      ${mover([126, 34], [126, 50], barbell, d)}
+      ${head([78, 72, -80], [78, 72, -80], d)}`); },
+
+    dumbbellcurl: () => { const d = "1.6s"; return wrap(`
+      ${leg("120,76 112,108", "120,76 112,108", 13, d)}
+      ${leg("132,76 140,108", "132,76 140,108", 13, d)}
+      ${torso("126,40 126,76", "126,40 126,76", 18, d)}
+      ${arm("130,46 134,70 138,92", "130,46 134,70 152,52", 9, d)}
+      ${mover([139, 95], [154, 49], dumbbell, d)}
+      ${head([126, 23, 0], [126, 22, 0], d)}`); },
+
+    pushup: () => { const d = "1.8s"; return wrap(`
+      ${leg("48,106 108,84", "48,106 108,98", 13, d, true)}
+      ${torso("108,84 166,62", "108,98 168,92", 16, d, true)}
+      ${arm("164,64 164,86 164,108", "166,92 150,98 164,108", 9, d)}
+      ${head([184, 54, 18], [188, 86, 8], d)}`); },
+
+    kneepushup: () => { const d = "1.8s"; return wrap(`
+      ${leg("42,92 84,106 122,80", "42,92 84,106 124,94", 13, d, true)}
+      ${torso("122,80 172,60", "124,94 176,90", 16, d, true)}
+      ${arm("170,62 168,86 170,108", "174,90 156,98 170,108", 9, d)}
+      ${head([188, 52, 18], [192, 84, 8], d)}`); },
+
+    dips: () => { const d = "1.8s"; return wrap(`
       <polyline points="55,110 55,64 95,64 95,110" stroke="#555" stroke-width="5" fill="none"/>
-      <polyline points="124,84 162,86 184,108" stroke="#1d3557" stroke-width="13" stroke-linecap="round" fill="none"/>
-      <path d="M116,46 L124,84" stroke="url(#giGrad)" stroke-width="16" stroke-linecap="round"/>
-      <polyline points="116,48 92,62" stroke="#f4c095" stroke-width="8" stroke-linecap="round" fill="none"/>
-      ${hair(116, 30, 0)}</svg>`,
-    plank: `<svg viewBox="0 0 260 125" width="235" height="120">${bg}
-      <path d="M45,104 L112,88 L174,74" stroke="#1d3557" stroke-width="13" stroke-linecap="round" fill="none"/>
-      <path d="M112,88 L176,73" stroke="url(#giGrad)" stroke-width="16" stroke-linecap="round" fill="none"/>
-      <polyline points="172,76 168,104 190,104" stroke="#f4c095" stroke-width="9" stroke-linecap="round" fill="none"/>
-      ${hair(194, 68, 12)}</svg>`,
-    situp: `<svg viewBox="0 0 260 125" width="235" height="120">${bg}
-      <polyline points="126,104 162,74 188,106" stroke="#1d3557" stroke-width="13" stroke-linecap="round" fill="none"/>
-      <path d="M126,104 L104,58" stroke="url(#giGrad)" stroke-width="17" stroke-linecap="round"/>
-      ${hair(98, 42, -18)}</svg>`,
-    legraise: `<svg viewBox="0 0 260 125" width="235" height="120">${bg}
-      <path d="M68,104 L124,104" stroke="url(#giGrad)" stroke-width="16" stroke-linecap="round"/>
-      <path d="M124,104 L176,46" stroke="#1d3557" stroke-width="13" stroke-linecap="round"/>
-      ${hair(52, 98, -75)}</svg>`,
-    squat: `<svg viewBox="0 0 260 125" width="235" height="120">${bg}
-      <polyline points="122,76 154,84 134,108" stroke="#1d3557" stroke-width="13" stroke-linecap="round" fill="none"/>
-      <path d="M128,42 L120,76" stroke="url(#giGrad)" stroke-width="17" stroke-linecap="round"/>
-      ${hair(130, 26, 0)}</svg>`,
-    lunge: `<svg viewBox="0 0 260 125" width="235" height="120">${bg}
-      <polyline points="124,74 162,76 162,108" stroke="#1d3557" stroke-width="13" stroke-linecap="round" fill="none"/>
-      <polyline points="124,74 96,102 72,104" stroke="#1d3557" stroke-width="12" stroke-linecap="round" fill="none"/>
-      <path d="M124,38 L124,74" stroke="url(#giGrad)" stroke-width="17" stroke-linecap="round"/>
-      ${hair(124, 22, 0)}</svg>`,
-    wallsit: `<svg viewBox="0 0 260 125" width="235" height="120">${bg}
-      <line x1="94" y1="14" x2="94" y2="112" stroke="${auraCol}" stroke-width="5" stroke-linecap="round"/>
-      <polyline points="104,76 146,76 146,108" stroke="#1d3557" stroke-width="13" stroke-linecap="round" fill="none"/>
-      <path d="M104,38 L104,76" stroke="url(#giGrad)" stroke-width="17" stroke-linecap="round"/>
-      ${hair(106, 22, 0)}</svg>`,
-    punch: `<svg viewBox="0 0 260 125" width="235" height="120">${bg}
-      <polyline points="104,76 86,108" stroke="#1d3557" stroke-width="13" stroke-linecap="round"/>
-      <polyline points="108,76 130,108" stroke="#1d3557" stroke-width="13" stroke-linecap="round"/>
-      <path d="M106,40 L106,76" stroke="url(#giGrad)" stroke-width="18" stroke-linecap="round"/>
-      <line x1="108" y1="48" x2="174" y2="46" stroke="#f4c095" stroke-width="9" stroke-linecap="round"/>
-      <polygon points="188,46 218,36 208,46 218,56" fill="${auraCol}"/>
-      ${hair(106, 24, 0)}</svg>`,
-    jump: `<svg viewBox="0 0 260 125" width="235" height="120">${bg}
-      <polyline points="128,68 108,94" stroke="#1d3557" stroke-width="12" stroke-linecap="round"/>
-      <polyline points="132,68 152,94" stroke="#1d3557" stroke-width="12" stroke-linecap="round"/>
-      <path d="M130,34 L130,68" stroke="url(#giGrad)" stroke-width="17" stroke-linecap="round"/>
-      ${hair(130, 19, 0)}</svg>`
+      ${leg("124,84 162,86 184,108", "124,100 160,94 184,108", 13, d)}
+      ${torso("116,46 124,84", "116,62 124,100", 16, d)}
+      ${arm("116,48 104,56 92,64", "116,64 98,56 92,64", 8, d)}
+      ${head([116, 30, 0], [116, 46, 0], d)}`); },
+
+    plank: () => { const d = "2.6s"; return wrap(sparks + tremble(`
+      ${leg("45,104 112,88", "45,104 112,86", 13, d, true)}
+      ${torso("112,88 176,73", "112,86 176,72", 16, d, true)}
+      ${arm("172,76 168,104 190,104", "172,75 168,104 190,104", 9, d)}
+      ${head([194, 68, 12], [194, 67, 12], d)}`)); },
+
+    situp: () => { const d = "1.8s"; return wrap(`
+      ${leg("126,104 156,78 182,106", "126,104 156,78 182,106", 13, d)}
+      ${torso("126,104 88,104", "126,104 106,62", 17, d, true)}
+      ${head([74, 102, -85], [100, 46, -20], d)}`); },
+
+    legraise: () => { const d = "2s"; return wrap(`
+      ${arm("70,109 110,110", "70,109 110,110", 8, d)}
+      ${torso("68,104 124,104", "68,104 124,104", 16, d)}
+      ${leg("124,104 184,102", "124,104 166,46", 13, d)}
+      ${head([52, 98, -75], [52, 98, -75], d)}`); },
+
+    squat: () => { const d = "1.8s"; return wrap(`
+      ${leg("130,70 132,90 130,110", "116,84 146,88 132,110", 13, d)}
+      ${torso("130,36 130,70", "124,50 116,84", 17, d)}
+      ${arm("130,44 156,48", "124,56 160,56", 9, d)}
+      ${head([130, 20, 0], [127, 34, 8], d)}`); },
+
+    lunge: () => { const d = "1.8s"; return wrap(`
+      ${leg("124,70 108,90 98,110", "122,84 100,104 76,108", 12, d)}
+      ${leg("124,70 142,90 150,110", "122,84 150,84 150,110", 13, d)}
+      ${torso("124,38 124,70", "122,52 122,84", 17, d)}
+      ${arm("124,44 118,62", "122,58 116,76", 8, d)}
+      ${head([124, 22, 0], [122, 36, 0], d)}`); },
+
+    wallsit: () => { const d = "2.6s"; return wrap(`
+      <line x1="94" y1="-6" x2="94" y2="112" stroke="${auraCol}" stroke-width="5" stroke-linecap="round"/>
+      ${sparks}${tremble(`
+      ${leg("104,76 146,76 146,108", "104,77 146,77 146,108", 13, d)}
+      ${torso("104,38 104,76", "104,39 104,77", 17, d)}
+      ${arm("106,46 138,48", "106,47 138,49", 9, d)}
+      ${head([106, 22, 0], [106, 23, 0], d)}`)}`); },
+
+    punch: () => { const d = "0.9s"; return wrap(`
+      ${leg("104,76 86,108", "104,76 86,108", 13, d)}
+      ${leg("108,76 130,108", "108,76 130,108", 13, d)}
+      ${arm("106,44 140,42 172,40", "106,44 122,54 130,40", 8, d, true)}
+      ${torso("106,40 106,76", "106,40 106,76", 18, d)}
+      ${arm("108,48 124,58 132,44", "108,48 141,47 174,46", 9, d)}
+      <polygon points="188,44 218,34 208,44 218,54" fill="${auraCol}">
+        <animate attributeName="opacity" values="1;0;1;0;1" keyTimes="0;0.25;0.5;0.75;1" dur="${d}" repeatCount="indefinite"/>
+      </polygon>
+      ${head([106, 24, 0], [108, 24, 3], d)}`); },
+
+    jump: () => { const d = "0.9s"; return wrap(`
+      ${leg("130,70 126,90 124,110", "130,64 114,86 104,108", 12, d)}
+      ${leg("130,70 134,90 136,110", "130,64 146,86 156,108", 12, d)}
+      ${torso("130,36 130,70", "130,30 130,64", 17, d)}
+      ${arm("130,42 120,58 118,72", "130,36 114,22 104,8", 8, d)}
+      ${arm("130,42 140,58 142,72", "130,36 146,22 156,8", 8, d)}
+      ${head([130, 20, 0], [130, 14, 0], d)}`); }
   };
-  return Reflect.get(svgs, pose) || svgs.punch;
+  return (Reflect.get(builders, pose) || builders.punch)();
 }
+
 const _croppedCache = new Map();
 
 function cleanImageBg(imgEl, baseName) {
@@ -577,6 +731,10 @@ function openExerciseModal(ex) {
   const imgEl = document.getElementById("ex-comic-img");
   const svgEl = document.getElementById("ex-comic-svg");
   svgEl.innerHTML = getComicSVG(ex.pose || "punch");
+  // Bei "Bewegung reduzieren" die Animation in der Startpose anhalten
+  if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    svgEl.querySelector("svg")?.pauseAnimations();
+  }
   svgEl.style.display = "grid";
   loadSmartImage(imgEl, `ex_${ex.pose || "punch"}`, () => { svgEl.style.display = "grid"; }, () => { svgEl.style.display = "none"; });
 
@@ -611,6 +769,13 @@ function openExerciseModal(ex) {
   document.getElementById("exercise-modal").classList.remove("hidden");
 }
 
+// Nur Anzeige: Emoji-Symbol pro Übungsart (pose)
+const WORKOUT_ICONS = {
+  dumbbellcurl: "🏋️", benchpress: "🏋️", pushup: "💪", kneepushup: "💪",
+  dips: "🪑", punch: "🥊", plank: "⏱️", situp: "🌀", legraise: "🦵",
+  squat: "🦵", lunge: "🚶", jump: "🤸", wallsit: "🧱"
+};
+
 function renderWorkouts() {
   const activePart = state.selectedPart === "core" ? BODY_WORKOUTS.core : (state.selectedPart === "legs" ? BODY_WORKOUTS.legs : BODY_WORKOUTS.arms);
   document.getElementById("selected-part-title").textContent = activePart.label;
@@ -620,7 +785,8 @@ function renderWorkouts() {
   exercises.forEach(ex => {
     const btn = document.createElement("button");
     btn.className = "workout-card";
-    btn.innerHTML = `<div><div class="workout-title">${ex.title}</div><div class="workout-sub">${ex.sub}</div></div><span class="xp-tag">+${ex.xp} XP</span>`;
+    const icon = WORKOUT_ICONS[ex.pose] || "⭐";
+    btn.innerHTML = `<span class="workout-ico" aria-hidden="true">${icon}</span><div class="workout-text"><div class="workout-title">${ex.title}</div><div class="workout-sub">${ex.sub}</div></div><span class="xp-tag">+${ex.xp} XP</span>`;
     btn.addEventListener("click", () => openExerciseModal(ex));
     list.appendChild(btn);
   });
@@ -764,16 +930,17 @@ function updateUI() {
   if (senzuBtn) {
     const usedToday = state.senzuDate === getTodayKey();
     senzuBtn.className = "hud-chip";
+    const senzuHtml = (lbl) => `<span class="hud-ico">🌱</span><span class="hud-lbl">${lbl}</span>`;
     if (state.senzuActive) {
       senzuBtn.classList.add("senzu-on");
-      senzuBtn.textContent = "🌱 2x AKTIV!";
+      senzuBtn.innerHTML = senzuHtml("2x AKTIV");
     } else if (usedToday) {
       senzuBtn.style.opacity = "0.45";
-      senzuBtn.textContent = "🌱 LEER";
+      senzuBtn.innerHTML = senzuHtml("LEER");
     } else {
       senzuBtn.style.opacity = "1";
       senzuBtn.classList.add("senzu-ready");
-      senzuBtn.textContent = "🌱 SENZU (2x)";
+      senzuBtn.innerHTML = senzuHtml("SENZU 2x");
     }
   }
 
@@ -969,13 +1136,16 @@ loadSmartImage(document.getElementById("intro-hero-img"), "intro_bg", () => {
   `;
   document.body.appendChild(battleModal);
 
-  const hud = document.querySelector(".hud-strip");
-  if (hud) {
+  const campDock = document.getElementById("campaign-dock") || document.querySelector(".hud-strip");
+  if (campDock) {
     const campBtn = document.createElement("button");
     campBtn.id = "campaign-btn";
     campBtn.className = "hud-chip";
-    hud.appendChild(campBtn);
+    campDock.appendChild(campBtn);
   }
+  // Nur Anzeige: Fortschrittspunkte statt "(x/y)"
+  const campDots = (filled, total) =>
+    `<span class="camp-dots">${Array.from({ length: total }, (_, i) => `<i class="${i < filled ? "on" : ""}"></i>`).join("")}</span>`;
 
   const origOpenExerciseModal = openExerciseModal;
   openExerciseModal = function (ex) {
@@ -1046,17 +1216,21 @@ loadSmartImage(document.getElementById("intro-hero-img"), "intro_bg", () => {
     if (!campBtn) return;
     const progress = state.dailyExerciseCount % EXERCISES_PER_TICKET;
     if (state.battleTickets > 0) {
-      campBtn.className = "hud-chip senzu-on";
-      campBtn.textContent = `🐉 KAMPF! (${state.battleTickets}x)`;
-    } else if (state.dailyTicketsEarned >= MAX_TICKETS_PER_DAY) {
-      campBtn.className = "hud-chip";
-      campBtn.style.opacity = "0.5";
-      campBtn.textContent = `🐉 LIMIT (4/4)`;
-    } else {
-      campBtn.className = "hud-chip";
+      campBtn.className = "hud-chip senzu-on camp-ready";
       campBtn.style.opacity = "1";
-      campBtn.textContent = `🐉 KAMPF (${progress}/${EXERCISES_PER_TICKET})`;
+      campBtn.innerHTML = `<span class="camp-label">🐉 KAMPF STARTEN</span><span class="camp-count">${state.battleTickets}×</span>`;
+    } else if (state.dailyTicketsEarned >= MAX_TICKETS_PER_DAY) {
+      campBtn.className = "hud-chip camp-limit";
+      campBtn.style.opacity = "0.5";
+      campBtn.innerHTML = `<span class="camp-label">🐉 TAGESLIMIT</span>${campDots(MAX_TICKETS_PER_DAY, MAX_TICKETS_PER_DAY)}`;
+    } else {
+      campBtn.className = "hud-chip camp-progress";
+      campBtn.style.opacity = "1";
+      campBtn.innerHTML = `<span class="camp-label">🐉 KAMPF</span>${campDots(progress, EXERCISES_PER_TICKET)}`;
     }
+    campBtn.setAttribute("aria-label", state.battleTickets > 0
+      ? `Kampf starten, ${state.battleTickets} Ticket bereit`
+      : `Kampf: ${progress} von ${EXERCISES_PER_TICKET} Übungen bis zum nächsten Ticket`);
   };
   // ===== KAMPF-GRAFIK (Parallax-Hintergrund, Aura, Energiestrahlen) =====
   const TAU = Math.PI * 2;

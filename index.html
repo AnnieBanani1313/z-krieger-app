@@ -122,11 +122,19 @@
 
   <!-- SCREEN 4: TRAINING-ARENA -->
   <section id="arena-screen" class="poster-screen arena-mode hidden">
-    <header class="poster-nav">
-      <button id="arena-back-btn" class="dark-square-btn">‹</button>
-      <div class="ki-badge">KI: <span id="power-level">0</span></div>
+    <header class="poster-nav arena-nav">
+      <button id="arena-back-btn" class="dark-square-btn" aria-label="Zurück">‹</button>
       <div class="avatar-thumb">
         <img id="header-avatar-img" alt="Avatar" />
+      </div>
+      <div class="arena-stats">
+        <span id="streak-chip" class="streak-chip">🔥 0 TAGE</span>
+        <div class="ki-badge">KI <span id="power-level">0</span></div>
+      </div>
+      <div class="hud-strip">
+        <button id="senzu-btn" class="hud-chip senzu-ready" aria-label="Senzu: doppelte KI"><span class="hud-ico">🌱</span><span class="hud-lbl">SENZU</span></button>
+        <button id="boss-btn" class="hud-chip" aria-label="Boss-Kampf"><span class="hud-ico">👹</span><span class="hud-lbl">BOSS</span></button>
+        <button id="trophy-btn" class="hud-chip" aria-label="Trophäen"><span class="hud-ico">🏆</span><span class="hud-lbl">TROPHÄEN</span></button>
       </div>
     </header>
 
@@ -144,27 +152,9 @@
           <span id="placeholder-code">c1_s1.png</span>
         </div>
 
-        <button class="body-hotspot active" data-part="arms" style="top: 38%; left: 20%;">ARME</button>
-        <button class="body-hotspot" data-part="core" style="top: 52%; left: 78%;">BAUCH</button>
-        <button class="body-hotspot" data-part="legs" style="top: 76%; left: 26%;">BEINE</button>
       </div>
 
       <div id="stage-pills" class="stage-pills"></div>
-
-      <div class="body-stats-grid">
-        <div class="stat-box active-box" data-part-box="arms">
-          <span>ARME</span>
-          <strong id="stat-arms">LVL 1</strong>
-        </div>
-        <div class="stat-box" data-part-box="core">
-          <span>BAUCH</span>
-          <strong id="stat-core">LVL 1</strong>
-        </div>
-        <div class="stat-box" data-part-box="legs">
-          <span>BEINE</span>
-          <strong id="stat-legs">LVL 1</strong>
-        </div>
-      </div>
 
       <div class="xp-row">
         <span id="level-label">LVL 1</span>
@@ -175,7 +165,32 @@
       </div>
     </div>
 
-    <div>
+    <div class="training-panel">
+      <!-- Körperteil-Kacheln: der .body-hotspot-Button füllt die ganze Kachel (Klick-Logik in app.js unverändert) -->
+      <div class="body-stats-grid">
+        <div class="stat-box active-box" data-part-box="arms">
+          <button class="body-hotspot active" data-part="arms">
+            <span class="part-ico">💪</span>
+            <span class="part-name">ARME</span>
+            <strong id="stat-arms">LVL 1</strong>
+          </button>
+        </div>
+        <div class="stat-box" data-part-box="core">
+          <button class="body-hotspot" data-part="core">
+            <span class="part-ico">🔥</span>
+            <span class="part-name">BAUCH</span>
+            <strong id="stat-core">LVL 1</strong>
+          </button>
+        </div>
+        <div class="stat-box" data-part-box="legs">
+          <button class="body-hotspot" data-part="legs">
+            <span class="part-ico">🦵</span>
+            <span class="part-name">BEINE</span>
+            <strong id="stat-legs">LVL 1</strong>
+          </button>
+        </div>
+      </div>
+
       <div class="training-head">
         <h3 id="selected-part-title" class="tall-orange-heading">TRAINING: ARME & HANTELBANK</h3>
         <div class="diff-switch">
@@ -190,6 +205,9 @@
 
     <button id="reset-btn" class="reset-link">Spielstand zurücksetzen</button>
   </section>
+
+  <!-- Fixierte Haupt-Aktion (nur sichtbar, solange #arena-screen sichtbar ist). #campaign-btn wird von app.js eingesetzt. -->
+  <div id="campaign-dock" class="campaign-dock"></div>
 
   <!-- LEVEL-UP OVERLAY -->
   <div id="levelup-overlay" class="levelup-overlay hidden">
