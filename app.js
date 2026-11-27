@@ -269,7 +269,7 @@ function playSound(mode = "click") {
   } catch (e) {}
 }
 // Aussehen der Krieger für die Übungs-Animationen (nach den Figuren-Bildern c*_s1)
-// hair: spiky | flame | wild | smooth | bald | ears | turban | bandana
+// hair: spiky | flame | wild | smooth | bald | ears | turban | bandana | dome
 // face: Extras am Kopf (dots, thirdEye, beard, shades) · body: Extras am Körper (cape, shell, pads)
 const FIGHTER_LOOKS = {
   1:  { hair: "spiky",  hairCol: "#1a1a1f", top: "#ff8c1a", top2: "#e8650a", belt: "#1d3fa0", pants: "#ff8c1a", shoe: "#2a54c8", band: "#2a54c8" },
@@ -283,6 +283,7 @@ const FIGHTER_LOOKS = {
   7:  { hair: "bald",   face: ["dots"], top: "#ff8c1a", top2: "#e8650a", belt: "#2a54c8", pants: "#ff8c1a", shoe: "#1a1a22", band: "#2a54c8" },
   10: { hair: "spiky",  hairCol: "#111114", top: "#4b3a9a", top2: "#3a2c80", belt: "#a82a2a", pants: "#4b3a9a", shoe: "#8a5a2b", band: "#7b3fb0" },
   12: { hair: "wild",   hairCol: "#15151a", body: ["pads"], top: "#5a2a7a", top2: "#43205c", belt: "#7bbf3a", beltW: 8, pants: "#5a2a7a", shoe: "#8a9a8a", shoeLen: 22, band: "#c0c0c8" },
+  11: { hair: "dome",   skin: "#e2b445", top: "#f0cc5a", top2: "#b8862a", belt: null, pants: "#d9a93a", shin: ["#7b4fc0", 46, 8], shoe: "#c99a30", arm: "#e2b445", glove: "#9b6fd0" },
   14: { hair: "wild",   hairCol: "#d9381e", body: ["pads"], padsCol: "#f4a52a", top: "#e9b48a", top2: "#3a2a2a", belt: "#2a54c8", pants: "#e8e8e8", shin: ["#2a54c8", 70, 16], shoe: "#1a1a22", arm: "#7a2a26", band: "#1a1a22" },
   13: { hair: "smooth", hairCol: "#c4a8e8", top: "#3f7ac8", top2: "#2c5ea8", belt: "#d9a441", pants: "#3c434d", shoe: "#e0a830", shoeLen: 22, arm: "#3f7ac8" },
   15: { hair: "bald",   face: ["thirdEye"], top: "#2f8a3e", top2: "#23702f", belt: "#b5382c", pants: "#2f8a3e", shin: ["#eeeeee", 74, 12], shoe: "#1f2f6a", band: "#5a3a8a" }
@@ -390,6 +391,9 @@ function getComicSVG(pose) {
           <polygon points="10,1 19,-5 10,-3" fill="${look.skin}" stroke="${OUT}" stroke-width="1"/>
           ${face}<path d="M-8,-1 C-8,-12 12,-12 12,-1 Z" fill="#eeeeee" stroke="${OUT}" stroke-width="1"/>
           <path d="M11,-5 L20,-9 L18,-2 Z" fill="#eeeeee" stroke="${OUT}" stroke-width="0.8"/>`;
+      case "dome": // goldener Kopf mit lila Kuppel und lila Mundpartie
+        return `${face}<path d="M-7,-1 C-7,-11 11,-11 11,-1 C7,-4 -3,-4 -7,-1 Z" fill="#6a3fb0" stroke="${OUT}" stroke-width="0.8"/>
+          <path d="M-3,6 Q2,11.5 7,6 Q2,8 -3,6 Z" fill="#9b6fd0"/>`;
       case "bald":
         return face;
       default: // spiky
