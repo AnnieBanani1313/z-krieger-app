@@ -449,6 +449,9 @@ function cleanImageBg(imgEl, baseName) {
 }
 
 function loadSmartImage(imgEl, baseName, onFail, onSuccess) {
+  if (!imgEl) return;
+  imgEl.dataset.targetBase = baseName;
+
   if (_croppedCache.has(baseName)) {
     imgEl.dataset.cleaned = baseName;
     imgEl.classList.add("clean-alpha");
@@ -457,23 +460,35 @@ function loadSmartImage(imgEl, baseName, onFail, onSuccess) {
     if (onSuccess) onSuccess();
     return;
   }
+
+  imgEl.removeAttribute("src");
+  imgEl.style.display = "none";
   imgEl.classList.remove("clean-alpha");
   imgEl.dataset.cleaned = "";
+
   imgEl.onload = () => {
-    if (baseName.startsWith("c") && imgEl.dataset.cleaned !== baseName) cleanImageBg(imgEl, baseName);
+    if (imgEl.dataset.targetBase !== baseName) return;
+    if (baseName.startsWith("c") && imgEl.dataset.cleaned !== baseName) {
+      cleanImageBg(imgEl, baseName);
+    }
     imgEl.style.display = "block";
     if (onSuccess) onSuccess();
   };
+
   imgEl.onerror = () => {
+    if (imgEl.dataset.targetBase !== baseName) return;
     imgEl.onerror = () => {
+      if (imgEl.dataset.targetBase !== baseName) return;
       imgEl.style.display = "none";
       imgEl.removeAttribute("src");
       if (onFail) onFail();
     };
     imgEl.src = `${baseName}.jpg`;
   };
+
   imgEl.src = `${baseName}.png`;
 }
+
 
 setTimeout(() => {
   CHARACTERS.forEach(c => {
