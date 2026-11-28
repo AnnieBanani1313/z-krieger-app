@@ -1750,8 +1750,37 @@ loadSmartImage(document.getElementById("intro-hero-img"), "intro_bg", () => {
     { id: "shooter", name: "HIMMELS-JAGD", run: (env) => miniShooter(env) },
     { id: "maze", name: "KI-LABYRINTH", run: (env) => miniMaze(env) },
     { id: "snake", name: "DRACHEN-SCHLANGE", run: (env) => miniSnake(env) },
-    { id: "breaker", name: "KI-MAUERBRECHER", run: (env) => miniBreaker(env) }
+    { id: "breaker", name: "KI-MAUERBRECHER", run: (env) => miniBreaker(env) },
+    { id: "whack", name: "WICHT-JAGD", run: (env) => miniWhack(env) },
+    { id: "memory", name: "KI-MEMORY", run: (env) => miniMemory(env) },
+    { id: "climb", name: "HIMMELSLEITER", run: (env) => miniClimb(env) },
+    { id: "cannon", name: "KI-KANONE", run: (env) => miniCannon(env) },
+    { id: "rhythm", name: "KI-TAKT", run: (env) => miniRhythm(env) },
+    { id: "stack", name: "KI-TURM", run: (env) => miniStack(env) }
   ];
+
+  // Lädt das (freigestellte) Bild eines Kriegers als Image
+  function mgCharImage(id) {
+    const im = new Image();
+    loadSmartImage(im, `c${id}_s1`, () => {});
+    return im;
+  }
+  // Bild proportional in ein Rechteck einpassen
+  function mgDrawContain(ctx, img, x, y, w, h) {
+    if (!img || !img.complete || !img.naturalWidth) return;
+    const s = Math.min(w / img.naturalWidth, h / img.naturalHeight);
+    const dw = img.naturalWidth * s, dh = img.naturalHeight * s;
+    ctx.drawImage(img, x + (w - dw) / 2, y + (h - dh) / 2, dw, dh);
+  }
+  function mgHearts(ctx, lives, x = 14, y = 12) {
+    for (let i = 0; i < 3; i++) {
+      ctx.fillStyle = i < lives ? "#ff4d6d" : "rgba(255,255,255,0.18)";
+      ctx.beginPath(); ctx.arc(x + i * 14, y, 4.5, 0, TAU); ctx.fill();
+    }
+  }
+  function mgInfoButton(ctrlArea, text, iconName = "glove") {
+    ctrlArea.innerHTML = `<button type="button" class="l-card mg-btn mg-info" style="grid-column: span 4;" disabled>${icon(iconName)}${text}</button>`;
+  }
   const MG_DIRS = { l: [-1, 0], r: [1, 0], u: [0, -1], d: [0, 1] };
   const MG_OPP = { l: "r", r: "l", u: "d", d: "u" };
 
@@ -3128,6 +3157,755 @@ loadSmartImage(document.getElementById("intro-hero-img"), "intro_bg", () => {
       ]);
       mgKO(ctx, sim);
       ctx.restore();
+      env.bars();
+    });
+  }
+
+  // ---------------------------------------------------------------------
+  // SPIEL 7: WICHT-JAGD – auftauchende Wichte antippen, Freunde verschonen
+  // ---------------------------------------------------------------------
+  function miniWhack(env) {
+    const { ctx, canvas, ctrlArea, lvl, sim, enemyObj, heroObj } = env;
+    const rnd = mgRng(Date.now() ^ (lvl * 92821));
+    const fx = mgFx();
+    const C = rnd() < 0.5 ? 3 : 4, R = 3;
+    const HW = MG_W / C, HH = (MG_H - 30) / R;
+    const holes = [];
+    for (let r = 0; r < R; r++) for (let c = 0; c < C; c++) holes.push({ x: HW * (c + 0.5), y: 30 + HH * (r + 0.78), pop: null });
+    const GOAL = Math.round(16 + Math.min(14, (lvl - 2) * 1.4));
+    const TIME = 45 * 60;
+    const friends = CHARACTERS.filter(c => c.id !== heroObj.id && c.id !== enemyObj.id)
+      .sort(() => rnd() - 0.5).slice(0, 3).map(c => ({ c, im: mgCharImage(c.id) }));
+    let hits = 0, lives = 3, time = TIME, intro = 170, spawnT = 30, shake = 0;
+    sim.maxEnemyHp = GOAL; sim.enemyHp = GOAL; sim.heroHp = 100; sim.ki = 100;
+
+    const spawn = () => {
+      const freeH = holes.filter(h => !h.pop);
+      if (!freeH.length) return;
+      const h = freeH[Math.floor(rnd() * freeH.length)];
+      const roll = rnd();
+      const kind = roll < 0.12 ? "gold" : roll < 0.26 ? "friend" : (roll < 0.33 && lvl >= 4) ? "bomb" : roll < 0.37 ? "senzu" : "shade";
+      const life = Math.max(40, 92 - lvl * 4) * (kind === "bomb" ? 1.4 : 1);
+      h.pop = { kind, t: 0, life, hit: false, friend: kind === "friend" ? friends[Math.floor(rnd() * friends.length)] : null };
+    };
+    mgInfoButton(ctrlArea, "TIPPE DIE WICHTE AUF DEM BILD AN!");
+    canvas.onpointerdown = (e) => {
+      if (intro > 45) { intro = 45; return; }
+      if (sim.over || intro > 0) return;
+      const p = mgCanvasPos(canvas, e);
+      const h = holes.find(o => o.pop && !o.pop.hit && Math.abs(p.x - o.x) < HW * 0.42 && p.y > o.y - HH * 0.9 && p.y < o.y + 12);
+      if (!h) return;
+      const k = h.pop.kind;
+      h.pop.hit = true; h.pop.t = Math.max(h.pop.t, h.pop.life - 10);
+      if (k === "friend") {
+        lives--; shake = 9; playFightSfx("hit"); fx.text(h.x, h.y - 40, "FREUND!", "#80ed99");
+        if (lives <= 0) env.end(false);
+      } else if (k === "senzu") {
+        time = Math.min(TIME, time + 300); playFightSfx("select"); fx.text(h.x, h.y - 40, "+5 SEK", "#80ed99");
+      } else {
+        hits += k === "gold" ? 2 : 1; playFightSfx("hit");
+        fx.burst(h.x, h.y - 20, k === "gold" ? "#ffd166" : "#c77dff", 12);
+        fx.text(h.x, h.y - 40, k === "gold" ? "GOLD +2" : k === "bomb" ? "ENTSCHÄRFT!" : "+1", k === "gold" ? "#ffd166" : "#ffffff");
+        sim.enemyHp = Math.max(0, GOAL - hits);
+        if (hits >= GOAL) env.end(true);
+      }
+    };
+
+    mgLoop((dt, t) => {
+      if (!sim.over && intro > 0) intro -= dt;
+      else if (!sim.over) {
+        time -= dt;
+        if (time <= 0) { time = 0; env.end(false); }
+        spawnT -= dt;
+        if (spawnT <= 0) {
+          spawn(); if (rnd() < 0.2 + lvl * 0.025) spawn();
+          spawnT = Math.max(14, 46 - lvl * 2.5) * (0.7 + rnd() * 0.6);
+        }
+        holes.forEach(h => {
+          if (!h.pop) return;
+          h.pop.t += dt;
+          if (h.pop.t >= h.pop.life) {
+            if (h.pop.kind === "bomb" && !h.pop.hit) {
+              lives--; shake = 12; playFightSfx("hit"); fx.burst(h.x, h.y - 20, "#ff9f1c", 20); fx.text(h.x, h.y - 40, "BUMM!", "#ff9f1c");
+              if (lives <= 0) env.end(false);
+            }
+            h.pop = null;
+          }
+        });
+      }
+      sim.heroHp = (lives / 3) * 100;
+      sim.ki = (time / TIME) * 100;
+
+      ctx.save();
+      if (shake > 0) { ctx.translate((Math.random() - 0.5) * shake, (Math.random() - 0.5) * shake); shake *= Math.pow(0.82, dt); if (shake < 0.3) shake = 0; }
+      drawStageBackground(ctx, MG_W, MG_H, t * 0.02, lvl, t);
+      ctx.fillStyle = "rgba(0,0,0,0.25)"; ctx.fillRect(0, 0, MG_W, MG_H);
+      holes.forEach(h => {
+        ctx.fillStyle = "#120c16"; ctx.beginPath(); ctx.ellipse(h.x, h.y, HW * 0.34, 9, 0, 0, TAU); ctx.fill();
+        if (h.pop) {
+          const p = h.pop;
+          const up = Math.min(1, p.t / 8, (p.life - p.t) / 8);
+          const ey = h.y - up * HH * 0.55;
+          ctx.save();
+          ctx.beginPath(); ctx.rect(h.x - HW / 2, h.y - HH, HW, HH); ctx.clip();
+          if (p.kind === "friend") drawFighterUnstretched(ctx, p.friend.im, h.x, ey + 22, { color: "#80ed99", t, maxW: 34, maxH: 46 });
+          else if (p.kind === "senzu") { ctx.fillStyle = "#80ed99"; ctx.beginPath(); ctx.ellipse(h.x, ey, 11, 7, 0.5, 0, TAU); ctx.fill(); ctx.strokeStyle = "#2d6a4f"; ctx.lineWidth = 1.5; ctx.stroke(); }
+          else if (p.kind === "bomb") {
+            ctx.fillStyle = "#1a1a22"; ctx.beginPath(); ctx.arc(h.x, ey, 12, 0, TAU); ctx.fill();
+            ctx.fillStyle = Math.floor(t / 90) % 2 ? "#ff9f1c" : "#ff2a55"; ctx.beginPath(); ctx.arc(h.x + 7, ey - 12, 3.5, 0, TAU); ctx.fill();
+            ctx.fillStyle = "#fff"; ctx.font = "bold 11px Anton, sans-serif"; ctx.textAlign = "center"; ctx.fillText("!", h.x, ey + 4); ctx.textAlign = "left";
+          } else {
+            if (p.kind === "gold") { ctx.fillStyle = "rgba(255, 209, 102, 0.45)"; ctx.beginPath(); ctx.arc(h.x, ey, 18, 0, TAU); ctx.fill(); }
+            mgShade(ctx, h.x, ey, 13, p.hit, t);
+          }
+          ctx.restore();
+        }
+        ctx.fillStyle = "#3a2a22"; ctx.beginPath(); ctx.ellipse(h.x, h.y + 2, HW * 0.36, 7, 0, 0, Math.PI); ctx.fill();
+      });
+      mgHearts(ctx, lives);
+      ctx.fillStyle = "#e6e6ec"; ctx.font = "700 11px Rajdhani, sans-serif";
+      ctx.fillText(`TREFFER ${hits}/${GOAL}`, 64, 16);
+      ctx.fillStyle = time < 600 ? "#ff4d6d" : "#e6e6ec";
+      ctx.fillText(`ZEIT ${Math.ceil(time / 60)}s`, 300, 16);
+
+      fx.draw(ctx, dt);
+      mgIntro(ctx, intro, "WICHT-JAGD", [
+        `Tippe ${GOAL} Schatten-Wichte an, bevor die Zeit abläuft.`,
+        "Goldene zählen doppelt · Bomben schnell antippen!",
+        "Aber Finger weg von deinen Freunden! Senzu = +5 Sekunden"
+      ]);
+      mgKO(ctx, sim);
+      ctx.restore();
+      env.bars();
+    });
+  }
+
+  // ---------------------------------------------------------------------
+  // SPIEL 8: KI-MEMORY – Krieger-Paare finden, Gegner mischt dazwischen
+  // ---------------------------------------------------------------------
+  function miniMemory(env) {
+    const { ctx, canvas, ctrlArea, lvl, sim } = env;
+    const rnd = mgRng(Date.now() ^ (lvl * 31337));
+    const fx = mgFx();
+    const PAIRS = lvl >= 6 ? 9 : 6;
+    const COLS = 6, ROWS = (PAIRS * 2) / COLS;
+    const CW = 52, CH = ROWS === 2 ? 90 : 66, GAP = 6;
+    const OX = (MG_W - (COLS * (CW + GAP) - GAP)) / 2, OY = ROWS === 2 ? 40 : 24;
+    const chars = CHARACTERS.slice().sort(() => rnd() - 0.5).slice(0, PAIRS).map(c => ({ c, im: mgCharImage(c.id) }));
+    const deck = chars.concat(chars).sort(() => rnd() - 0.5);
+    const cards = deck.map((d, i) => ({ d, x: OX + (i % COLS) * (CW + GAP), y: OY + Math.floor(i / COLS) * (CH + GAP), up: false, done: false, a: 0 }));
+    const TIME = (50 + PAIRS * 4 - Math.min(15, lvl)) * 60;
+    let time = TIME, open = [], lockT = 0, found = 0, intro = 170, shuffleT = 600 + rnd() * 300, warnT = 0, swapPair = null;
+    sim.maxEnemyHp = PAIRS; sim.enemyHp = PAIRS; sim.heroHp = 100; sim.ki = 100;
+
+    mgInfoButton(ctrlArea, "TIPPE ZWEI KARTEN AN – FINDE DIE PAARE!", "rotate");
+    canvas.onpointerdown = (e) => {
+      if (intro > 45) { intro = 45; return; }
+      if (sim.over || intro > 0 || lockT > 0) return;
+      const p = mgCanvasPos(canvas, e);
+      const card = cards.find(c => p.x >= c.x && p.x <= c.x + CW && p.y >= c.y && p.y <= c.y + CH);
+      if (!card || card.up || card.done) return;
+      card.up = true; open.push(card); playFightSfx("click");
+      if (open.length === 2) {
+        if (open[0].d.c.id === open[1].d.c.id) {
+          open.forEach(c => { c.done = true; fx.burst(c.x + CW / 2, c.y + CH / 2, "#ffd166", 10); });
+          found++; sim.enemyHp = PAIRS - found; playFightSfx("hit");
+          fx.text(open[1].x + CW / 2, open[1].y, open[1].d.c.name, "#ffd166");
+          open = [];
+          if (found >= PAIRS) env.end(true);
+        } else {
+          lockT = 48;
+          if (lvl >= 5) { time -= 120; fx.text(open[1].x + CW / 2, open[1].y, "-2 SEK", "#ff4d6d"); }
+        }
+      }
+    };
+
+    mgLoop((dt, t) => {
+      if (!sim.over && intro > 0) intro -= dt;
+      else if (!sim.over) {
+        time -= dt;
+        if (time <= 0) { time = 0; env.end(false); }
+        if (lockT > 0) { lockT -= dt; if (lockT <= 0) { open.forEach(c => { c.up = false; }); open = []; } }
+        // Gegner vertauscht zwei verdeckte Karten
+        if (lvl >= 3) {
+          if (warnT > 0) {
+            warnT -= dt;
+            if (warnT <= 0 && swapPair) {
+              const [a, b] = swapPair;
+              if (!a.up && !b.up && !a.done && !b.done) { const tmp = a.d; a.d = b.d; b.d = tmp; fx.text(MG_W / 2, 18, "GEMISCHT!", "#ff4d6d"); playFightSfx("zap"); }
+              swapPair = null;
+            }
+          } else {
+            shuffleT -= dt;
+            if (shuffleT <= 0) {
+              const hidden = cards.filter(c => !c.up && !c.done);
+              if (hidden.length >= 2) { const a = hidden[Math.floor(rnd() * hidden.length)]; let b = a; while (b === a) b = hidden[Math.floor(rnd() * hidden.length)]; swapPair = [a, b]; warnT = 70; }
+              shuffleT = Math.max(360, 720 - lvl * 30) + rnd() * 240;
+            }
+          }
+        }
+      }
+      sim.ki = (time / TIME) * 100;
+
+      ctx.save();
+      drawStageBackground(ctx, MG_W, MG_H, t * 0.02, lvl + 1, t);
+      ctx.fillStyle = "rgba(0,0,0,0.3)"; ctx.fillRect(0, 0, MG_W, MG_H);
+      cards.forEach(c => {
+        c.a += ((c.up || c.done ? 1 : 0) - c.a) * Math.min(1, 0.22 * dt);
+        const sx = Math.abs(1 - 2 * c.a);
+        const cx = c.x + CW / 2;
+        const warned = swapPair && swapPair.includes(c);
+        ctx.save();
+        ctx.translate(cx, c.y); ctx.scale(Math.max(0.04, sx), 1); ctx.translate(-cx, -c.y);
+        if (c.a < 0.5) {
+          ctx.fillStyle = warned && Math.floor(t / 80) % 2 ? "#5a1a2a" : "#241a3d";
+          ctx.fillRect(c.x, c.y, CW, CH);
+          ctx.strokeStyle = warned ? "#ff4d6d" : "#4b3c7a"; ctx.lineWidth = 1.5; ctx.strokeRect(c.x + 2, c.y + 2, CW - 4, CH - 4);
+          mgOrb(ctx, cx, c.y + CH / 2, 7, t);
+        } else {
+          ctx.fillStyle = c.done ? "#2b2414" : "#e9e6f2"; ctx.fillRect(c.x, c.y, CW, CH);
+          ctx.fillStyle = c.d.c.color; ctx.fillRect(c.x, c.y + CH - 4, CW, 4);
+          mgDrawContain(ctx, c.d.im, c.x + 3, c.y + 3, CW - 6, CH - 10);
+          if (c.done) { ctx.strokeStyle = "#ffd166"; ctx.lineWidth = 2; ctx.strokeRect(c.x + 1, c.y + 1, CW - 2, CH - 2); }
+        }
+        ctx.restore();
+      });
+      ctx.fillStyle = "#e6e6ec"; ctx.font = "700 11px Rajdhani, sans-serif";
+      ctx.fillText(`PAARE ${found}/${PAIRS}`, 10, 14);
+      ctx.fillStyle = time < 600 ? "#ff4d6d" : "#e6e6ec";
+      ctx.fillText(`ZEIT ${Math.ceil(time / 60)}s`, 300, 14);
+      if (swapPair) { ctx.fillStyle = "#ff4d6d"; ctx.fillText("ACHTUNG: GEGNER MISCHT!", 120, 14); }
+
+      fx.draw(ctx, dt);
+      mgIntro(ctx, intro, "KI-MEMORY", [
+        `Finde alle ${PAIRS} Krieger-Paare, bevor die Zeit abläuft.`,
+        lvl >= 3 ? "Rot blinkende Karten werden gleich vom Gegner vertauscht!" : "Merk dir gut, wo welcher Krieger liegt.",
+        lvl >= 5 ? "Falsches Paar kostet 2 Sekunden." : "Tippe zwei Karten nacheinander an."
+      ]);
+      mgKO(ctx, sim);
+      ctx.restore();
+      env.bars();
+    });
+  }
+
+  // ---------------------------------------------------------------------
+  // SPIEL 9: HIMMELSLEITER – von Plattform zu Plattform nach oben springen
+  // ---------------------------------------------------------------------
+  function miniClimb(env) {
+    const { ctx, canvas, ctrlArea, lvl, sim, heroObj, enemySprite, heroSprite } = env;
+    const rnd = mgRng(Date.now() ^ (lvl * 7777));
+    const fx = mgFx();
+    const diff = Math.min(1, (lvl - 2) / 10);
+    const GOAL = 2000 + (lvl - 2) * 140;
+    const plats = [{ x: MG_W / 2 - 40, wy: 0, w: 80, type: "normal" }];
+    const shadesC = [], orbsC = [];
+    let wy = 0;
+    while (wy < GOAL) {
+      wy += 36 + rnd() * (28 + diff * 18);
+      const w = Math.max(36, 58 - diff * 16 - rnd() * 8);
+      const roll = rnd();
+      const type = roll < 0.12 ? "spring" : roll < 0.3 + diff * 0.1 ? "move" : roll < 0.42 + diff * 0.15 ? "crumble" : "normal";
+      const p = { x: 10 + rnd() * (MG_W - 20 - w), wy, w, type, vx: (rnd() < 0.5 ? -1 : 1) * (0.6 + rnd() * 0.8), broken: false };
+      plats.push(p);
+      if (type === "normal" && lvl >= 3 && rnd() < 0.1 + diff * 0.1) shadesC.push({ p, alive: true });
+      if (rnd() < 0.3) orbsC.push({ x: 20 + rnd() * (MG_W - 40), wy: wy + 22, got: false });
+    }
+    const top = { x: MG_W / 2 - 50, wy: GOAL + 60, w: 100, type: "normal" };
+    plats.push(top);
+    const H = { x: MG_W / 2, wy: 0, vy: 8.2, dir: 0, inv: 0 };
+    let camY = 0, lives = 3, intro = 170, shake = 0, finale = 0, dropT = 260 + rnd() * 200, got = 0;
+    const drops = [];
+    const screenY = (w) => MG_H - 22 - (w - camY);
+    sim.maxEnemyHp = 100; sim.enemyHp = 100; sim.heroHp = 100; sim.ki = 0;
+
+    const b = mgButtons(ctrlArea, [
+      { id: "cl-l", icon: "left", label: "LINKS", span: 2 },
+      { id: "cl-r", icon: "right", label: "RECHTS", span: 2 }
+    ]);
+    mgHold(b["cl-l"], () => { H.dir = -1; }, () => { if (H.dir === -1) H.dir = 0; });
+    mgHold(b["cl-r"], () => { H.dir = 1; }, () => { if (H.dir === 1) H.dir = 0; });
+    canvas.onpointerdown = (e) => { if (intro > 45) { intro = 45; return; } H.dir = mgCanvasPos(canvas, e).x < MG_W / 2 ? -1 : 1; };
+    canvas.onpointerup = () => { H.dir = 0; };
+
+    const loseLife = (why) => {
+      if (H.inv > 0 || sim.over) return;
+      lives--; shake = 10; playFightSfx("hit"); fx.text(H.x, screenY(H.wy) - 40, why, "#ff4d6d");
+      if (lives <= 0) { env.end(false); return; }
+      H.inv = 100;
+    };
+
+    mgLoop((dt, t) => {
+      if (!sim.over && intro > 0) intro -= dt;
+      else if (!sim.over && finale > 0) { finale -= dt; if (finale <= 0) { sim.enemyHp = 0; env.end(true); } }
+      else if (!sim.over) {
+        if (H.inv > 0) H.inv -= dt;
+        H.x += H.dir * 3.3 * dt;
+        if (H.x < -10) H.x = MG_W + 10; if (H.x > MG_W + 10) H.x = -10;
+        const prev = H.wy;
+        H.vy -= 0.32 * dt; H.wy += H.vy * dt;
+        plats.forEach(p => { if (p.type === "move") { p.x += p.vx * dt; if (p.x < 4 || p.x + p.w > MG_W - 4) p.vx = -p.vx; } });
+        if (H.vy < 0) {
+          for (const p of plats) {
+            if (p.broken) continue;
+            if (prev >= p.wy && H.wy <= p.wy && H.x > p.x - 6 && H.x < p.x + p.w + 6) {
+              H.wy = p.wy;
+              H.vy = p.type === "spring" ? 12.4 : 8.2;
+              if (p.type === "spring") { fx.text(H.x, screenY(p.wy) - 20, "HUI!", "#7bdff2"); playFightSfx("zap"); }
+              if (p.type === "crumble") { p.broken = true; fx.burst(p.x + p.w / 2, screenY(p.wy), "#8d6e4f", 10); }
+              if (p === top) { finale = 70; playFightSfx("beam"); }
+              break;
+            }
+          }
+        }
+        camY = Math.max(camY, H.wy - 110);
+        if (H.wy < camY - 40) {
+          loseLife("ABGESTÜRZT!");
+          if (!sim.over) {
+            const safe = plats.filter(p => !p.broken && p.wy >= camY && p.wy <= camY + 150).sort((a, c) => a.wy - c.wy)[0] || plats[0];
+            H.x = safe.x + safe.w / 2; H.wy = safe.wy + 4; H.vy = 8.2;
+          }
+        }
+        shadesC.forEach(s => {
+          if (s.alive && Math.abs(H.x - (s.p.x + s.p.w / 2)) < 14 && Math.abs(H.wy - (s.p.wy + 10)) < 16) {
+            if (H.vy < 0) { s.alive = false; H.vy = 8.2; fx.burst(H.x, screenY(H.wy), "#c77dff", 12); fx.text(H.x, screenY(H.wy) - 20, "WEG DAMIT!", "#c77dff"); }
+            else loseLife("WICHT!");
+          }
+        });
+        orbsC.forEach(o => { if (!o.got && Math.abs(H.x - o.x) < 14 && Math.abs(H.wy + 14 - o.wy) < 18) { o.got = true; got++; sim.ki = Math.min(100, sim.ki + 10); playFightSfx("select"); } });
+        if (lvl >= 3) {
+          dropT -= dt;
+          if (dropT <= 0) { drops.push({ x: 20 + rnd() * (MG_W - 40), wy: camY + MG_H + 20, warn: 50 }); dropT = Math.max(110, 260 - lvl * 12) + rnd() * 150; }
+        }
+        for (let i = drops.length - 1; i >= 0; i--) {
+          const d = drops[i];
+          if (d.warn > 0) { d.warn -= dt; continue; }
+          d.wy -= 3.2 * dt;
+          if (Math.abs(d.x - H.x) < 12 && Math.abs(d.wy - (H.wy + 16)) < 16) { drops.splice(i, 1); loseLife("GETROFFEN!"); }
+          else if (d.wy < camY - 30) drops.splice(i, 1);
+        }
+      }
+      sim.heroHp = (lives / 3) * 100;
+      if (!finale && !sim.over) sim.enemyHp = 100 * (1 - Math.min(1, Math.max(0, H.wy) / (GOAL + 60)));
+
+      ctx.save();
+      if (shake > 0) { ctx.translate((Math.random() - 0.5) * shake, (Math.random() - 0.5) * shake); shake *= Math.pow(0.82, dt); if (shake < 0.3) shake = 0; }
+      drawStageBackground(ctx, MG_W, MG_H, camY * 0.3, lvl + 2, t);
+      ctx.fillStyle = "rgba(10, 12, 30, 0.25)"; ctx.fillRect(0, 0, MG_W, MG_H);
+      plats.forEach(p => {
+        const y = screenY(p.wy);
+        if (y < -20 || y > MG_H + 20 || p.broken) return;
+        const cols = { normal: ["#6d5bd0", "#2e2550"], move: ["#4cc9f0", "#1d4e6a"], crumble: ["#a47148", "#4a3020"], spring: ["#ffffff", "#9ad1ff"] }[p.type];
+        ctx.fillStyle = cols[1]; ctx.fillRect(p.x, y, p.w, 8);
+        ctx.fillStyle = cols[0]; ctx.fillRect(p.x, y, p.w, 3);
+        if (p.type === "crumble") { ctx.strokeStyle = "rgba(0,0,0,0.5)"; ctx.beginPath(); ctx.moveTo(p.x + p.w * 0.3, y); ctx.lineTo(p.x + p.w * 0.4, y + 8); ctx.moveTo(p.x + p.w * 0.7, y); ctx.lineTo(p.x + p.w * 0.6, y + 8); ctx.stroke(); }
+        if (p.type === "spring") { ctx.fillStyle = "rgba(255,255,255,0.7)"; ctx.beginPath(); ctx.ellipse(p.x + p.w / 2, y - 2, p.w * 0.45, 5, 0, 0, TAU); ctx.fill(); }
+      });
+      shadesC.forEach(s => { if (s.alive && !s.p.broken) { const y = screenY(s.p.wy); if (y > -20 && y < MG_H + 20) mgShade(ctx, s.p.x + s.p.w / 2, y - 11, 9, false, t); } });
+      orbsC.forEach(o => { if (!o.got) { const y = screenY(o.wy); if (y > -10 && y < MG_H + 10) mgOrb(ctx, o.x, y, 4.5, t); } });
+      const ty = screenY(top.wy);
+      if (ty > -60) drawFighterUnstretched(ctx, enemySprite, top.x + top.w / 2 + 26, ty, { color: "#ff0055", flip: true, t: t + 900, maxW: 30, maxH: 42 });
+      drops.forEach(d => {
+        if (d.warn > 0) { ctx.fillStyle = `rgba(255, 42, 85, ${0.4 + 0.4 * Math.abs(Math.sin(t / 60))})`; ctx.font = "bold 16px Anton, sans-serif"; ctx.textAlign = "center"; ctx.fillText("!", d.x, 18); ctx.textAlign = "left"; return; }
+        const y = screenY(d.wy); ctx.fillStyle = "#ff2a55"; ctx.beginPath(); ctx.arc(d.x, y, 6, 0, TAU); ctx.fill();
+      });
+      const hy = screenY(H.wy);
+      if (!(H.inv > 0 && Math.floor(t / 80) % 2 === 0)) drawFighterUnstretched(ctx, heroSprite, H.x, hy, { color: heroObj.color, t, maxW: 22, maxH: 30 });
+      if (finale > 0) drawBeam(ctx, H.x, top.x + top.w / 2 + 20, hy - 15, 12, heroObj.color, t);
+      mgHearts(ctx, lives);
+      mgPanel(ctx, MG_W - 14, 24, 8, MG_H - 48, 0.6);
+      const prog = Math.min(1, Math.max(0, H.wy) / (GOAL + 60));
+      ctx.fillStyle = heroObj.color; ctx.fillRect(MG_W - 12, 24 + (MG_H - 50) * (1 - prog), 4, (MG_H - 50) * prog);
+      ctx.fillStyle = "#e6e6ec"; ctx.font = "700 11px Rajdhani, sans-serif";
+      ctx.fillText(`HÖHE ${Math.round(prog * 100)}%`, 64, 16);
+
+      fx.draw(ctx, dt);
+      mgIntro(ctx, intro, "HIMMELSLEITER", [
+        "Spring von Plattform zu Plattform nach oben bis zum Gegner.",
+        "Steuern mit LINKS/RECHTS oder linke/rechte Bildhälfte gedrückt halten.",
+        "Braune bröckeln · Wolken federn · Wichte von oben plattmachen!"
+      ]);
+      mgKO(ctx, sim);
+      ctx.restore();
+      env.bars();
+    });
+  }
+
+  // ---------------------------------------------------------------------
+  // SPIEL 10: KI-KANONE – Winkel & Kraft einstellen, Wind beachten, Runde um Runde
+  // ---------------------------------------------------------------------
+  function miniCannon(env) {
+    const { ctx, ctrlArea, canvas, lvl, sim, heroObj, enemySprite, heroSprite } = env;
+    const rnd = mgRng(Date.now() ^ (lvl * 1103515245));
+    const fx = mgFx();
+    const STEP = 4, N = Math.ceil(MG_W / STEP) + 1;
+    const p1 = rnd() * 6, p2 = rnd() * 6, hillH = 40 + rnd() * 50;
+    const ground = Array.from({ length: N }, (_, i) => {
+      const x = i * STEP;
+      const mid = Math.exp(-Math.pow((x - MG_W * (0.45 + rnd() * 0.0)) / 60, 2)) * hillH;
+      return 200 - mid - Math.sin(x * 0.02 + p1) * 10 - Math.sin(x * 0.05 + p2) * 6;
+    });
+    const gAt = (x) => ground[Math.max(0, Math.min(N - 1, Math.round(x / STEP)))];
+    const heroX = 34, enemyX = 300 + rnd() * 30;
+    const G = 0.11;
+    let wind = (rnd() - 0.5) * (0.03 + Math.min(0.04, (lvl - 2) * 0.004));
+    let angle = 50, power = 0, charging = false, angUp = false, angDown = false;
+    let turn = "hero", shot = null, intro = 170, shake = 0, enemyThink = 0;
+    const eMax = 100;
+    sim.maxEnemyHp = eMax; sim.enemyHp = eMax; sim.heroHp = 100; sim.ki = 0;
+    const hitDmg = 30 + env.heroStage * 2;
+
+    const fire = (from, ang, pow, owner) => {
+      const a = ang * Math.PI / 180;
+      const sp = 2 + pow * 0.045;
+      const dir = owner === "hero" ? 1 : -1;
+      shot = { x: from, y: gAt(from) - 26, vx: Math.cos(a) * sp * dir, vy: -Math.sin(a) * sp, owner, trail: [] };
+      playFightSfx("zap");
+    };
+    const simulate = (ang, pow) => {
+      const a = ang * Math.PI / 180, sp = 2 + pow * 0.045;
+      let x = enemyX, y = gAt(enemyX) - 26, vx = -Math.cos(a) * sp, vy = -Math.sin(a) * sp;
+      for (let i = 0; i < 600; i++) { vx += wind; vy += G; x += vx; y += vy; if (x < 0 || x > MG_W || y >= gAt(x)) break; }
+      return x;
+    };
+    const enemyTurn = () => {
+      let best = { d: Infinity, a: 45, p: 60 };
+      for (let a = 25; a <= 75; a += 5) for (let p = 30; p <= 100; p += 5) {
+        const d = Math.abs(simulate(a, p) - heroX);
+        if (d < best.d) best = { d, a, p };
+      }
+      // Gegner zielt "menschlich": Streuung + ab und zu ein klarer Fehlschuss
+      let err = Math.max(10, 30 - lvl * 1.2);
+      if (rnd() < 0.3) err *= 2.2;
+      fire(enemyX, best.a + (rnd() - 0.5) * err * 0.6, Math.max(20, Math.min(100, best.p + (rnd() - 0.5) * err)), "enemy");
+    };
+    const explode = (x, y) => {
+      fx.burst(x, y, shot.owner === "hero" ? heroObj.color : "#ff0055", 18); playFightSfx("hit"); shake = 7;
+      for (let i = 0; i < N; i++) { const dx = i * STEP - x; if (Math.abs(dx) < 14) ground[i] = Math.max(ground[i], y + Math.sqrt(196 - dx * dx) * 0.7); }
+    };
+
+    const b = mgButtons(ctrlArea, [
+      { id: "ca-u", icon: "up", label: "WINKEL +" },
+      { id: "ca-d", icon: "down", label: "WINKEL −" },
+      { id: "ca-f", icon: "bolt", label: "FEUER", sub: "halten = Kraft", span: 2, cls: "special" }
+    ]);
+    mgHold(b["ca-u"], () => { angUp = true; }, () => { angUp = false; });
+    mgHold(b["ca-d"], () => { angDown = true; }, () => { angDown = false; });
+    mgHold(b["ca-f"], () => { if (turn === "hero" && intro <= 0 && !sim.over) { charging = true; power = 0; } }, () => {
+      if (charging && turn === "hero" && !sim.over) { charging = false; fire(heroX, angle, power, "hero"); turn = "flying"; }
+    });
+    canvas.onpointerdown = () => { if (intro > 45) intro = 45; };
+
+    mgLoop((dt, t) => {
+      if (!sim.over && intro > 0) intro -= dt;
+      else if (!sim.over) {
+        if (angUp) angle = Math.min(85, angle + 0.9 * dt);
+        if (angDown) angle = Math.max(10, angle - 0.9 * dt);
+        if (charging) power = Math.min(100, power + 1.25 * dt);
+        sim.ki = charging ? power : 0;
+        if (turn === "enemyWait") { enemyThink -= dt; if (enemyThink <= 0) { enemyTurn(); turn = "enemyFlying"; } }
+        if (shot) {
+          const steps = 2;
+          for (let s = 0; s < steps && shot; s++) {
+            shot.vx += wind * dt / steps; shot.vy += G * dt / steps;
+            shot.x += shot.vx * dt / steps; shot.y += shot.vy * dt / steps;
+            if (Math.floor(t / 30) % 2 === 0) shot.trail.push([shot.x, shot.y]);
+            const target = shot.owner === "hero" ? enemyX : heroX;
+            const ty = gAt(target) - 22;
+            if (Math.hypot(shot.x - target, shot.y - ty) < 20) {
+              explode(shot.x, shot.y);
+              if (shot.owner === "hero") { sim.enemyHp -= hitDmg; fx.text(target, ty - 30, `TREFFER! -${hitDmg}`, "#ffe66d"); }
+              else { sim.heroHp -= 20; fx.text(target, ty - 30, "AUTSCH! -20", "#ff4d6d"); }
+              shot = null;
+            } else if (shot.y >= gAt(shot.x) || shot.x < -20 || shot.x > MG_W + 20 || shot.y > MG_H + 20) {
+              if (shot.x > 0 && shot.x < MG_W) explode(shot.x, Math.min(shot.y, gAt(shot.x)));
+              fx.text(Math.max(30, Math.min(MG_W - 30, shot.x)), Math.min(200, gAt(Math.max(0, Math.min(MG_W, shot.x)))) - 20, "DANEBEN", "#9a9aa8");
+              shot = null;
+            }
+            if (!shot) {
+              if (sim.enemyHp <= 0) { sim.enemyHp = 0; env.end(true); }
+              else if (sim.heroHp <= 0) { sim.heroHp = 0; env.end(false); }
+              else if (turn === "flying") { turn = "enemyWait"; enemyThink = 50; }
+              else { turn = "hero"; wind = Math.max(-0.08, Math.min(0.08, wind + (rnd() - 0.5) * 0.03)); }
+            }
+          }
+        }
+      }
+
+      ctx.save();
+      if (shake > 0) { ctx.translate((Math.random() - 0.5) * shake, (Math.random() - 0.5) * shake); shake *= Math.pow(0.82, dt); if (shake < 0.3) shake = 0; }
+      drawStageBackground(ctx, MG_W, MG_H, t * 0.01, lvl, t);
+      const gg = ctx.createLinearGradient(0, 120, 0, MG_H);
+      gg.addColorStop(0, "#5b4a3a"); gg.addColorStop(1, "#1a120c");
+      ctx.fillStyle = gg; ctx.beginPath(); ctx.moveTo(0, MG_H);
+      ground.forEach((y, i) => ctx.lineTo(i * STEP, y)); ctx.lineTo(MG_W, MG_H); ctx.closePath(); ctx.fill();
+      ctx.strokeStyle = "#c9a26b"; ctx.lineWidth = 2; ctx.beginPath(); ground.forEach((y, i) => (i ? ctx.lineTo(i * STEP, y) : ctx.moveTo(0, y))); ctx.stroke();
+      drawFighterUnstretched(ctx, heroSprite, heroX, gAt(heroX), { color: heroObj.color, t, maxW: 30, maxH: 42 });
+      drawFighterUnstretched(ctx, enemySprite, enemyX, gAt(enemyX), { color: "#ff0055", flip: true, t: t + 900, maxW: 30, maxH: 42 });
+      if (turn === "hero" && !sim.over && intro <= 0) {
+        const a = angle * Math.PI / 180, len = 18 + (charging ? power * 0.45 : 20);
+        const ox = heroX, oy = gAt(heroX) - 26;
+        ctx.setLineDash([4, 4]); ctx.strokeStyle = "rgba(255,255,255,0.8)"; ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.moveTo(ox, oy); ctx.lineTo(ox + Math.cos(a) * len, oy - Math.sin(a) * len); ctx.stroke(); ctx.setLineDash([]);
+      }
+      if (shot) {
+        shot.trail.slice(-24).forEach(([x, y], i) => { ctx.fillStyle = `rgba(255,255,255,${i / 40})`; ctx.fillRect(x, y, 2, 2); });
+        const g = ctx.createRadialGradient(shot.x, shot.y, 0, shot.x, shot.y, 9);
+        g.addColorStop(0, "#fff"); g.addColorStop(0.4, shot.owner === "hero" ? heroObj.color : "#ff2a55"); g.addColorStop(1, "rgba(0,0,0,0)");
+        ctx.fillStyle = g; ctx.beginPath(); ctx.arc(shot.x, shot.y, 9, 0, TAU); ctx.fill();
+      }
+      ctx.fillStyle = "#e6e6ec"; ctx.font = "700 11px Rajdhani, sans-serif";
+      const wStr = Math.abs(wind) < 0.004 ? "WIND: RUHIG" : `WIND: ${wind < 0 ? "◀".repeat(Math.min(3, Math.ceil(Math.abs(wind) / 0.02))) : "▶".repeat(Math.min(3, Math.ceil(Math.abs(wind) / 0.02)))}`;
+      ctx.fillText(wStr, 10, 16);
+      ctx.fillText(`WINKEL ${Math.round(angle)}°`, 120, 16);
+      ctx.fillText(turn === "hero" ? "DU BIST DRAN" : turn === "flying" ? "…" : "GEGNER ZIELT", 250, 16);
+      if (charging) { mgPanel(ctx, 10, 24, 104, 8, 0.6); ctx.fillStyle = heroObj.color; ctx.fillRect(12, 26, power, 4); }
+
+      fx.draw(ctx, dt);
+      mgIntro(ctx, intro, "KI-KANONE", [
+        "Stell den WINKEL ein und halte FEUER – je länger, desto stärker.",
+        "Achte auf den Wind! Danach schießt der Gegner zurück.",
+        "Treffer machen Krater in den Boden. Wer zuerst fällt, verliert."
+      ]);
+      mgKO(ctx, sim);
+      ctx.restore();
+      env.bars();
+    });
+  }
+
+  // ---------------------------------------------------------------------
+  // SPIEL 11: KI-TAKT – fallende Ki-Noten im richtigen Moment treffen
+  // ---------------------------------------------------------------------
+  function miniRhythm(env) {
+    const { ctx, canvas, ctrlArea, lvl, sim, heroObj, enemySprite, heroSprite } = env;
+    const rnd = mgRng(Date.now() ^ (lvl * 2246822519));
+    const fx = mgFx();
+    const LANES = 4, LW = 46, OX = (MG_W - LANES * LW) / 2, HIT_Y = 208;
+    const LANE_COL = ["#ff4d6d", "#4cc9f0", "#80ed99", "#ffd166"];
+    const bpm = 92 + Math.min(56, (lvl - 2) * 5) + rnd() * 12;
+    const beat = 3600 / bpm;
+    const SPEED = 2.2 + Math.min(1.6, (lvl - 2) * 0.12);
+    const notes = [];
+    const LEN = 36 * 60;
+    for (let tm = 120; tm < LEN; tm += beat / (lvl >= 5 && rnd() < 0.3 ? 2 : 1)) {
+      if (rnd() < 0.72) {
+        const lane = Math.floor(rnd() * LANES);
+        notes.push({ t: tm, lane, done: false, missed: false });
+        if (lvl >= 5 && rnd() < 0.15) notes.push({ t: tm, lane: (lane + 1 + Math.floor(rnd() * 3)) % LANES, done: false, missed: false });
+      }
+    }
+    const lastT = notes.length ? notes[notes.length - 1].t : LEN;
+    const eMax = Math.round(notes.length * 2 * 0.7);
+    let clock = 0, combo = 0, intro = 170, shake = 0, beamT = 0;
+    const flash = [0, 0, 0, 0];
+    sim.maxEnemyHp = eMax; sim.enemyHp = eMax; sim.heroHp = 100; sim.ki = 0;
+
+    const press = (lane) => {
+      if (intro > 45) { intro = 45; return; }
+      if (sim.over || intro > 0) return;
+      flash[lane] = 10;
+      let best = null;
+      notes.forEach(n => { if (!n.done && !n.missed && n.lane === lane && Math.abs(n.t - clock) <= 10 && (!best || Math.abs(n.t - clock) < Math.abs(best.t - clock))) best = n; });
+      if (!best) {
+        // Danebengetippt: Kombo weg, etwas Energie verloren (verhindert Dauertippen)
+        combo = 0; sim.ki = 0; sim.heroHp -= 3;
+        fx.text(OX + lane * LW + LW / 2, HIT_Y - 24, "ZU FRÜH", "#9a9aa8");
+        if (sim.heroHp <= 0) { sim.heroHp = 0; env.end(false); }
+        return;
+      }
+      best.done = true;
+      const perfect = Math.abs(best.t - clock) <= 4;
+      combo++;
+      const dmg = (perfect ? 3 : 2) + (combo >= 10 ? 1 : 0);
+      sim.enemyHp -= dmg; sim.ki = Math.min(100, combo * 5);
+      fx.text(OX + lane * LW + LW / 2, HIT_Y - 24, perfect ? "PERFEKT" : "GUT", perfect ? "#ffd166" : "#e6e6ec");
+      fx.burst(OX + lane * LW + LW / 2, HIT_Y, LANE_COL[lane], perfect ? 10 : 5);
+      playFightSfx("click");
+      if (combo % 10 === 0) { beamT = 24; playFightSfx("beam"); fx.text(MG_W / 2, 60, `${combo}ER-KOMBO!`, "#00f5d4"); }
+      if (sim.enemyHp <= 0) { sim.enemyHp = 0; env.end(true); }
+    };
+    const b = mgButtons(ctrlArea, [
+      { id: "rt-0", icon: "left", label: "1" },
+      { id: "rt-1", icon: "down", label: "2" },
+      { id: "rt-2", icon: "up", label: "3" },
+      { id: "rt-3", icon: "right", label: "4" }
+    ]);
+    [0, 1, 2, 3].forEach(i => mgTap(b[`rt-${i}`], () => press(i)));
+    canvas.onpointerdown = (e) => {
+      if (intro > 45) { intro = 45; return; }
+      const x = mgCanvasPos(canvas, e).x;
+      const lane = Math.floor((x - OX) / LW);
+      if (lane >= 0 && lane < LANES) press(lane);
+    };
+
+    mgLoop((dt, t) => {
+      if (!sim.over && intro > 0) intro -= dt;
+      else if (!sim.over) {
+        clock += dt;
+        notes.forEach(n => {
+          if (!n.done && !n.missed && clock - n.t > 10) {
+            n.missed = true; combo = 0; sim.ki = 0; sim.heroHp -= 6; shake = 4;
+            fx.text(OX + n.lane * LW + LW / 2, HIT_Y - 24, "VERPASST", "#ff4d6d");
+            if (sim.heroHp <= 0) { sim.heroHp = 0; env.end(false); }
+          }
+        });
+        if (!sim.over && clock > lastT + 50) env.end(sim.enemyHp <= 0);
+      }
+
+      ctx.save();
+      if (shake > 0) { ctx.translate((Math.random() - 0.5) * shake, (Math.random() - 0.5) * shake); shake *= Math.pow(0.82, dt); if (shake < 0.3) shake = 0; }
+      drawStageBackground(ctx, MG_W, MG_H, t * 0.03, lvl + 1, t);
+      const pulse = 1 - ((clock % beat) / beat);
+      ctx.fillStyle = `rgba(0,0,0,${0.45 - pulse * 0.12})`; ctx.fillRect(OX - 6, 0, LANES * LW + 12, MG_H);
+      for (let i = 0; i < LANES; i++) {
+        const x = OX + i * LW;
+        ctx.fillStyle = flash[i] > 0 ? `rgba(255,255,255,${flash[i] / 40})` : "rgba(255,255,255,0.03)";
+        ctx.fillRect(x + 2, 0, LW - 4, MG_H);
+        if (flash[i] > 0) flash[i] -= dt;
+        ctx.strokeStyle = LANE_COL[i]; ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.arc(x + LW / 2, HIT_Y, 13, 0, TAU); ctx.stroke();
+      }
+      ctx.fillStyle = "rgba(255,255,255,0.25)"; ctx.fillRect(OX, HIT_Y - 1, LANES * LW, 2);
+      notes.forEach(n => {
+        if (n.done) return;
+        const y = HIT_Y - (n.t - clock) * SPEED;
+        if (y < -20 || y > MG_H + 20) return;
+        const x = OX + n.lane * LW + LW / 2;
+        const g = ctx.createRadialGradient(x, y, 0, x, y, 13);
+        g.addColorStop(0, "#fff"); g.addColorStop(0.45, n.missed ? "#555" : LANE_COL[n.lane]); g.addColorStop(1, "rgba(0,0,0,0)");
+        ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, 13, 0, TAU); ctx.fill();
+      });
+      drawFighterUnstretched(ctx, heroSprite, 36, 226, { color: heroObj.color, t, maxW: 42, maxH: 64 });
+      drawFighterUnstretched(ctx, enemySprite, MG_W - 36, 226, { color: "#ff0055", flip: true, t: t + 900, maxW: 42, maxH: 64 });
+      if (beamT > 0) { beamT -= dt; drawBeam(ctx, 52, MG_W - 52, 190, 14 * Math.min(1, beamT / 8), heroObj.color, t); }
+      ctx.fillStyle = "#e6e6ec"; ctx.font = "700 11px Rajdhani, sans-serif";
+      ctx.fillText(`KOMBO ${combo}`, 10, 16);
+      ctx.fillText(`${Math.round(bpm)} BPM`, MG_W - 60, 16);
+      const prog = Math.min(1, clock / (lastT + 50));
+      ctx.fillStyle = "rgba(255,255,255,0.15)"; ctx.fillRect(OX, 4, LANES * LW, 3);
+      ctx.fillStyle = heroObj.color; ctx.fillRect(OX, 4, LANES * LW * prog, 3);
+
+      fx.draw(ctx, dt);
+      mgIntro(ctx, intro, "KI-TAKT", [
+        "Tippe die Spur (1–4), wenn die Ki-Kugel den Kreis erreicht.",
+        "Treffer schaden dem Gegner, verpasste Kugeln dir.",
+        `Tempo heute: ${Math.round(bpm)} BPM · 10er-Kombo = Ki-Strahl!`
+      ]);
+      mgKO(ctx, sim);
+      ctx.restore();
+      env.bars();
+    });
+  }
+
+  // ---------------------------------------------------------------------
+  // SPIEL 12: KI-TURM – Ki-Blöcke im richtigen Moment stapeln bis zum Gegner
+  // ---------------------------------------------------------------------
+  function miniStack(env) {
+    const { ctx, canvas, ctrlArea, lvl, sim, heroObj, enemySprite, heroSprite } = env;
+    const rnd = mgRng(Date.now() ^ (lvl * 48271));
+    const fx = mgFx();
+    const GOAL = 10 + Math.min(10, lvl - 2);
+    const BH = 14, BASE_W = 110, BASE_Y = 220;
+    const sway = lvl >= 5 && rnd() < 0.5;
+    const hue0 = rnd() * 360;
+    const tower = [{ x: MG_W / 2 - BASE_W / 2, w: BASE_W }];
+    let mover = null, lives = 3, intro = 170, shake = 0, finale = 0, camY = 0, fallers = [];
+    const speed0 = 1.6 + Math.min(1.8, (lvl - 2) * 0.13);
+    const newMover = () => {
+      const last = tower[tower.length - 1];
+      const fromLeft = tower.length % 2 === 0;
+      mover = { x: fromLeft ? 0 : MG_W - last.w, w: last.w, dir: fromLeft ? 1 : -1, ph: 0 };
+    };
+    newMover();
+    sim.maxEnemyHp = GOAL; sim.enemyHp = GOAL; sim.heroHp = 100; sim.ki = 0;
+
+    const drop = () => {
+      if (intro > 45) { intro = 45; return; }
+      if (sim.over || intro > 0 || finale > 0 || !mover) return;
+      const last = tower[tower.length - 1];
+      const l = Math.max(mover.x, last.x), r = Math.min(mover.x + mover.w, last.x + last.w);
+      const yTop = BASE_Y - tower.length * BH;
+      if (r - l <= 0) {
+        lives--; shake = 10; playFightSfx("hit");
+        fallers.push({ x: mover.x, y: yTop, w: mover.w, vy: 0 });
+        fx.text(MG_W / 2, yTop - 20 + camY, "DANEBEN!", "#ff4d6d");
+        if (lives <= 0) { env.end(false); return; }
+        newMover(); return;
+      }
+      const off = Math.abs(mover.x - last.x);
+      if (off <= 3) {
+        const w = Math.min(BASE_W, last.w + 4);
+        tower.push({ x: last.x - (w - last.w) / 2, w });
+        fx.text(MG_W / 2, yTop - 20 + camY, "PERFEKT!", "#ffd166"); playFightSfx("zap");
+        fx.burst(MG_W / 2, yTop + camY, "#ffd166", 14);
+      } else {
+        tower.push({ x: l, w: r - l });
+        if (mover.x < l) fallers.push({ x: mover.x, y: yTop, w: l - mover.x, vy: 0 });
+        if (mover.x + mover.w > r) fallers.push({ x: r, y: yTop, w: mover.x + mover.w - r, vy: 0 });
+        playFightSfx("click");
+      }
+      sim.enemyHp = GOAL - (tower.length - 1);
+      sim.ki = Math.min(100, ((tower.length - 1) / GOAL) * 100);
+      if (tower.length - 1 >= GOAL) { finale = 70; mover = null; playFightSfx("beam"); return; }
+      newMover();
+    };
+    const b = mgButtons(ctrlArea, [{ id: "st-d", icon: "drop", label: "STOPPEN", sub: "oder aufs Bild tippen", span: 4, cls: "special" }]);
+    mgTap(b["st-d"], drop);
+    canvas.onpointerdown = drop;
+
+    mgLoop((dt, t) => {
+      if (!sim.over && intro > 0) intro -= dt;
+      else if (!sim.over && finale > 0) { finale -= dt; if (finale <= 0) { sim.enemyHp = 0; env.end(true); } }
+      else if (!sim.over && mover) {
+        const sp = speed0 + tower.length * 0.06;
+        mover.ph += 0.05 * dt;
+        mover.x += mover.dir * sp * dt * (sway ? 0.65 + 0.5 * Math.abs(Math.sin(mover.ph)) : 1);
+        if (mover.x < 0) { mover.x = 0; mover.dir = 1; }
+        if (mover.x > MG_W - mover.w) { mover.x = MG_W - mover.w; mover.dir = -1; }
+      }
+      fallers.forEach(f => { f.vy += 0.3 * dt; f.y += f.vy * dt; });
+      fallers = fallers.filter(f => f.y < MG_H + 200);
+      const targetCam = Math.max(0, tower.length * BH - 120);
+      camY += (targetCam - camY) * Math.min(1, 0.1 * dt);
+      sim.heroHp = (lives / 3) * 100;
+
+      ctx.save();
+      if (shake > 0) { ctx.translate((Math.random() - 0.5) * shake, (Math.random() - 0.5) * shake); shake *= Math.pow(0.82, dt); if (shake < 0.3) shake = 0; }
+      drawStageBackground(ctx, MG_W, MG_H, camY * 0.4, lvl + 2, t);
+      ctx.translate(0, camY);
+      ctx.fillStyle = "#2a2140"; ctx.fillRect(0, BASE_Y + BH, MG_W, 60);
+      const col = (i) => `hsl(${(hue0 + i * 14) % 360}, 75%, ${52 + (i % 2) * 6}%)`;
+      tower.forEach((blk, i) => {
+        const y = BASE_Y - i * BH;
+        ctx.fillStyle = col(i); ctx.fillRect(blk.x, y, blk.w, BH - 1);
+        ctx.fillStyle = "rgba(255,255,255,0.3)"; ctx.fillRect(blk.x, y, blk.w, 2);
+      });
+      fallers.forEach(f => { ctx.fillStyle = "rgba(200,200,220,0.6)"; ctx.fillRect(f.x, f.y, f.w, BH - 1); });
+      const goalY = BASE_Y - GOAL * BH;
+      ctx.strokeStyle = "rgba(255, 209, 102, 0.6)"; ctx.setLineDash([5, 5]); ctx.beginPath(); ctx.moveTo(0, goalY); ctx.lineTo(MG_W, goalY); ctx.stroke(); ctx.setLineDash([]);
+      drawFighterUnstretched(ctx, enemySprite, MG_W - 40, goalY, { color: "#ff0055", flip: true, t: t + 900, maxW: 34, maxH: 48 });
+      const topBlk = tower[tower.length - 1];
+      const topY = BASE_Y - (tower.length - 1) * BH;
+      drawFighterUnstretched(ctx, heroSprite, topBlk.x + topBlk.w / 2, topY, { color: heroObj.color, t, maxW: 22, maxH: 30 });
+      if (mover) {
+        const y = BASE_Y - tower.length * BH;
+        ctx.fillStyle = col(tower.length); ctx.fillRect(mover.x, y, mover.w, BH - 1);
+        ctx.fillStyle = "rgba(255,255,255,0.45)"; ctx.fillRect(mover.x, y, mover.w, 2);
+      }
+      if (finale > 0) drawBeam(ctx, topBlk.x + topBlk.w / 2 + 8, MG_W - 52, topY - 16, 12, heroObj.color, t);
+      ctx.restore();
+
+      mgHearts(ctx, lives);
+      ctx.fillStyle = "#e6e6ec"; ctx.font = "700 11px Rajdhani, sans-serif";
+      ctx.fillText(`TURM ${tower.length - 1}/${GOAL}`, 64, 16);
+      if (sway) { ctx.fillStyle = "#7bdff2"; ctx.fillText("REGEL: WACKEL-WIND", 230, 16); }
+
+      fx.draw(ctx, dt);
+      mgIntro(ctx, intro, "KI-TURM", [
+        `Stapel ${GOAL} Ki-Blöcke bis hoch zum Gegner.`,
+        "Tippe im richtigen Moment – was übersteht, fällt ab.",
+        sway ? "Diese Runde schwankt das Tempo! · Genau drauf = PERFEKT" : "Genau drauf = PERFEKT, der Block wächst wieder!"
+      ]);
+      mgKO(ctx, sim);
       env.bars();
     });
   }

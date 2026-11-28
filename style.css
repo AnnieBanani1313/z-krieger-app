@@ -2109,3 +2109,16 @@ body {
 .mg-btn:active {
   transform: scale(0.95);
 }
+
+/* Hinweis statt Steuerung (Spiele, die direkt auf dem Bild gespielt werden) */
+.mg-btn.mg-info,
+.mg-btn.mg-info:disabled {
+  opacity: 1;
+  cursor: default;
+  flex-direction: row;
+  justify-content: center;
+  gap: 8px;
+  background: transparent;
+  border-style: dashed;
+  color: #c9c9d4;
+}
