@@ -4005,7 +4005,13 @@ loadSmartImage(document.getElementById("intro-hero-img"), "intro_bg", () => {
 
     // Ab Welt-Level 2: jede Runde ein anderes Minispiel (Runde 1 bleibt unten unverändert)
     if (lvl >= 2) {
-      const game = MINI_GAMES[(lvl - 2) % MINI_GAMES.length];
+      // Jeder Kampf = nächstes Spiel der Reihe (auch nach einer Niederlage).
+      // Eigener Speicher-Schlüssel, damit "zwarriors_neon_v10" unverändert bleibt.
+      const GAME_KEY = "zkrieger_spiel_nr";
+      const stored = parseInt(localStorage.getItem(GAME_KEY), 10);
+      const gameNr = Number.isFinite(stored) ? stored : lvl - 2;
+      localStorage.setItem(GAME_KEY, String(gameNr + 1));
+      const game = MINI_GAMES[((gameNr % MINI_GAMES.length) + MINI_GAMES.length) % MINI_GAMES.length];
       chargeBtn.style.display = "none";
       document.getElementById("gta-mode-label").textContent = game.name;
       battleModal.classList.remove("hidden");
