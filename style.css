@@ -2048,3 +2048,40 @@ body {
   font-size: 0.75rem;
   color: #9a9aa8;
 }
+
+/* =========================================================
+   TRAININGSSCREEN – Hintergrund im Farbton des Kriegers
+   --char wird von app.js (updateUI) gesetzt.
+   Verlauf: farbiges Licht hinter der Figur -> Schwarz.
+   ========================================================= */
+#arena-screen {
+  --char: #ff9900;
+  background-color: #0b0b0d;
+  background-image:
+    radial-gradient(ellipse 58% 210px at 50% 235px,
+      color-mix(in srgb, var(--char) 40%, transparent) 0%,
+      color-mix(in srgb, var(--char) 12%, transparent) 50%,
+      transparent 100%),
+    radial-gradient(ellipse 110% 420px at 50% 120px,
+      color-mix(in srgb, var(--char) 16%, transparent) 0%,
+      transparent 100%),
+    linear-gradient(to bottom, #0b0b0d 0px, #0b0b0d 100%);
+  background-repeat: no-repeat;
+  background-attachment: local; /* Verlauf scrollt mit dem Inhalt */
+}
+
+/* Bühne selbst durchsichtig, damit der Verlauf durchscheint */
+#arena-screen .arena-poster-stage {
+  background: transparent;
+}
+
+/* Name im Hintergrund: leicht in Krieger-Farbe, nach unten ausblendend */
+#arena-screen .arena-bg-word {
+  color: transparent;
+  background: linear-gradient(to bottom,
+    color-mix(in srgb, var(--char) 70%, #ffffff) 0%,
+    transparent 90%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  opacity: 0.16;
+}

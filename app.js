@@ -936,6 +936,8 @@ function updateUI() {
   document.getElementById("char-num").textContent = String(state.selectedChar).padStart(3, "0");
   document.getElementById("fighter-title").textContent = `${charObj.name} · STUFE ${state.selectedStage}`;
   document.getElementById("bg-watermark").textContent = charObj.name;
+  // Nur Anzeige: Farbe des Kriegers für den Hintergrund-Verlauf im Trainingsscreen
+  document.getElementById("arena-screen").style.setProperty("--char", charObj.color || "#ff9900");
   document.getElementById("level-label").textContent = `LVL ${state.level}`;
   document.getElementById("xp-text").textContent = `${state.xp} / ${xpNeeded} XP`;
 
