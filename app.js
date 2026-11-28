@@ -717,9 +717,13 @@ carouselEl.addEventListener("touchend", e => {
 
 document.getElementById("card-prev").addEventListener("click", () => stepCarousel(-1));
 document.getElementById("card-next").addEventListener("click", () => stepCarousel(1));
+// Antippen wählt den Krieger und geht direkt ins Training (ohne Detail-Zwischenschritt)
 document.getElementById("card-curr").addEventListener("click", () => {
-  playSound("click");
-  openCharacterDetails(CHARACTERS.at(state.carouselIndex).id);
+  state.selectedChar = CHARACTERS.at(state.carouselIndex).id;
+  playSound("levelup");
+  updateUI();
+  renderWorkouts();
+  showScreen("arena-screen");
 });
 
 function openCharacterDetails(charId) {
@@ -1743,8 +1747,39 @@ loadSmartImage(document.getElementById("intro-hero-img"), "intro_bg", () => {
   const MINI_GAMES = [
     { id: "puzzle", name: "KI-STEIN-STAPEL", run: (env) => miniPuzzle(env) },
     { id: "runner", name: "SCHLUCHT-LAUF", run: (env) => miniRunner(env) },
-    { id: "shooter", name: "HIMMELS-JAGD", run: (env) => miniShooter(env) }
+    { id: "shooter", name: "HIMMELS-JAGD", run: (env) => miniShooter(env) },
+    { id: "maze", name: "KI-LABYRINTH", run: (env) => miniMaze(env) },
+    { id: "snake", name: "DRACHEN-SCHLANGE", run: (env) => miniSnake(env) },
+    { id: "breaker", name: "KI-MAUERBRECHER", run: (env) => miniBreaker(env) }
   ];
+  const MG_DIRS = { l: [-1, 0], r: [1, 0], u: [0, -1], d: [0, 1] };
+  const MG_OPP = { l: "r", r: "l", u: "d", d: "u" };
+
+  // Wischen auf dem Spielfeld -> Richtung (l/r/u/d); onTap z.B. zum Überspringen des Intros
+  function mgSwipe(canvas, onDir, onTap) {
+    let sx = 0, sy = 0, down = false;
+    canvas.onpointerdown = (e) => { down = true; const p = mgCanvasPos(canvas, e); sx = p.x; sy = p.y; if (onTap) onTap(); };
+    canvas.onpointermove = (e) => {
+      if (!down) return;
+      const p = mgCanvasPos(canvas, e);
+      const dx = p.x - sx, dy = p.y - sy;
+      if (Math.hypot(dx, dy) > 16) {
+        onDir(Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? "r" : "l") : (dy > 0 ? "d" : "u"));
+        sx = p.x; sy = p.y;
+      }
+    };
+    canvas.onpointerup = () => { down = false; };
+  }
+
+  // Schatten-Wicht (Gegner in mehreren Minispielen)
+  function mgShade(ctx, x, y, r, scared, t) {
+    ctx.fillStyle = scared ? "#3a5ba0" : "#2b1d40";
+    ctx.beginPath(); ctx.ellipse(x, y, r, r * 1.1, 0, 0, TAU); ctx.fill();
+    ctx.fillStyle = scared ? "#e6f0ff" : "#ff2a55";
+    const blink = Math.sin(t / 260 + x) > 0.96 ? 0.4 : 1;
+    ctx.fillRect(x - r * 0.55, y - r * 0.3, r * 0.38, r * 0.28 * blink);
+    ctx.fillRect(x + r * 0.17, y - r * 0.3, r * 0.38, r * 0.28 * blink);
+  }
   const MG_W = 356, MG_H = 245;
 
   // Zufall mit Startwert (jede Runde anders)
@@ -2534,6 +2569,562 @@ loadSmartImage(document.getElementById("intro-hero-img"), "intro_bg", () => {
         "HOCH/RUNTER oder aufs Bild tippen & ziehen – du schießt automatisch.",
         "Erst die Gegnerwellen, dann kommt der Boss mit neuen Angriffen.",
         "Ki sammeln für die KI-EXPLOSION · grüne Bohne heilt"
+      ]);
+      mgKO(ctx, sim);
+      ctx.restore();
+      env.bars();
+    });
+  }
+
+  // ---------------------------------------------------------------------
+  // SPIEL 4: KI-LABYRINTH – 7 Sternkugeln sammeln, Schatten-Wichten entkommen
+  // ---------------------------------------------------------------------
+  function miniMaze(env) {
+    const { ctx, canvas, ctrlArea, lvl, sim, heroObj, enemySprite, heroSprite } = env;
+    const rnd = mgRng(Date.now() ^ (lvl * 2654435761));
+    const fx = mgFx();
+    const COLS = 17, ROWS = 11, CS = 20, OX = 8, OY = 20;
+
+    // Labyrinth erzeugen (Tiefensuche) + zusätzliche Durchgänge für Fluchtwege
+    const wall = Array.from({ length: ROWS }, () => Array(COLS).fill(true));
+    const stack = [[1, 1]]; wall[1][1] = false;
+    while (stack.length) {
+      const [cx, cy] = stack[stack.length - 1];
+      const nb = [[2, 0], [-2, 0], [0, 2], [0, -2]]
+        .map(([dx, dy]) => [cx + dx, cy + dy, dx, dy])
+        .filter(([x, y]) => x > 0 && y > 0 && x < COLS - 1 && y < ROWS - 1 && wall[y][x]);
+      if (!nb.length) { stack.pop(); continue; }
+      const [nx, ny, dx, dy] = nb[Math.floor(rnd() * nb.length)];
+      wall[cy + dy / 2][cx + dx / 2] = false; wall[ny][nx] = false;
+      stack.push([nx, ny]);
+    }
+    const extra = 14 + Math.floor(rnd() * 8);
+    for (let i = 0, tries = 0; i < extra && tries < 800; tries++) {
+      const x = 1 + Math.floor(rnd() * (COLS - 2)), y = 1 + Math.floor(rnd() * (ROWS - 2));
+      if (!wall[y][x]) continue;
+      const horiz = !wall[y][x - 1] && !wall[y][x + 1] && wall[y - 1][x] && wall[y + 1][x];
+      const vert = !wall[y - 1][x] && !wall[y + 1][x] && wall[y][x - 1] && wall[y][x + 1];
+      if (horiz || vert) { wall[y][x] = false; i++; }
+    }
+    const open = (x, y) => x >= 0 && y >= 0 && x < COLS && y < ROWS && !wall[y][x];
+    const bfs = (sx, sy) => {
+      const d = Array.from({ length: ROWS }, () => Array(COLS).fill(Infinity));
+      const q = [[sx, sy]]; d[sy][sx] = 0;
+      while (q.length) {
+        const [x, y] = q.shift();
+        for (const k in MG_DIRS) {
+          const nx = x + MG_DIRS[k][0], ny = y + MG_DIRS[k][1];
+          if (open(nx, ny) && d[ny][nx] === Infinity) { d[ny][nx] = d[y][x] + 1; q.push([nx, ny]); }
+        }
+      }
+      return d;
+    };
+    const fromStart = bfs(1, 1);
+    const cells = [];
+    for (let y = 0; y < ROWS; y++) for (let x = 0; x < COLS; x++) if (open(x, y)) cells.push([x, y]);
+    let portal = cells[0];
+    cells.forEach(c => { if (fromStart[c[1]][c[0]] > fromStart[portal[1]][portal[0]]) portal = c; });
+    const free = cells.filter(([x, y]) => fromStart[y][x] >= 4 && !(x === portal[0] && y === portal[1])).sort(() => rnd() - 0.5);
+    const orbs = free.slice(0, 7).map(([x, y]) => ({ x, y, got: false }));
+    const senzus = free.slice(7, 9).map(([x, y]) => ({ x, y, got: false }));
+    const fromPortal = bfs(portal[0], portal[1]);
+    const shadeStarts = cells.filter(([x, y]) => fromPortal[y][x] <= 4 && fromStart[y][x] > 8);
+
+    const mover = (x, y, speed) => ({ x, y, tx: x, ty: y, t: 1, dir: null, speed });
+    const pos = (m) => [m.x + (m.tx - m.x) * m.t, m.y + (m.ty - m.y) * m.t];
+    const advance = (m, dt, choose) => {
+      m.t += m.speed * dt;
+      if (m.t >= 1) {
+        m.x = m.tx; m.y = m.ty; m.t = 1;
+        const d = choose(m);
+        if (d && open(m.x + MG_DIRS[d][0], m.y + MG_DIRS[d][1])) { m.tx = m.x + MG_DIRS[d][0]; m.ty = m.y + MG_DIRS[d][1]; m.t = 0; m.dir = d; }
+        return true;
+      }
+      return false;
+    };
+
+    const hero = mover(1, 1, 0.085);
+    let queued = null, lives = 3, inv = 0, power = 0, got = 0, intro = 170, finale = 0, shake = 0;
+    const nShades = Math.min(5, 2 + Math.floor((lvl - 2) / 3));
+    const chaseP = Math.min(0.85, 0.5 + (lvl - 2) * 0.04);
+    const shadeSpeed = Math.min(0.08, 0.052 + (lvl - 2) * 0.003);
+    const shades = Array.from({ length: nShades }, (_, i) => {
+      const s = shadeStarts[i % Math.max(1, shadeStarts.length)] || portal;
+      return Object.assign(mover(s[0], s[1], shadeSpeed), { home: s, gone: 0 });
+    });
+    let heroDist = bfs(1, 1);
+    sim.maxEnemyHp = 7; sim.enemyHp = 7; sim.heroHp = 100; sim.ki = 0;
+
+    const setDir = (d) => { if (intro > 45) { intro = 45; return; } queued = d; if (hero.t >= 1 || (hero.dir && d === MG_OPP[hero.dir])) { if (hero.dir && d === MG_OPP[hero.dir] && hero.t < 1) { const tx = hero.tx, ty = hero.ty; hero.tx = hero.x; hero.ty = hero.y; hero.x = tx; hero.y = ty; hero.t = 1 - hero.t; hero.dir = d; } } };
+    const b = mgButtons(ctrlArea, [
+      { id: "mz-l", icon: "left", label: "LINKS" },
+      { id: "mz-u", icon: "up", label: "HOCH" },
+      { id: "mz-d", icon: "down", label: "RUNTER" },
+      { id: "mz-r", icon: "right", label: "RECHTS" }
+    ]);
+    mgTap(b["mz-l"], () => setDir("l"));
+    mgTap(b["mz-u"], () => setDir("u"));
+    mgTap(b["mz-d"], () => setDir("d"));
+    mgTap(b["mz-r"], () => setDir("r"));
+    mgSwipe(canvas, setDir, () => { if (intro > 45) intro = 45; });
+
+    const px = (x) => OX + x * CS + CS / 2, py = (y) => OY + y * CS + CS / 2;
+
+    mgLoop((dt, t) => {
+      if (!sim.over && intro > 0) intro -= dt;
+      else if (!sim.over && finale > 0) { finale -= dt; if (finale <= 0) { sim.enemyHp = 0; env.end(true); } }
+      else if (!sim.over) {
+        if (inv > 0) inv -= dt;
+        if (power > 0) power -= dt;
+        const arrived = advance(hero, dt, (m) => {
+          if (queued && open(m.x + MG_DIRS[queued][0], m.y + MG_DIRS[queued][1])) return queued;
+          if (m.dir && open(m.x + MG_DIRS[m.dir][0], m.y + MG_DIRS[m.dir][1])) return m.dir;
+          return null;
+        });
+        if (arrived) {
+          heroDist = bfs(hero.x, hero.y);
+          orbs.forEach(o => {
+            if (!o.got && o.x === hero.x && o.y === hero.y) {
+              o.got = true; got++; sim.enemyHp = 7 - got; playFightSfx("hit");
+              fx.burst(px(o.x), py(o.y), "#ffb020", 14);
+              fx.text(px(o.x), py(o.y) - 10, got === 7 ? "PORTAL OFFEN!" : `${got}/7`, "#ffd166");
+            }
+          });
+          senzus.forEach(s => {
+            if (!s.got && s.x === hero.x && s.y === hero.y) {
+              s.got = true; power = 380; playFightSfx("charge");
+              fx.text(px(s.x), py(s.y) - 10, "KAIOKEN!", "#ff4d6d");
+            }
+          });
+          if (got >= 7 && hero.x === portal[0] && hero.y === portal[1]) { finale = 60; playFightSfx("beam"); }
+        }
+        sim.ki = power > 0 ? (power / 380) * 100 : 0;
+        shades.forEach(s => {
+          if (s.gone > 0) { s.gone -= dt; if (s.gone <= 0) { s.x = s.tx = s.home[0]; s.y = s.ty = s.home[1]; s.t = 1; } return; }
+          s.speed = shadeSpeed * (power > 0 ? 0.7 : 1);
+          advance(s, dt, (m) => {
+            let opts = Object.keys(MG_DIRS).filter(k => open(m.x + MG_DIRS[k][0], m.y + MG_DIRS[k][1]));
+            if (opts.length > 1 && m.dir) opts = opts.filter(k => k !== MG_OPP[m.dir]);
+            if (rnd() < chaseP) {
+              const score = (k) => heroDist[m.y + MG_DIRS[k][1]][m.x + MG_DIRS[k][0]];
+              opts.sort((a, c) => (power > 0 ? score(c) - score(a) : score(a) - score(c)));
+              return opts[0];
+            }
+            return opts[Math.floor(rnd() * opts.length)];
+          });
+          const [hx, hy] = pos(hero), [sx, sy] = pos(s);
+          if (Math.hypot(hx - sx, hy - sy) < 0.6) {
+            if (power > 0) {
+              s.gone = 240; fx.burst(px(sx), py(sy), "#7bdff2", 16); fx.text(px(sx), py(sy) - 8, "WEG!", "#7bdff2"); playFightSfx("hit");
+            } else if (inv <= 0) {
+              lives--; inv = 110; shake = 10; playFightSfx("hit");
+              fx.text(px(hx), py(hy) - 10, "ERWISCHT!", "#ff4d6d");
+              hero.x = hero.tx = 1; hero.y = hero.ty = 1; hero.t = 1; hero.dir = null; queued = null;
+              heroDist = bfs(1, 1);
+              // faire neue Chance: alle Wichte zurück an ihren Startpunkt
+              shades.forEach(o => { o.x = o.tx = o.home[0]; o.y = o.ty = o.home[1]; o.t = 1; o.dir = null; });
+              if (lives <= 0) env.end(false);
+            }
+          }
+        });
+      }
+      sim.heroHp = (lives / 3) * 100;
+
+      ctx.save();
+      if (shake > 0) { ctx.translate((Math.random() - 0.5) * shake, (Math.random() - 0.5) * shake); shake *= Math.pow(0.82, dt); if (shake < 0.3) shake = 0; }
+      drawStageBackground(ctx, MG_W, MG_H, t * 0.02, lvl, t);
+      ctx.fillStyle = "rgba(6, 5, 12, 0.62)"; ctx.fillRect(OX, OY, COLS * CS, ROWS * CS);
+      for (let y = 0; y < ROWS; y++) for (let x = 0; x < COLS; x++) {
+        if (!wall[y][x]) continue;
+        const X = OX + x * CS, Y = OY + y * CS;
+        ctx.fillStyle = "#231b3a"; ctx.fillRect(X, Y, CS, CS);
+        ctx.fillStyle = "#3a2e62"; ctx.fillRect(X + 2, Y + 2, CS - 4, CS - 4);
+        ctx.fillStyle = "rgba(180, 160, 255, 0.35)"; ctx.fillRect(X + 2, Y + 2, CS - 4, 2);
+      }
+      // Portal
+      const [ptx, pty] = [px(portal[0]), py(portal[1])];
+      ctx.strokeStyle = got >= 7 ? `hsl(${(t / 6) % 360}, 90%, 65%)` : "rgba(255,255,255,0.18)";
+      ctx.lineWidth = 2.5;
+      for (let k = 0; k < 3; k++) { ctx.beginPath(); ctx.arc(ptx, pty, 4 + k * 3 + Math.sin(t / 200 + k) * 1.2, 0, TAU); ctx.stroke(); }
+      if (got >= 7) drawFighterUnstretched(ctx, enemySprite, ptx, pty + 9, { color: "#ff0055", flip: true, t: t + 900, maxW: 18, maxH: 26 });
+      orbs.forEach(o => { if (!o.got) mgOrb(ctx, px(o.x), py(o.y) + Math.sin(t / 300 + o.x) * 1.5, 4.5, t); });
+      senzus.forEach(s => {
+        if (s.got) return;
+        ctx.fillStyle = "#80ed99"; ctx.beginPath(); ctx.ellipse(px(s.x), py(s.y), 5, 3.4, 0.5, 0, TAU); ctx.fill();
+        ctx.strokeStyle = "#2d6a4f"; ctx.lineWidth = 1; ctx.stroke();
+      });
+      shades.forEach(s => {
+        if (s.gone > 0) return;
+        const [sx, sy] = pos(s);
+        mgShade(ctx, px(sx), py(sy), 7, power > 0, t);
+      });
+      const [hx, hy] = pos(hero);
+      if (!(inv > 0 && Math.floor(t / 80) % 2 === 0)) {
+        drawFighterUnstretched(ctx, heroSprite, px(hx), py(hy) + 10, { color: power > 0 ? "#ff2a2a" : heroObj.color, t, maxW: 18, maxH: 25 });
+      }
+      if (finale > 0) drawBeam(ctx, px(hx), ptx, py(hy), 10, heroObj.color, t);
+
+      // Anzeige
+      for (let i = 0; i < 3; i++) { ctx.fillStyle = i < lives ? "#ff4d6d" : "rgba(255,255,255,0.18)"; ctx.beginPath(); ctx.arc(14 + i * 14, 10, 4.5, 0, TAU); ctx.fill(); }
+      ctx.fillStyle = "#e6e6ec"; ctx.font = "700 11px Rajdhani, sans-serif";
+      ctx.fillText(`STERNKUGELN ${got}/7`, 64, 14);
+      if (power > 0) { ctx.fillStyle = "#ff4d6d"; ctx.fillText(`KAIOKEN ${Math.ceil(power / 60)}s – jag die Wichte!`, 170, 14); }
+      else if (got >= 7) { ctx.fillStyle = "#ffd166"; ctx.fillText("ZUM PORTAL!", 170, 14); }
+
+      fx.draw(ctx, dt);
+      mgIntro(ctx, intro, "KI-LABYRINTH", [
+        "Sammle alle 7 Sternkugeln – dann öffnet sich das Portal zum Gegner.",
+        "Steuern mit den Pfeilen oder Wischen. Weich den Schatten-Wichten aus!",
+        "Grüne Senzu-Bohne = KAIOKEN: dann jagst du die Wichte."
+      ]);
+      mgKO(ctx, sim);
+      ctx.restore();
+      env.bars();
+    });
+  }
+
+  // ---------------------------------------------------------------------
+  // SPIEL 5: DRACHEN-SCHLANGE – Drache steuern, Ki-Kugeln fressen, Blitzen ausweichen
+  // ---------------------------------------------------------------------
+  function miniSnake(env) {
+    const { ctx, canvas, ctrlArea, lvl, sim, heroObj, heroSprite } = env;
+    const rnd = mgRng(Date.now() ^ (lvl * 40503));
+    const fx = mgFx();
+    const COLS = 22, ROWS = 14, CS = 15, OX = 13, OY = 24;
+    const wrap = rnd() < 0.4; // Regel dieser Runde: durch die Wände gleiten?
+    const GOAL = 8 + Math.min(8, lvl - 2);
+    const START = [{ x: 5, y: 7 }, { x: 4, y: 7 }, { x: 3, y: 7 }];
+    const rocks = new Set();
+    const nRocks = Math.min(18, 3 + lvl);
+    for (let i = 0, tries = 0; i < nRocks && tries < 400; tries++) {
+      const x = Math.floor(rnd() * COLS), y = Math.floor(rnd() * ROWS);
+      if (y === 7 && x < 12) continue;
+      const k = `${x},${y}`;
+      if (!rocks.has(k)) { rocks.add(k); i++; }
+    }
+    let snake = START.map(s => ({ ...s })), dir = "r", nextDir = "r";
+    let stepT = 0, grow = 0, lives = 3, got = 0, inv = 0, intro = 170, shake = 0, crashFlash = 0;
+    const baseStep = Math.max(4.5, 9 - (lvl - 2) * 0.35) * (0.9 + rnd() * 0.2);
+    let food = null, golden = null, goldenT = 0, orbCount = 0;
+    let bolt = null, boltT = 360 + rnd() * 200;
+    sim.maxEnemyHp = GOAL; sim.enemyHp = GOAL; sim.heroHp = 100; sim.ki = 0;
+
+    const occupied = (x, y) => rocks.has(`${x},${y}`) || snake.some(s => s.x === x && s.y === y);
+    const freeCell = () => {
+      for (let i = 0; i < 300; i++) {
+        const x = Math.floor(rnd() * COLS), y = Math.floor(rnd() * ROWS);
+        if (!occupied(x, y) && !(food && food.x === x && food.y === y)) return { x, y };
+      }
+      return { x: 10, y: 3 };
+    };
+    food = freeCell();
+
+    const setDir = (d) => { if (intro > 45) { intro = 45; return; } if (d !== MG_OPP[dir]) nextDir = d; };
+    const b = mgButtons(ctrlArea, [
+      { id: "sn-l", icon: "left", label: "LINKS" },
+      { id: "sn-u", icon: "up", label: "HOCH" },
+      { id: "sn-d", icon: "down", label: "RUNTER" },
+      { id: "sn-r", icon: "right", label: "RECHTS" }
+    ]);
+    mgTap(b["sn-l"], () => setDir("l"));
+    mgTap(b["sn-u"], () => setDir("u"));
+    mgTap(b["sn-d"], () => setDir("d"));
+    mgTap(b["sn-r"], () => setDir("r"));
+    mgSwipe(canvas, setDir, () => { if (intro > 45) intro = 45; });
+
+    const crash = (why) => {
+      if (inv > 0) return;
+      lives--; shake = 10; crashFlash = 20; playFightSfx("hit");
+      fx.text(OX + snake[0].x * CS, OY + snake[0].y * CS - 6, why, "#ff4d6d");
+      if (lives <= 0) { env.end(false); return; }
+      snake = START.map(s => ({ ...s })); dir = nextDir = "r"; grow = 0; inv = 90;
+      START.forEach(s => rocks.delete(`${s.x},${s.y}`));
+    };
+
+    const step = () => {
+      dir = nextDir;
+      let nx = snake[0].x + MG_DIRS[dir][0], ny = snake[0].y + MG_DIRS[dir][1];
+      if (wrap) { nx = (nx + COLS) % COLS; ny = (ny + ROWS) % ROWS; }
+      else if (nx < 0 || ny < 0 || nx >= COLS || ny >= ROWS) { crash("WAND!"); return; }
+      if (rocks.has(`${nx},${ny}`)) { crash("FELS!"); return; }
+      if (snake.slice(0, -1).some(s => s.x === nx && s.y === ny) && inv <= 0) { crash("KNOTEN!"); return; }
+      snake.unshift({ x: nx, y: ny });
+      if (grow > 0) grow--; else snake.pop();
+      const eat = (o, worth) => {
+        got = Math.min(GOAL, got + worth); grow += 1 + worth; orbCount++;
+        sim.enemyHp = GOAL - got; playFightSfx(worth > 1 ? "beam" : "hit");
+        fx.burst(OX + o.x * CS + CS / 2, OY + o.y * CS + CS / 2, "#ffb020", 14);
+        fx.text(OX + o.x * CS + CS / 2, OY + o.y * CS - 4, worth > 1 ? "GOLD ×2!" : `${got}/${GOAL}`, "#ffd166");
+        if (got >= GOAL) { sim.enemyHp = 0; env.end(true); }
+      };
+      if (food && nx === food.x && ny === food.y) {
+        eat(food, 1); food = freeCell();
+        if (orbCount % 4 === 3 && !golden) { golden = freeCell(); goldenT = 330; }
+      }
+      if (golden && nx === golden.x && ny === golden.y) { eat(golden, 2); golden = null; }
+    };
+
+    mgLoop((dt, t) => {
+      if (!sim.over && intro > 0) intro -= dt;
+      else if (!sim.over) {
+        if (inv > 0) inv -= dt;
+        stepT += dt;
+        const stepLen = Math.max(3.6, baseStep - got * 0.15);
+        while (stepT >= stepLen && !sim.over) { stepT -= stepLen; step(); }
+        if (golden) { goldenT -= dt; if (goldenT <= 0) golden = null; }
+        // Gegner-Blitz über eine ganze Reihe oder Spalte
+        if (bolt) {
+          bolt.t -= dt;
+          if (bolt.t <= 0 && !bolt.fire) { bolt.fire = true; bolt.t = 22; playFightSfx("zap"); }
+          else if (bolt.t <= 0) bolt = null;
+          if (bolt && bolt.fire && snake.some(s => (bolt.row ? s.y === bolt.i : s.x === bolt.i))) { crash("BLITZ!"); bolt = null; }
+        } else {
+          boltT -= dt;
+          if (boltT <= 0) {
+            const row = rnd() < 0.5;
+            bolt = { row, i: Math.floor(rnd() * (row ? ROWS : COLS)), t: Math.max(55, 95 - lvl * 4), fire: false };
+            boltT = Math.max(220, 480 - lvl * 22) + rnd() * 200;
+          }
+        }
+      }
+      sim.heroHp = (lives / 3) * 100;
+      sim.ki = (got / GOAL) * 100;
+
+      ctx.save();
+      if (shake > 0) { ctx.translate((Math.random() - 0.5) * shake, (Math.random() - 0.5) * shake); shake *= Math.pow(0.82, dt); if (shake < 0.3) shake = 0; }
+      drawStageBackground(ctx, MG_W, MG_H, t * 0.02, lvl + 1, t);
+      mgPanel(ctx, OX - 3, OY - 3, COLS * CS + 6, ROWS * CS + 6, 0.7);
+      if (wrap) { ctx.strokeStyle = "rgba(0, 245, 212, 0.45)"; ctx.setLineDash([4, 4]); ctx.strokeRect(OX - 3, OY - 3, COLS * CS + 6, ROWS * CS + 6); ctx.setLineDash([]); }
+      ctx.fillStyle = "rgba(255,255,255,0.035)";
+      for (let y = 0; y < ROWS; y++) for (let x = (y % 2); x < COLS; x += 2) ctx.fillRect(OX + x * CS, OY + y * CS, CS, CS);
+      if (bolt) {
+        const a = bolt.fire ? 0.85 : 0.18 + 0.2 * Math.abs(Math.sin(t / 60));
+        ctx.fillStyle = bolt.fire ? `rgba(255, 255, 255, ${a})` : `rgba(255, 42, 85, ${a})`;
+        if (bolt.row) ctx.fillRect(OX, OY + bolt.i * CS, COLS * CS, CS); else ctx.fillRect(OX + bolt.i * CS, OY, CS, ROWS * CS);
+      }
+      rocks.forEach(k => {
+        const [x, y] = k.split(",").map(Number);
+        const X = OX + x * CS, Y = OY + y * CS;
+        ctx.fillStyle = "#4a4550"; ctx.beginPath(); ctx.moveTo(X + 2, Y + CS - 1); ctx.lineTo(X + 4, Y + 4); ctx.lineTo(X + CS / 2, Y + 1); ctx.lineTo(X + CS - 3, Y + 5); ctx.lineTo(X + CS - 1, Y + CS - 1); ctx.closePath(); ctx.fill();
+        ctx.fillStyle = "rgba(255,255,255,0.16)"; ctx.fillRect(X + 5, Y + 4, 4, 2);
+      });
+      if (food) mgOrb(ctx, OX + food.x * CS + CS / 2, OY + food.y * CS + CS / 2, 5, t);
+      if (golden) {
+        const gx = OX + golden.x * CS + CS / 2, gy = OY + golden.y * CS + CS / 2;
+        ctx.fillStyle = `rgba(255, 230, 109, ${0.3 + 0.3 * Math.abs(Math.sin(t / 120))})`;
+        ctx.beginPath(); ctx.arc(gx, gy, 10, 0, TAU); ctx.fill();
+        mgOrb(ctx, gx, gy, 6, t);
+      }
+      // Drache: Körper von hinten nach vorn
+      const blink = inv > 0 && Math.floor(t / 80) % 2 === 0;
+      if (!blink) {
+        for (let i = snake.length - 1; i >= 0; i--) {
+          const s = snake[i], X = OX + s.x * CS + CS / 2, Y = OY + s.y * CS + CS / 2;
+          const r = i === 0 ? CS * 0.56 : CS * (0.46 - Math.min(0.14, i * 0.008));
+          ctx.fillStyle = i % 2 ? "#1f8a4c" : "#2fae62";
+          ctx.beginPath(); ctx.arc(X, Y, r, 0, TAU); ctx.fill();
+          if (i > 0) { ctx.fillStyle = "#e9d48a"; ctx.beginPath(); ctx.arc(X, Y + r * 0.35, r * 0.4, 0, TAU); ctx.fill(); }
+        }
+        const h = snake[0], HX = OX + h.x * CS + CS / 2, HY = OY + h.y * CS + CS / 2;
+        const [ddx, ddy] = MG_DIRS[dir];
+        ctx.strokeStyle = "#f4e3a1"; ctx.lineWidth = 2; ctx.lineCap = "round";
+        ctx.beginPath(); ctx.moveTo(HX - ddy * 4 - ddx * 3, HY + ddx * 4 - ddy * 3); ctx.lineTo(HX - ddy * 8 - ddx * 8, HY + ddx * 8 - ddy * 8); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(HX + ddy * 4 - ddx * 3, HY - ddx * 4 - ddy * 3); ctx.lineTo(HX + ddy * 8 - ddx * 8, HY - ddx * 8 - ddy * 8); ctx.stroke();
+        ctx.strokeStyle = "#ff6b6b"; ctx.lineWidth = 1.2;
+        ctx.beginPath(); ctx.moveTo(HX + ddx * 6, HY + ddy * 6); ctx.quadraticCurveTo(HX + ddx * 12 - ddy * 6, HY + ddy * 12 + ddx * 6, HX + ddx * 9 - ddy * 10, HY + ddy * 9 + ddx * 10); ctx.stroke();
+        ctx.fillStyle = "#ffeb3b"; ctx.beginPath(); ctx.arc(HX + ddx * 3 - ddy * 3, HY + ddy * 3 + ddx * 3, 1.8, 0, TAU); ctx.fill();
+        drawFighterUnstretched(ctx, heroSprite, HX, HY - 4, { color: heroObj.color, t, maxW: 14, maxH: 18 });
+      }
+      if (crashFlash > 0) { ctx.fillStyle = `rgba(255, 42, 85, ${crashFlash / 60})`; ctx.fillRect(0, 0, MG_W, MG_H); crashFlash -= dt; }
+
+      for (let i = 0; i < 3; i++) { ctx.fillStyle = i < lives ? "#ff4d6d" : "rgba(255,255,255,0.18)"; ctx.beginPath(); ctx.arc(14 + i * 14, 11, 4.5, 0, TAU); ctx.fill(); }
+      ctx.fillStyle = "#e6e6ec"; ctx.font = "700 11px Rajdhani, sans-serif";
+      ctx.fillText(`KI-KUGELN ${got}/${GOAL}`, 64, 15);
+      ctx.fillStyle = wrap ? "#00f5d4" : "#9a9aa8";
+      ctx.fillText(wrap ? "REGEL: DURCH DIE WÄNDE" : "REGEL: WÄNDE SIND HART", 210, 15);
+
+      fx.draw(ctx, dt);
+      mgIntro(ctx, intro, "DRACHEN-SCHLANGE", [
+        `Steuer den Drachen und friss ${GOAL} Ki-Kugeln – Gold zählt doppelt.`,
+        "Nicht gegen Felsen, Wände oder dich selbst! Wischen oder Pfeile.",
+        wrap ? "Diese Runde: du gleitest durch die Wände!" : "Rot blinkende Reihe = gleich schlägt ein Blitz ein!"
+      ]);
+      mgKO(ctx, sim);
+      ctx.restore();
+      env.bars();
+    });
+  }
+
+  // ---------------------------------------------------------------------
+  // SPIEL 6: KI-MAUERBRECHER – Ki-Kugel gegen die Energie-Mauer des Gegners
+  // ---------------------------------------------------------------------
+  function miniBreaker(env) {
+    const { ctx, canvas, ctrlArea, lvl, sim, heroObj, enemySprite, heroSprite } = env;
+    const rnd = mgRng(Date.now() ^ (lvl * 69069));
+    const fx = mgFx();
+    const BC = 10, BW = 31, BH = 11, BOX = (MG_W - BC * (BW + 2)) / 2, BOY = 44;
+    const rowsN = 5 + (lvl >= 6 ? 1 : 0);
+    const layouts = ["full", "pyramid", "checker", "holes", "diamond", "stripes"];
+    const layout = layouts[Math.floor(rnd() * layouts.length)];
+    const ROW_COLS = ["#ff4d6d", "#ff9f1c", "#ffd166", "#80ed99", "#4cc9f0", "#c77dff"];
+    const bricks = [];
+    for (let r = 0; r < rowsN; r++) for (let c = 0; c < BC; c++) {
+      let on = true;
+      if (layout === "pyramid") on = c >= r && c < BC - r;
+      if (layout === "checker") on = (r + c) % 2 === 0;
+      if (layout === "holes") on = rnd() > 0.28;
+      if (layout === "diamond") on = Math.abs(c - (BC - 1) / 2) + Math.abs(r - (rowsN - 1) / 2) <= 4.2;
+      if (layout === "stripes") on = c % 3 !== 1;
+      if (!on) continue;
+      const hp = (lvl >= 4 && r < 2) || (lvl >= 8 && r < 4) ? 2 : 1;
+      const roll = rnd();
+      const special = roll < 0.05 ? "multi" : roll < 0.09 ? "pierce" : roll < 0.12 ? "senzu" : null;
+      bricks.push({ x: BOX + c * (BW + 2), y: BOY + r * (BH + 2), hp, max: hp, col: ROW_COLS[r % ROW_COLS.length], special });
+    }
+    const totalHp = bricks.reduce((a, b) => a + b.hp, 0);
+    const P = { x: MG_W / 2, w: 58 - Math.min(14, (lvl - 2) * 1.2), y: 226, stun: 0, left: false, right: false, tx: null };
+    const speed = Math.min(5.2, 3.5 + (lvl - 2) * 0.12);
+    let balls = [], lives = 3, pierce = 0, intro = 170, shake = 0, shotT = 200 + rnd() * 120;
+    const eShots = [];
+    const newBall = () => { balls = [{ x: P.x, y: P.y - 8, vx: 0, vy: 0, stuck: true }]; };
+    newBall();
+    sim.maxEnemyHp = totalHp; sim.enemyHp = totalHp; sim.heroHp = 100; sim.ki = 0;
+
+    const launch = () => {
+      if (intro > 45) { intro = 45; return; }
+      balls.forEach(bl => { if (bl.stuck) { bl.stuck = false; const a = -Math.PI / 2 + (rnd() - 0.5) * 0.8; bl.vx = Math.cos(a) * speed; bl.vy = Math.sin(a) * speed; } });
+    };
+    const b = mgButtons(ctrlArea, [
+      { id: "bk-l", icon: "left", label: "LINKS" },
+      { id: "bk-f", icon: "bolt", label: "ABSCHUSS", span: 2, cls: "special" },
+      { id: "bk-r", icon: "right", label: "RECHTS" }
+    ]);
+    mgHold(b["bk-l"], () => { P.left = true; P.tx = null; }, () => { P.left = false; });
+    mgHold(b["bk-r"], () => { P.right = true; P.tx = null; }, () => { P.right = false; });
+    mgTap(b["bk-f"], launch);
+    canvas.onpointerdown = (e) => { launch(); P.tx = mgCanvasPos(canvas, e).x; };
+    canvas.onpointermove = (e) => { if (e.buttons || e.pointerType === "touch") P.tx = mgCanvasPos(canvas, e).x; };
+
+    const hitBrick = (br) => {
+      br.hp -= 1; sim.enemyHp -= 1;
+      fx.burst(br.x + BW / 2, br.y + BH / 2, br.col, br.hp <= 0 ? 10 : 4);
+      if (br.hp <= 0) {
+        playFightSfx("hit");
+        if (br.special === "multi") {
+          const src = balls[0];
+          if (src) for (const a of [-0.5, 0.5]) { const sp = Math.hypot(src.vx, src.vy) || speed; const ang = Math.atan2(src.vy, src.vx) + a; balls.push({ x: src.x, y: src.y, vx: Math.cos(ang) * sp, vy: Math.sin(ang) * sp, stuck: false }); }
+          fx.text(br.x + BW / 2, br.y, "DREIFACH!", "#4cc9f0");
+        }
+        if (br.special === "pierce") { pierce = 300; fx.text(br.x + BW / 2, br.y, "DURCHSCHLAG!", "#ff9f1c"); }
+        if (br.special === "senzu") { lives = Math.min(3, lives + 1); fx.text(br.x + BW / 2, br.y, "SENZU +1", "#80ed99"); }
+      } else playFightSfx("click");
+      if (sim.enemyHp <= 0) { sim.enemyHp = 0; env.end(true); }
+    };
+
+    mgLoop((dt, t) => {
+      if (!sim.over && intro > 0) intro -= dt;
+      else if (!sim.over) {
+        if (pierce > 0) pierce -= dt;
+        if (P.stun > 0) P.stun -= dt;
+        else {
+          if (P.left) P.x -= 4.6 * dt;
+          if (P.right) P.x += 4.6 * dt;
+          if (P.tx !== null) P.x += (P.tx - P.x) * Math.min(1, 0.3 * dt);
+        }
+        P.x = Math.max(P.w / 2 + 4, Math.min(MG_W - P.w / 2 - 4, P.x));
+        balls.forEach(bl => {
+          if (bl.stuck) { bl.x = P.x; bl.y = P.y - 8; return; }
+          const steps = 3;
+          for (let s = 0; s < steps; s++) {
+            const px0 = bl.x, py0 = bl.y;
+            bl.x += bl.vx * dt / steps; bl.y += bl.vy * dt / steps;
+            if (bl.x < 5) { bl.x = 5; bl.vx = Math.abs(bl.vx); }
+            if (bl.x > MG_W - 5) { bl.x = MG_W - 5; bl.vx = -Math.abs(bl.vx); }
+            if (bl.y < 26) { bl.y = 26; bl.vy = Math.abs(bl.vy); }
+            if (bl.vy > 0 && bl.y >= P.y - 5 && bl.y <= P.y + 4 && Math.abs(bl.x - P.x) <= P.w / 2 + 4) {
+              const off = (bl.x - P.x) / (P.w / 2);
+              const sp = Math.hypot(bl.vx, bl.vy);
+              const ang = -Math.PI / 2 + off * 1.05;
+              bl.vx = Math.cos(ang) * sp; bl.vy = Math.sin(ang) * sp; bl.y = P.y - 6;
+              playFightSfx("click");
+            }
+            for (const br of bricks) {
+              if (br.hp <= 0) continue;
+              if (bl.x + 4 > br.x && bl.x - 4 < br.x + BW && bl.y + 4 > br.y && bl.y - 4 < br.y + BH) {
+                hitBrick(br);
+                if (pierce <= 0) {
+                  const fromSide = px0 + 4 <= br.x || px0 - 4 >= br.x + BW;
+                  if (fromSide) bl.vx = -bl.vx; else bl.vy = -bl.vy;
+                  bl.x = px0; bl.y = py0;
+                }
+                break;
+              }
+            }
+          }
+        });
+        const before = balls.length;
+        balls = balls.filter(bl => bl.y < MG_H + 10);
+        if (before && !balls.length) {
+          lives--; shake = 9; playFightSfx("hit"); fx.text(P.x, P.y - 20, "KUGEL VERLOREN!", "#ff4d6d");
+          if (lives <= 0) env.end(false); else newBall();
+        }
+        // Gegner schießt durch die Lücken
+        shotT -= dt;
+        if (shotT <= 0) {
+          eShots.push({ x: MG_W / 2 + (rnd() - 0.5) * 60, y: 40, vx: (P.x - MG_W / 2) / 90, vy: 2.4 + lvl * 0.08 });
+          shotT = Math.max(90, 240 - lvl * 10) + rnd() * 120;
+        }
+        for (let i = eShots.length - 1; i >= 0; i--) {
+          const s = eShots[i];
+          s.x += s.vx * dt; s.y += s.vy * dt;
+          if (s.y >= P.y - 4 && s.y <= P.y + 6 && Math.abs(s.x - P.x) <= P.w / 2) {
+            eShots.splice(i, 1); P.stun = 45; shake = 7; playFightSfx("hit"); fx.text(P.x, P.y - 22, "GELÄHMT!", "#ff4d6d");
+          } else if (s.y > MG_H) eShots.splice(i, 1);
+        }
+      }
+      sim.heroHp = (lives / 3) * 100;
+      sim.ki = pierce > 0 ? (pierce / 300) * 100 : 0;
+
+      ctx.save();
+      if (shake > 0) { ctx.translate((Math.random() - 0.5) * shake, (Math.random() - 0.5) * shake); shake *= Math.pow(0.82, dt); if (shake < 0.3) shake = 0; }
+      drawStageBackground(ctx, MG_W, MG_H, t * 0.02, lvl + 2, t);
+      ctx.fillStyle = "rgba(6, 5, 12, 0.35)"; ctx.fillRect(0, 0, MG_W, MG_H);
+      drawFighterUnstretched(ctx, enemySprite, MG_W / 2, 42, { color: "#ff0055", flip: true, t: t + 900, maxW: 26, maxH: 34 });
+      bricks.forEach(br => {
+        if (br.hp <= 0) return;
+        ctx.globalAlpha = br.hp < br.max ? 0.55 : 1;
+        ctx.fillStyle = br.col; ctx.fillRect(br.x, br.y, BW, BH);
+        ctx.fillStyle = "rgba(255,255,255,0.35)"; ctx.fillRect(br.x + 1, br.y + 1, BW - 2, 2);
+        if (br.max > 1) { ctx.strokeStyle = "rgba(255,255,255,0.7)"; ctx.lineWidth = 1; ctx.strokeRect(br.x + 0.5, br.y + 0.5, BW - 1, BH - 1); }
+        ctx.globalAlpha = 1;
+        if (br.special) {
+          ctx.fillStyle = "#0b0b0d"; ctx.font = "bold 9px Anton, sans-serif"; ctx.textAlign = "center";
+          ctx.fillText(br.special === "multi" ? "×3" : br.special === "pierce" ? "»" : "+", br.x + BW / 2, br.y + 9);
+          ctx.textAlign = "left";
+        }
+      });
+      eShots.forEach(s => { ctx.fillStyle = "#ff2a55"; ctx.beginPath(); ctx.arc(s.x, s.y, 4, 0, TAU); ctx.fill(); });
+      // Schläger = Ki-Schild des Helden
+      ctx.fillStyle = P.stun > 0 ? "#6f6f7c" : heroObj.color;
+      ctx.beginPath(); if (ctx.roundRect) ctx.roundRect(P.x - P.w / 2, P.y, P.w, 6, 3); else ctx.rect(P.x - P.w / 2, P.y, P.w, 6); ctx.fill();
+      ctx.fillStyle = "rgba(255,255,255,0.6)"; ctx.fillRect(P.x - P.w / 2 + 4, P.y + 1, P.w - 8, 1.5);
+      drawFighterUnstretched(ctx, heroSprite, P.x, P.y + 1, { color: heroObj.color, t, maxW: 20, maxH: 26 });
+      balls.forEach(bl => {
+        const g = ctx.createRadialGradient(bl.x, bl.y, 0, bl.x, bl.y, 9);
+        g.addColorStop(0, "#ffffff"); g.addColorStop(0.35, pierce > 0 ? "#ff9f1c" : heroObj.color); g.addColorStop(1, "rgba(0,0,0,0)");
+        ctx.fillStyle = g; ctx.beginPath(); ctx.arc(bl.x, bl.y, 9, 0, TAU); ctx.fill();
+      });
+      for (let i = 0; i < 3; i++) { ctx.fillStyle = i < lives ? "#ff4d6d" : "rgba(255,255,255,0.18)"; ctx.beginPath(); ctx.arc(14 + i * 14, 12, 4.5, 0, TAU); ctx.fill(); }
+      if (balls.some(bl => bl.stuck) && intro <= 0 && !sim.over) {
+        ctx.fillStyle = "#e6e6ec"; ctx.font = "700 11px Rajdhani, sans-serif"; ctx.textAlign = "center";
+        ctx.fillText("ABSCHUSS oder aufs Bild tippen", MG_W / 2, 200); ctx.textAlign = "left";
+      }
+
+      fx.draw(ctx, dt);
+      mgIntro(ctx, intro, "KI-MAUERBRECHER", [
+        "Brich mit der Ki-Kugel durch die Energie-Mauer des Gegners.",
+        "Schild mit LINKS/RECHTS oder Ziehen bewegen. Rote Schüsse lähmen!",
+        "Sondersteine: ×3 = drei Kugeln · » = Durchschlag · + = Extra-Leben"
       ]);
       mgKO(ctx, sim);
       ctx.restore();

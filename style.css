@@ -2075,15 +2075,17 @@ body {
   background: transparent;
 }
 
-/* Name im Hintergrund: leicht in Krieger-Farbe, nach unten ausblendend */
+/* Name im Hintergrund: kräftig in der Farbe des Kriegers */
 #arena-screen .arena-bg-word {
   color: transparent;
   background: linear-gradient(to bottom,
-    color-mix(in srgb, var(--char) 70%, #ffffff) 0%,
-    transparent 90%);
+    var(--char) 0%,
+    var(--char) 55%,
+    color-mix(in srgb, var(--char) 55%, transparent) 100%);
   -webkit-background-clip: text;
   background-clip: text;
-  opacity: 0.16;
+  opacity: 0.62;
+  filter: saturate(1.35);
 }
 
 /* Minispiele ab Welt-Level 2: Steuer-Buttons */
