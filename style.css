@@ -2148,14 +2148,20 @@ body {
   border-radius: 14px 0 0 14px;
 }
 
-/* Oben: linke Kante kippt nach oben rechts ( / ) – Karte wird nach oben schmaler */
-.card-top::before {
-  clip-path: polygon(22% 0, 100% 0, 100% 100%, 0 100%);
+/* Obere/untere Karte reichen weit hinein – fast so breit wie die mittlere */
+.card-top,
+.card-bottom {
+  width: 300px !important;
 }
 
-/* Unten: linke Kante kippt nach unten rechts ( \ ) – Karte wird nach unten schmaler */
+/* Oben: linke Kante kippt leicht nach oben rechts ( / ) */
+.card-top::before {
+  clip-path: polygon(9% 0, 100% 0, 100% 100%, 0 100%);
+}
+
+/* Unten: linke Kante kippt leicht nach unten rechts ( \ ) */
 .card-bottom::before {
-  clip-path: polygon(0 0, 100% 0, 100% 100%, 22% 100%);
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 9% 100%);
 }
 
 .s-fallback {
