@@ -675,9 +675,10 @@ function updateStaggeredCarousel() {
   const cPrev = CHARACTERS.at(idxPrev), cCurr = CHARACTERS.at(idxCurr), cNext = CHARACTERS.at(idxNext);
 
   document.getElementById("select-power").textContent = state.powerLevel.toLocaleString("de-DE");
-  document.getElementById("card-prev").style.background = cPrev.color;
-  document.getElementById("card-curr").style.background = cCurr.color;
-  document.getElementById("card-next").style.background = cNext.color;
+  // Kartenfarbe als Variable: die schräge Kartenform wird per CSS (::before) gezeichnet
+  document.getElementById("card-prev").style.setProperty("--card-col", cPrev.color);
+  document.getElementById("card-curr").style.setProperty("--card-col", cCurr.color);
+  document.getElementById("card-next").style.setProperty("--card-col", cNext.color);
   document.getElementById("name-curr").textContent = cCurr.name;
   document.getElementById("lvl-curr").textContent = `LVL ${state.level}`;
   document.getElementById("evo-curr").textContent = `STUFE · ${getMaxUnlockedStage(state.level)}`;

@@ -2122,3 +2122,54 @@ body {
   border-style: dashed;
   color: #c9c9d4;
 }
+
+/* =========================================================
+   KRIEGERAUSWAHL – schräge Karten (Form als eigene Ebene hinter der Figur,
+   damit die Figur oben über die Karte hinausragen darf)
+   ========================================================= */
+.s-card {
+  background: transparent !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+.s-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background:
+    linear-gradient(160deg, rgba(255, 255, 255, 0.18) 0%, rgba(255, 255, 255, 0) 45%),
+    var(--card-col, #2a2a33);
+}
+
+.card-center::before {
+  clip-path: polygon(0 11%, 100% 0, 100% 100%, 0 96%);
+}
+
+.card-top::before,
+.card-bottom::before {
+  clip-path: polygon(0 20%, 100% 0, 100% 100%, 0 100%);
+}
+
+.s-fallback {
+  z-index: 1;
+}
+
+/* Name/Stufe unten an der mittleren Karte: gleiche Schräge unten links */
+.center-card-footer {
+  border-radius: 0;
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 0 calc(100% - 12px));
+}
+
+/* Figuren etwas kleiner (ca. 10 %) */
+.char-center {
+  width: 330px;
+  height: 362px;
+}
+
+.char-top,
+.char-bottom {
+  width: 132px;
+  height: 141px;
+}
