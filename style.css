@@ -2143,23 +2143,28 @@ body {
     var(--card-col, #2a2a33);
 }
 
+/* Mitte: gerade Karte mit leicht abgerundeten linken Ecken */
 .card-center::before {
-  clip-path: polygon(0 11%, 100% 0, 100% 100%, 0 96%);
+  border-radius: 14px 0 0 14px;
 }
 
-.card-top::before,
+/* Oben: linke Kante kippt nach oben rechts ( / ) – Karte wird nach oben schmaler */
+.card-top::before {
+  clip-path: polygon(22% 0, 100% 0, 100% 100%, 0 100%);
+}
+
+/* Unten: linke Kante kippt nach unten rechts ( \ ) – Karte wird nach unten schmaler */
 .card-bottom::before {
-  clip-path: polygon(0 20%, 100% 0, 100% 100%, 0 100%);
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 22% 100%);
 }
 
 .s-fallback {
   z-index: 1;
 }
 
-/* Name/Stufe unten an der mittleren Karte: gleiche Schräge unten links */
+/* Name/Stufe unten an der mittleren Karte passend zur geraden Karte */
 .center-card-footer {
-  border-radius: 0;
-  clip-path: polygon(0 0, 100% 0, 100% 100%, 0 calc(100% - 12px));
+  border-radius: 0 0 0 14px;
 }
 
 /* Figuren etwas kleiner (ca. 10 %) */
