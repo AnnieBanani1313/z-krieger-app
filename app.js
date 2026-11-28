@@ -764,12 +764,17 @@ function openExerciseModal(ex) {
   if (ex.sec) {
     let remaining = ex.sec;
     timerArea.classList.remove("hidden");
-    const fmt = (s) => `00:${String(Math.max(0, s)).padStart(2, "0")}`;
+    const fmt = (s) => {
+      const t = Math.max(0, s);
+      return `${String(Math.floor(t / 60)).padStart(2, "0")}:${String(t % 60).padStart(2, "0")}`;
+    };
     timerDisp.textContent = fmt(remaining);
     timerBtn.textContent = "TIMER STARTEN";
     timerBtn.onclick = () => {
       clearInterval(timerInterval);
-      timerBtn.textContent = "LÄUFT...";
+      remaining = ex.sec; // Neustart beginnt immer von vorn
+      timerDisp.textContent = fmt(remaining);
+      timerBtn.textContent = "NEU STARTEN";
       timerInterval = setInterval(() => {
         remaining -= 1;
         timerDisp.textContent = fmt(remaining);
@@ -1181,6 +1186,7 @@ loadSmartImage(document.getElementById("intro-hero-img"), "intro_bg", () => {
       const origClick = timerBtn.onclick;
       timerBtn.onclick = function () {
         if (origClick) origClick();
+        clearInterval(window._paceGuardInterval); // bei Neustart keinen zweiten Wächter starten
         let left = ex.sec;
         window._paceGuardInterval = setInterval(() => {
           left -= 1;
@@ -1191,6 +1197,8 @@ loadSmartImage(document.getElementById("intro-hero-img"), "intro_bg", () => {
           }
         }, 1000);
       };
+      // Timer startet automatisch beim Öffnen der Übung (Button bleibt zum Neustarten)
+      timerBtn.onclick();
     } else {
       let waitSec = MIN_EXERCISE_SEC;
       completeBtn.textContent = `TRAINING LÄUFT · ${waitSec}s`;
