@@ -6,6 +6,11 @@
   document.head.appendChild(link);
 })();
 
+// Linien-Icon aus dem Icon-Set in index.html (#i-name)
+function icon(name, cls = "ico") {
+  return `<svg class="${cls}" aria-hidden="true" focusable="false"><use href="#i-${name}"/></svg>`;
+}
+
 (function injectGameUI() {
   const style = document.createElement("style");
   style.textContent = `
@@ -128,12 +133,12 @@ const BOSS_CHALLENGES = Array.of(
 );
 
 const TROPHIES = Array.of(
-  { id: "t1", icon: "⚡", name: "ERWACHEN", desc: "Stufe 2 erreicht" },
-  { id: "t2", icon: "🔥", name: "10.000 KI", desc: "10.000 Ki gesammelt" },
-  { id: "t3", icon: "👹", name: "BOSS-JÄGER", desc: "Ersten Boss besiegt" },
-  { id: "t4", icon: "📅", name: "DISZIPLIN", desc: "3 Tage Streak" },
-  { id: "t5", icon: "💪", name: "BAUCH-STAHL", desc: "Bauch Level 3" },
-  { id: "t6", icon: "👑", name: "TEAM-LEADER", desc: "5 Krieger trainiert" }
+  { id: "t1", icon: "bolt", name: "ERWACHEN", desc: "Stufe 2 erreicht" },
+  { id: "t2", icon: "flame", name: "10.000 KI", desc: "10.000 Ki gesammelt" },
+  { id: "t3", icon: "boss", name: "BOSS-JÄGER", desc: "Ersten Boss besiegt" },
+  { id: "t4", icon: "calendar", name: "DISZIPLIN", desc: "3 Tage Streak" },
+  { id: "t5", icon: "core", name: "BAUCH-STAHL", desc: "Bauch Level 3" },
+  { id: "t6", icon: "crown", name: "TEAM-LEADER", desc: "5 Krieger trainiert" }
 );
    const BODY_WORKOUTS = {
   arms: {
@@ -737,7 +742,7 @@ function openExerciseModal(ex) {
   clearInterval(timerInterval);
   playSound("select");
   const mult = state.senzuActive ? 2 : 1;
-  document.getElementById("ex-modal-tag").textContent = ex.isBoss ? "👹 BOSS-HERAUSFORDERUNG" : "TECHNIK-GUIDE";
+  document.getElementById("ex-modal-tag").textContent = ex.isBoss ? "BOSS-HERAUSFORDERUNG" : "TECHNIK-GUIDE";
   document.getElementById("ex-modal-title").textContent = ex.title;
   document.getElementById("ex-modal-tip").textContent = ex.tip || "Volle Körperspannung!";
   document.getElementById("ex-complete-btn").textContent = `GESCHAFFT (+${ex.xp * mult} XP)`;
@@ -783,11 +788,11 @@ function openExerciseModal(ex) {
   document.getElementById("exercise-modal").classList.remove("hidden");
 }
 
-// Nur Anzeige: Emoji-Symbol pro Übungsart (pose)
+// Nur Anzeige: Icon pro Übungsart (pose), siehe Icon-Set in index.html
 const WORKOUT_ICONS = {
-  dumbbellcurl: "🏋️", benchpress: "🏋️", pushup: "💪", kneepushup: "💪",
-  dips: "🪑", punch: "🥊", plank: "⏱️", situp: "🌀", legraise: "🦵",
-  squat: "🦵", lunge: "🚶", jump: "🤸", wallsit: "🧱"
+  dumbbellcurl: "dumbbell", benchpress: "barbell", pushup: "pushup", kneepushup: "pushup",
+  dips: "chair", punch: "glove", plank: "timer", situp: "rotate", legraise: "legraise",
+  squat: "squat", lunge: "steps", jump: "jump", wallsit: "wall"
 };
 
 function renderWorkouts() {
@@ -799,8 +804,8 @@ function renderWorkouts() {
   exercises.forEach(ex => {
     const btn = document.createElement("button");
     btn.className = "workout-card";
-    const icon = WORKOUT_ICONS[ex.pose] || "⭐";
-    btn.innerHTML = `<span class="workout-ico" aria-hidden="true">${icon}</span><div class="workout-text"><div class="workout-title">${ex.title}</div><div class="workout-sub">${ex.sub}</div></div><span class="xp-tag">+${ex.xp} XP</span>`;
+    const exIcon = icon(WORKOUT_ICONS[ex.pose] || "dumbbell");
+    btn.innerHTML = `<span class="workout-ico">${exIcon}</span><div class="workout-text"><div class="workout-title">${ex.title}</div><div class="workout-sub">${ex.sub}</div></div><span class="xp-tag">+${ex.xp} XP</span>`;
     btn.addEventListener("click", () => openExerciseModal(ex));
     list.appendChild(btn);
   });
@@ -822,7 +827,7 @@ function renderTrophies() {
     const ok = !!Reflect.get(unlockedMap, t.id);
     const div = document.createElement("div");
     div.className = `trophy-item ${ok ? "unlocked" : ""}`;
-    div.innerHTML = `<div style="font-size:1.3rem;">${ok ? t.icon : "🔒"} ${t.name}</div><div style="font-size:0.75rem;color:#aaa;">${t.desc}</div>`;
+    div.innerHTML = `<div class="trophy-name">${icon(ok ? t.icon : "lock")}<span>${t.name}</span></div><div class="trophy-desc">${t.desc}</div>`;
     grid.appendChild(div);
   });
 }
@@ -938,13 +943,13 @@ function updateUI() {
   document.getElementById("stat-legs").textContent = calcPartLvl(state.partXP.legs);
 
   const streakEl = document.getElementById("streak-chip");
-  if (streakEl) streakEl.textContent = `🔥 ${state.streak || 0} TAGE`;
+  if (streakEl) streakEl.innerHTML = `${icon("flame")}<span>${state.streak || 0} ${(state.streak || 0) === 1 ? "TAG" : "TAGE"}</span>`;
 
   const senzuBtn = document.getElementById("senzu-btn");
   if (senzuBtn) {
     const usedToday = state.senzuDate === getTodayKey();
     senzuBtn.className = "hud-chip";
-    const senzuHtml = (lbl) => `<span class="hud-ico">🌱</span><span class="hud-lbl">${lbl}</span>`;
+    const senzuHtml = (lbl) => `<span class="hud-ico">${icon("bean")}</span><span class="hud-lbl">${lbl}</span>`;
     if (state.senzuActive) {
       senzuBtn.classList.add("senzu-on");
       senzuBtn.innerHTML = senzuHtml("2x AKTIV");
@@ -974,7 +979,7 @@ function updateUI() {
     const unlocked = s.stage <= maxUnlocked;
     const btn = document.createElement("button");
     btn.className = `stage-pill ${s.stage === state.selectedStage ? "active" : ""} ${!unlocked ? "locked" : ""}`;
-    btn.textContent = unlocked ? `STUFE ${s.stage}` : `🔒 ${s.stage}`;
+    btn.innerHTML = unlocked ? `STUFE ${s.stage}` : `${icon("lock")}${s.stage}`;
     if (unlocked) {
       btn.addEventListener("click", () => {
         state.selectedStage = s.stage;
@@ -1102,13 +1107,13 @@ loadSmartImage(document.getElementById("intro-hero-img"), "intro_bg", () => {
   ticketModal.id = "ticket-unlock-modal";
   ticketModal.className = "levelup-overlay hidden";
   ticketModal.innerHTML = `
-    <div class="levelup-card" style="max-width: 350px; border-color:#ffb703;">
-      <span class="orange-tag">🐉 TURNIER-PORTAL GEÖFFNET</span>
+    <div class="levelup-card" style="max-width: 350px;">
+      <span class="orange-tag">TURNIER-PORTAL GEÖFFNET</span>
       <h2 id="ticket-modal-title" class="tall-orange-title small">WELT-LEVEL 1</h2>
       <p id="ticket-modal-desc" class="poster-copy center" style="color:#fff;">
         Training erledigt! Starte jetzt deinen HD-Kampf!
       </p>
-      <button id="ticket-play-now" class="tall-orange-btn">⚔️ JETZT KÄMPFEN!</button>
+      <button id="ticket-play-now" class="tall-orange-btn">${icon("swords")}JETZT KÄMPFEN</button>
       <button id="ticket-later-btn" class="reset-link">Später spielen</button>
     </div>
   `;
@@ -1171,7 +1176,7 @@ loadSmartImage(document.getElementById("intro-hero-img"), "intro_bg", () => {
     completeBtn.disabled = true;
 
     if (ex.sec) {
-      completeBtn.textContent = "⏳ ERST TIMER BEENDEN";
+      completeBtn.textContent = "ERST TIMER BEENDEN";
       const timerBtn = document.getElementById("ex-timer-start");
       const origClick = timerBtn.onclick;
       timerBtn.onclick = function () {
@@ -1188,10 +1193,10 @@ loadSmartImage(document.getElementById("intro-hero-img"), "intro_bg", () => {
       };
     } else {
       let waitSec = MIN_EXERCISE_SEC;
-      completeBtn.textContent = `⏳ TRAINING LÄUFT (${waitSec}s)`;
+      completeBtn.textContent = `TRAINING LÄUFT · ${waitSec}s`;
       window._paceGuardInterval = setInterval(() => {
         waitSec -= 1;
-        if (waitSec > 0) completeBtn.textContent = `⏳ TRAINING LÄUFT (${waitSec}s)`;
+        if (waitSec > 0) completeBtn.textContent = `TRAINING LÄUFT · ${waitSec}s`;
         else {
           clearInterval(window._paceGuardInterval);
           completeBtn.disabled = false;
@@ -1232,15 +1237,15 @@ loadSmartImage(document.getElementById("intro-hero-img"), "intro_bg", () => {
     if (state.battleTickets > 0) {
       campBtn.className = "hud-chip senzu-on camp-ready";
       campBtn.style.opacity = "1";
-      campBtn.innerHTML = `<span class="camp-label">🐉 KAMPF STARTEN</span><span class="camp-count">${state.battleTickets}×</span>`;
+      campBtn.innerHTML = `<span class="camp-label">${icon("swords")}KAMPF STARTEN</span><span class="camp-count">${state.battleTickets}×</span>`;
     } else if (state.dailyTicketsEarned >= MAX_TICKETS_PER_DAY) {
       campBtn.className = "hud-chip camp-limit";
       campBtn.style.opacity = "0.5";
-      campBtn.innerHTML = `<span class="camp-label">🐉 TAGESLIMIT</span>${campDots(MAX_TICKETS_PER_DAY, MAX_TICKETS_PER_DAY)}`;
+      campBtn.innerHTML = `<span class="camp-label">${icon("swords")}TAGESLIMIT</span>${campDots(MAX_TICKETS_PER_DAY, MAX_TICKETS_PER_DAY)}`;
     } else {
       campBtn.className = "hud-chip camp-progress";
       campBtn.style.opacity = "1";
-      campBtn.innerHTML = `<span class="camp-label">🐉 KAMPF</span>${campDots(progress, EXERCISES_PER_TICKET)}`;
+      campBtn.innerHTML = `<span class="camp-label">${icon("swords")}KAMPF</span>${campDots(progress, EXERCISES_PER_TICKET)}`;
     }
     campBtn.setAttribute("aria-label", state.battleTickets > 0
       ? `Kampf starten, ${state.battleTickets} Ticket bereit`
