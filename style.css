@@ -2085,3 +2085,25 @@ body {
   background-clip: text;
   opacity: 0.16;
 }
+
+/* Minispiele ab Welt-Level 2: Steuer-Buttons */
+#legends-canvas {
+  touch-action: none;
+}
+
+.mg-btn {
+  touch-action: none;
+  -webkit-touch-callout: none;
+  gap: 3px;
+  padding: 10px 4px;
+  font-size: 0.82rem;
+}
+
+.mg-btn .ico {
+  width: 20px;
+  height: 20px;
+}
+
+.mg-btn:active {
+  transform: scale(0.95);
+}
