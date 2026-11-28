@@ -2199,7 +2199,7 @@ body {
 
 /* Untere Figur: mittig, groß, wird von der Karte abgeschnitten (ragt nicht heraus) */
 .card-bottom {
-  clip-path: polygon(0 0, 100% 0, 100% 100%, 9% 100%);
+  clip-path: path("M 16 0 L 300 0 L 300 300 L 43 300 Q 27 300 25.56 284.1 L 1.44 15.9 Q 0 0 16 0 Z");
 }
 
 .char-bottom {
@@ -2217,14 +2217,15 @@ body {
   width: 300px !important;
 }
 
-/* Oben: linke Kante kippt leicht nach oben rechts ( / ) */
+/* Oben: gleiche Karte wie in der Mitte, nur nach hinten gekippt –
+   linke Kante schräg ( / ), linke Ecken abgerundet (Kartengröße 300 × 230 px) */
 .card-top::before {
-  clip-path: polygon(9% 0, 100% 0, 100% 100%, 0 100%);
+  clip-path: path("M 300 0 L 43 0 Q 27 0 25.13 15.9 L 1.87 214.1 Q 0 230 16 230 L 300 230 Z");
 }
 
-/* Unten: linke Kante kippt leicht nach unten rechts ( \ ) */
+/* Unten: nach vorn gekippt – linke Kante schräg ( \ ), linke Ecken abgerundet (300 × 300 px) */
 .card-bottom::before {
-  clip-path: polygon(0 0, 100% 0, 100% 100%, 9% 100%);
+  clip-path: path("M 16 0 L 300 0 L 300 300 L 43 300 Q 27 300 25.56 284.1 L 1.44 15.9 Q 0 0 16 0 Z");
 }
 
 .s-fallback {
