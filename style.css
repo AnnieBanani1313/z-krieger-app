@@ -2075,13 +2075,50 @@ body {
   background: transparent;
 }
 
-/* Name im Hintergrund: leicht in Krieger-Farbe, nach unten ausblendend */
+/* Name im Hintergrund: kräftig in der Farbe des Kriegers */
 #arena-screen .arena-bg-word {
   color: transparent;
   background: linear-gradient(to bottom,
-    color-mix(in srgb, var(--char) 70%, #ffffff) 0%,
-    transparent 90%);
+    var(--char) 0%,
+    var(--char) 55%,
+    color-mix(in srgb, var(--char) 55%, transparent) 100%);
   -webkit-background-clip: text;
   background-clip: text;
-  opacity: 0.16;
+  opacity: 0.62;
+  filter: saturate(1.35);
+}
+
+/* Minispiele ab Welt-Level 2: Steuer-Buttons */
+#legends-canvas {
+  touch-action: none;
+}
+
+.mg-btn {
+  touch-action: none;
+  -webkit-touch-callout: none;
+  gap: 3px;
+  padding: 10px 4px;
+  font-size: 0.82rem;
+}
+
+.mg-btn .ico {
+  width: 20px;
+  height: 20px;
+}
+
+.mg-btn:active {
+  transform: scale(0.95);
+}
+
+/* Hinweis statt Steuerung (Spiele, die direkt auf dem Bild gespielt werden) */
+.mg-btn.mg-info,
+.mg-btn.mg-info:disabled {
+  opacity: 1;
+  cursor: default;
+  flex-direction: row;
+  justify-content: center;
+  gap: 8px;
+  background: transparent;
+  border-style: dashed;
+  color: #c9c9d4;
 }
