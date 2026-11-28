@@ -2122,3 +2122,173 @@ body {
   border-style: dashed;
   color: #c9c9d4;
 }
+
+/* =========================================================
+   KRIEGERAUSWAHL – schräge Karten (Form als eigene Ebene hinter der Figur,
+   damit die Figur oben über die Karte hinausragen darf)
+   ========================================================= */
+.s-card {
+  background: transparent !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+.s-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background:
+    linear-gradient(160deg, rgba(255, 255, 255, 0.18) 0%, rgba(255, 255, 255, 0) 45%),
+    var(--card-col, #2a2a33);
+}
+
+/* Mitte: gerade Karte mit leicht abgerundeten linken Ecken – schmaler, damit links der Drache sichtbar bleibt */
+.card-center::before {
+  border-radius: 14px 0 0 14px;
+}
+
+.card-center,
+.center-card-footer {
+  width: 262px;
+}
+
+/* Figur steht über dem Schriftbereich, Kopf ragt oben aus der Karte */
+.char-center {
+  top: auto;
+  bottom: 74px;
+  right: -9px;
+  width: 280px;
+  height: 300px;
+  transform: none;
+  object-position: center bottom;
+}
+
+/* Name & Stufe wie im Vorbild: dunkle Schrift direkt auf der Kartenfarbe */
+.center-card-footer {
+  background: none;
+  padding: 0 18px 16px;
+}
+
+.center-card-footer .center-name {
+  color: #16110a;
+  font-size: 1.55rem;
+  letter-spacing: 0.4px;
+  margin-bottom: 6px;
+}
+
+.center-card-footer .dark-pill {
+  background: rgba(0, 0, 0, 0.12);
+  color: #16110a;
+  border: 1px solid rgba(0, 0, 0, 0.28);
+  border-radius: 999px;
+  padding: 2px 10px;
+  font-size: 0.72rem;
+}
+
+/* Drache im Hintergrund der Kriegerauswahl */
+.dragon-svg {
+  left: -40px;
+  top: 22%;
+  width: 260px;
+  height: 466px;
+  opacity: 0.2;
+  overflow: visible;
+}
+
+/* Überschrift kleiner, damit sie nicht an den Karten klebt */
+#select-screen .orange-kicker-tall {
+  font-size: 1.2rem;
+}
+
+#select-screen .tall-orange-title.select-big-word {
+  font-size: 2.45rem;
+}
+
+/* Kartenstapel: mittlere Karte sitzt in der Mitte, die untere Karte läuft bis zum Bildschirmrand */
+.neon-stack {
+  top: calc(100% - 707px); /* mittlere Karte endet 200 px über dem Bildschirmrand (174 px + 26 px Innenabstand); 707 = 174 + 300 + (277 − 44) */
+  transform: none;
+}
+
+/* Obere und untere Karte deutlich höher; sie liegen ein gutes Stück hinter der mittleren Karte */
+.card-top,
+.card-bottom {
+  height: 230px;
+}
+
+.card-top {
+  margin-bottom: -44px !important;
+  height: 277px; /* sichtbar ca. 200 px über der Mitte (277 × 0,88 − 44) – gleich viel wie die untere Karte unten */
+}
+
+.card-bottom {
+  margin-top: -44px !important;
+  height: 640px;
+}
+
+/* Name/Stufe sitzt unten an der mittleren Karte (Abstand = sichtbarer Teil der unteren Karte: 640 − 44) */
+.center-card-footer {
+  bottom: 596px;
+}
+
+/* Obere Figur: mittig auf der Karte, Kopf ragt oben heraus */
+.char-top {
+  top: auto;
+  bottom: 34px;
+  width: 190px;
+  height: 250px;
+  right: 56px !important;
+  object-position: center bottom;
+}
+
+/* Untere Figur: mittig, groß, wird von der Karte abgeschnitten (ragt nicht heraus) */
+.card-bottom {
+  clip-path: path("M 16 0 L 300 0 L 300 640 L 74 640 Q 57.6 640 56.16 624.1 L 1.44 15.9 Q 0 0 16 0 Z");
+}
+
+.char-bottom {
+  top: 50px;
+  bottom: auto;
+  width: 220px;
+  height: 340px;
+  right: 46px !important;
+  object-position: center top;
+}
+
+/* Obere/untere Karte reichen weit hinein – fast so breit wie die mittlere */
+.card-top,
+.card-bottom {
+  width: 300px !important;
+}
+
+/* Oben: gleiche Karte wie in der Mitte, nur nach hinten gekippt –
+   linke Kante schräg ( / ), linke Ecken abgerundet (Kartengröße 300 × 277 px) */
+.card-top::before {
+  clip-path: path("M 300 0 L 41 0 Q 24.9 0 23.46 15.9 L 1.44 261.1 Q 0 277 16 277 L 300 277 Z");
+}
+
+/* Unten: nach vorn gekippt – linke Kante schräg ( \ ), linke Ecken abgerundet (300 × 640 px) */
+.card-bottom::before {
+  clip-path: path("M 16 0 L 300 0 L 300 640 L 74 640 Q 57.6 640 56.16 624.1 L 1.44 15.9 Q 0 0 16 0 Z");
+}
+
+.s-fallback {
+  z-index: 1;
+}
+
+/* Name/Stufe unten an der mittleren Karte passend zur geraden Karte */
+.center-card-footer {
+  border-radius: 0 0 0 14px;
+}
+
+/* (Figurengrößen der Kriegerauswahl stehen weiter oben bei den Kartenformen) */
+
+/* Kampfkraft-Anzeige oben rechts liegt jetzt auf der oberen Karte: Schatten für Lesbarkeit */
+#select-screen .user-texts {
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.75), 0 0 10px rgba(0, 0, 0, 0.45);
+}
+#select-screen .poster-nav {
+  position: relative;
+  z-index: 30;
+}
