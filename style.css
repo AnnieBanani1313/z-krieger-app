@@ -2207,7 +2207,7 @@ body {
 
 /* Kartenstapel: mittlere Karte sitzt in der Mitte, die untere Karte läuft bis zum Bildschirmrand */
 .neon-stack {
-  top: calc(50% - 483px); /* Layout-Höhe obere Karte (377 − 44) + halbe mittlere Karte */
+  top: calc(100% - 707px); /* mittlere Karte endet 200 px über dem Bildschirmrand (174 px + 26 px Innenabstand); 707 = 174 + 300 + (277 − 44) */
   transform: none;
 }
 
@@ -2219,7 +2219,7 @@ body {
 
 .card-top {
   margin-bottom: -44px !important;
-  height: 377px; /* sichtbar 288 px über der Mitte (377 × 0,88 − 44) – so viel wie die untere Karte unten */
+  height: 277px; /* sichtbar ca. 200 px über der Mitte (277 × 0,88 − 44) – gleich viel wie die untere Karte unten */
 }
 
 .card-bottom {
@@ -2263,9 +2263,9 @@ body {
 }
 
 /* Oben: gleiche Karte wie in der Mitte, nur nach hinten gekippt –
-   linke Kante schräg ( / ), linke Ecken abgerundet (Kartengröße 300 × 377 px) */
+   linke Kante schräg ( / ), linke Ecken abgerundet (Kartengröße 300 × 277 px) */
 .card-top::before {
-  clip-path: path("M 300 0 L 50 0 Q 33.9 0 32.46 15.9 L 1.44 361.1 Q 0 377 16 377 L 300 377 Z");
+  clip-path: path("M 300 0 L 41 0 Q 24.9 0 23.46 15.9 L 1.44 261.1 Q 0 277 16 277 L 300 277 Z");
 }
 
 /* Unten: nach vorn gekippt – linke Kante schräg ( \ ), linke Ecken abgerundet (300 × 640 px) */
