@@ -2143,9 +2143,49 @@ body {
     var(--card-col, #2a2a33);
 }
 
-/* Mitte: gerade Karte mit leicht abgerundeten linken Ecken */
+/* Mitte: gerade Karte mit leicht abgerundeten linken Ecken – schmaler, damit links der Drache sichtbar bleibt */
 .card-center::before {
   border-radius: 14px 0 0 14px;
+}
+
+.card-center,
+.center-card-footer {
+  width: 262px;
+}
+
+.char-center {
+  width: 300px;
+  height: 340px;
+}
+
+/* Drache im Hintergrund der Kriegerauswahl */
+.dragon-svg {
+  left: -34px;
+  top: 14%;
+  width: 290px;
+  height: 435px;
+  opacity: 0.13;
+}
+
+/* Obere Figur ragt oben über die Karte hinaus, Füße stehen unten auf der Karte */
+.char-top {
+  top: -40px;
+  width: 150px;
+  height: 188px;
+  object-position: center bottom;
+}
+
+/* Untere Figur bleibt in der Karte: Karte schneidet die Figur ab (Brustbild) */
+.card-bottom {
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 9% 100%);
+}
+
+.char-bottom {
+  top: 4px;
+  bottom: auto;
+  width: 170px;
+  height: 240px;
+  object-position: center top;
 }
 
 /* Obere/untere Karte reichen weit hinein – fast so breit wie die mittlere */
@@ -2173,14 +2213,4 @@ body {
   border-radius: 0 0 0 14px;
 }
 
-/* Figuren etwas kleiner (ca. 10 %) */
-.char-center {
-  width: 330px;
-  height: 362px;
-}
-
-.char-top,
-.char-bottom {
-  width: 132px;
-  height: 141px;
-}
+/* (Figurengrößen der Kriegerauswahl stehen weiter oben bei den Kartenformen) */
