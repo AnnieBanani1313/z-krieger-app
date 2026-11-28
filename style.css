@@ -2207,7 +2207,7 @@ body {
 
 /* Kartenstapel: mittlere Karte sitzt in der Mitte, die untere Karte läuft bis zum Bildschirmrand */
 .neon-stack {
-  top: calc(50% - 336px);
+  top: calc(50% - 746px); /* 596 px sichtbare obere Karte + halbe mittlere Karte */
   transform: none;
 }
 
@@ -2219,6 +2219,7 @@ body {
 
 .card-top {
   margin-bottom: -44px !important;
+  height: 640px;
 }
 
 .card-bottom {
@@ -2233,8 +2234,8 @@ body {
 
 /* Obere Figur: mittig auf der Karte, Kopf ragt oben heraus */
 .char-top {
-  top: -44px;
-  bottom: auto;
+  top: auto;
+  bottom: 34px;
   width: 190px;
   height: 250px;
   right: 56px !important;
@@ -2262,9 +2263,9 @@ body {
 }
 
 /* Oben: gleiche Karte wie in der Mitte, nur nach hinten gekippt –
-   linke Kante schräg ( / ), linke Ecken abgerundet (Kartengröße 300 × 230 px) */
+   linke Kante schräg ( / ), linke Ecken abgerundet (Kartengröße 300 × 640 px) */
 .card-top::before {
-  clip-path: path("M 300 0 L 43 0 Q 27 0 25.13 15.9 L 1.87 214.1 Q 0 230 16 230 L 300 230 Z");
+  clip-path: path("M 300 0 L 74 0 Q 57.6 0 56.16 15.9 L 1.44 624.1 Q 0 640 16 640 L 300 640 Z");
 }
 
 /* Unten: nach vorn gekippt – linke Kante schräg ( \ ), linke Ecken abgerundet (300 × 640 px) */
@@ -2282,3 +2283,12 @@ body {
 }
 
 /* (Figurengrößen der Kriegerauswahl stehen weiter oben bei den Kartenformen) */
+
+/* Kampfkraft-Anzeige oben rechts liegt jetzt auf der oberen Karte: Schatten für Lesbarkeit */
+#select-screen .user-texts {
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.75), 0 0 10px rgba(0, 0, 0, 0.45);
+}
+#select-screen .poster-nav {
+  position: relative;
+  z-index: 30;
+}
