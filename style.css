@@ -1738,3 +1738,313 @@ body {
   border-radius: 99px;
   padding: 3px 9px;
 }
+
+/* =========================================================
+   ICONS & BUTTONS – ruhiger, flacher Stil
+   Linien-Icons statt Emojis, keine Glows/Verläufe,
+   einfarbige Buttons mit leichter Unterkante.
+   ========================================================= */
+:root {
+  --btn-orange: #ff8a1f;
+  --btn-orange-edge: #c25e00;
+  --hair: #2a2a32;
+}
+
+.ico {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  vertical-align: middle;
+}
+
+/* Haupt-Button (alle Screens + Dialoge) */
+.tall-orange-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: var(--btn-orange);
+  color: #141009;
+  border: none;
+  border-radius: 12px;
+  box-shadow: inset 0 -3px 0 var(--btn-orange-edge);
+  padding: 15px 14px 16px;
+  font-size: 1.35rem;
+  letter-spacing: 1.6px;
+  transition: transform 0.08s ease, box-shadow 0.08s ease, background 0.15s ease;
+}
+
+.tall-orange-btn .ico {
+  width: 22px;
+  height: 22px;
+  stroke-width: 2.2;
+}
+
+.tall-orange-btn:active {
+  transform: translateY(2px);
+  box-shadow: inset 0 -1px 0 var(--btn-orange-edge);
+}
+
+.tall-orange-btn:disabled {
+  background: #1d1d23 !important;
+  color: #6f6f7c !important;
+  box-shadow: inset 0 0 0 1px var(--hair) !important;
+  transform: none;
+}
+
+/* Sekundäre Buttons (Timer) */
+.timer-btn {
+  background: transparent;
+  border: 1px solid #3a3a44;
+  color: #e6e6ec;
+  border-radius: 10px;
+  letter-spacing: 1px;
+}
+
+/* Kampf-Button unten */
+.campaign-dock {
+  background: linear-gradient(to top, #0b0b0d 70%, rgba(11, 11, 13, 0));
+}
+
+.campaign-dock #campaign-btn {
+  gap: 12px;
+  border-radius: 12px;
+  border: 1px solid #34343e;
+  background: #18181d;
+  color: #f2f2f5;
+  box-shadow: inset 0 -3px 0 #0f0f13;
+  letter-spacing: 1.6px;
+}
+
+.campaign-dock #campaign-btn .camp-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.campaign-dock #campaign-btn .ico {
+  width: 22px;
+  height: 22px;
+  stroke-width: 2;
+}
+
+.campaign-dock #campaign-btn:active {
+  transform: translateY(2px);
+  box-shadow: inset 0 -1px 0 #0f0f13;
+}
+
+.campaign-dock #campaign-btn.camp-ready {
+  background: var(--btn-orange);
+  border-color: var(--btn-orange);
+  color: #141009;
+  box-shadow: inset 0 -3px 0 var(--btn-orange-edge);
+  animation: campReady 2.4s ease-out infinite;
+}
+
+/* sanftes Pulsieren als Ring statt Leuchten */
+@keyframes campReady {
+  0% { box-shadow: inset 0 -3px 0 var(--btn-orange-edge), 0 0 0 0 rgba(255, 138, 31, 0.45); }
+  70% { box-shadow: inset 0 -3px 0 var(--btn-orange-edge), 0 0 0 10px rgba(255, 138, 31, 0); }
+  100% { box-shadow: inset 0 -3px 0 var(--btn-orange-edge), 0 0 0 0 rgba(255, 138, 31, 0); }
+}
+
+.campaign-dock #campaign-btn.camp-limit {
+  background: #141418;
+  color: #6f6f7c;
+}
+
+/* Fortschritt: kurze Balken statt leuchtender Punkte */
+.camp-dots {
+  gap: 4px;
+}
+
+.camp-dots i {
+  width: 18px;
+  height: 5px;
+  border-radius: 2px;
+  border: none;
+  background: #34343e;
+}
+
+.camp-dots i.on {
+  background: var(--btn-orange);
+  box-shadow: none;
+}
+
+.camp-count {
+  background: rgba(0, 0, 0, 0.14);
+  border-radius: 6px;
+  padding: 1px 8px;
+}
+
+/* Kopfzeile */
+.streak-chip,
+.arena-nav .ki-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.streak-chip .ico {
+  width: 14px;
+  height: 14px;
+  color: var(--ink-3);
+}
+
+.arena-nav .ki-badge .ico {
+  width: 16px;
+  height: 16px;
+  color: var(--ink-2);
+}
+
+.arena-nav .ki-badge small {
+  font-family: 'Rajdhani', sans-serif;
+  font-weight: 700;
+  font-size: 0.7rem;
+  letter-spacing: 0.8px;
+  color: var(--ink-3);
+}
+
+.hud-ico {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: transparent;
+  border: 1px solid var(--hair);
+  color: #d6d6de;
+}
+
+.hud-ico .ico {
+  width: 19px;
+  height: 19px;
+}
+
+.hud-strip .hud-chip:active .hud-ico {
+  background: var(--panel-2);
+}
+
+.hud-chip.senzu-ready .hud-ico {
+  box-shadow: none;
+  border-color: rgba(61, 220, 132, 0.55);
+  color: var(--easy);
+}
+
+.hud-chip.senzu-on .hud-ico {
+  background: var(--easy);
+  border-color: var(--easy);
+  color: #0b0b0d;
+  box-shadow: none;
+}
+
+/* Stufen-Leiste ohne Glow */
+#arena-screen .stage-pill {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+}
+
+#arena-screen .stage-pill .ico {
+  width: 12px;
+  height: 12px;
+  stroke-width: 2.2;
+}
+
+#arena-screen .stage-pill.active::before {
+  box-shadow: none;
+}
+
+/* Körperteil-Kacheln: Linien-Icons, keine Verläufe */
+#arena-screen .stat-box.active-box {
+  background: var(--panel);
+}
+
+#arena-screen .part-ico,
+#arena-screen .active-box .part-ico {
+  width: 24px;
+  height: 24px;
+  margin-bottom: 2px;
+  filter: none;
+  opacity: 1;
+  color: var(--ink-3);
+}
+
+#arena-screen .active-box .part-ico {
+  color: var(--btn-orange);
+}
+
+/* Schwierigkeit: getönt statt knallig gefüllt */
+#arena-screen .diff-tab.active {
+  background: color-mix(in srgb, var(--diff) 16%, transparent);
+  color: var(--diff);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--diff) 55%, transparent);
+}
+
+#arena-screen .diff-tab.active::before {
+  background: var(--diff);
+  opacity: 1;
+}
+
+/* Übungskarten */
+#arena-screen .workout-card {
+  background: #131317;
+  border-color: #23232a;
+}
+
+#arena-screen .workout-ico {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: #1c1c22;
+  color: #d6d6de;
+}
+
+#arena-screen .workout-ico .ico {
+  width: 22px;
+  height: 22px;
+}
+
+#arena-screen .xp-tag {
+  background: transparent;
+  padding: 0;
+  color: var(--ink-3);
+}
+
+/* Dialoge: ruhiger Rahmen statt Neon-Orange */
+.levelup-card {
+  border: 1px solid #2c2c34;
+  border-radius: 18px;
+}
+
+.trophy-item {
+  border-radius: 10px;
+}
+
+.trophy-name {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'Anton', sans-serif;
+  font-size: 0.95rem;
+  letter-spacing: 0.6px;
+}
+
+.trophy-name .ico {
+  width: 18px;
+  height: 18px;
+}
+
+.trophy-item.unlocked .trophy-name .ico {
+  color: var(--btn-orange);
+}
+
+.trophy-desc {
+  margin-top: 2px;
+  font-size: 0.75rem;
+  color: #9a9aa8;
+}
