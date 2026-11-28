@@ -2153,18 +2153,46 @@ body {
   width: 262px;
 }
 
+/* Figur steht über dem Schriftbereich, Kopf ragt oben aus der Karte */
 .char-center {
-  width: 300px;
-  height: 340px;
+  top: auto;
+  bottom: 74px;
+  right: -9px;
+  width: 280px;
+  height: 300px;
+  transform: none;
+  object-position: center bottom;
+}
+
+/* Name & Stufe wie im Vorbild: dunkle Schrift direkt auf der Kartenfarbe */
+.center-card-footer {
+  background: none;
+  padding: 0 18px 16px;
+}
+
+.center-card-footer .center-name {
+  color: #16110a;
+  font-size: 1.55rem;
+  letter-spacing: 0.4px;
+  margin-bottom: 6px;
+}
+
+.center-card-footer .dark-pill {
+  background: rgba(0, 0, 0, 0.12);
+  color: #16110a;
+  border: 1px solid rgba(0, 0, 0, 0.28);
+  border-radius: 999px;
+  padding: 2px 10px;
+  font-size: 0.72rem;
 }
 
 /* Drache im Hintergrund der Kriegerauswahl */
 .dragon-svg {
-  left: -34px;
-  top: 14%;
-  width: 290px;
-  height: 435px;
-  opacity: 0.13;
+  left: -40px;
+  top: 12%;
+  width: 280px;
+  height: 467px;
+  opacity: 0.2;
 }
 
 /* Obere und untere Karte deutlich höher; sie liegen ein gutes Stück hinter der mittleren Karte */

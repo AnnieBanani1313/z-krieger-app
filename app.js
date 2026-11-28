@@ -11,6 +11,131 @@ function icon(name, cls = "ico") {
   return `<svg class="${cls}" aria-hidden="true" focusable="false"><use href="#i-${name}"/></svg>`;
 }
 
+// =====================================================================
+// Drache im Hintergrund der Kriegerauswahl – chinesischer Drache in weißen Konturlinien.
+// Körper entlang einer geschwungenen Linie, Schuppen/Bauchplatten/Rückenflossen werden
+// automatisch entlang des Körpers erzeugt; Kopf, Mähne, Beine und Schwanzquaste dazu.
+// =====================================================================
+(function drawSelectDragon() {
+  const svg = document.querySelector(".dragon-svg");
+  if (!svg) return;
+  const f1 = (v) => Math.round(v * 10) / 10;
+  const P = [[74, 66], [146, 60], [186, 104], [140, 160], [66, 196], [56, 254], [134, 286], [182, 334], [140, 384]];
+  const N = 240, SEG = P.length - 1;
+  const pts = [];
+  for (let i = 0; i <= N; i++) {
+    const tt = (i / N) * SEG, k = Math.min(SEG - 1, Math.floor(tt)), u = tt - k;
+    const p0 = P[Math.max(0, k - 1)], p1 = P[k], p2 = P[k + 1], p3 = P[Math.min(SEG, k + 2)];
+    const cr = (a, b, c, d) => 0.5 * (2 * b + (-a + c) * u + (2 * a - 5 * b + 4 * c - d) * u * u + (-a + 3 * b - 3 * c + d) * u * u * u);
+    pts.push([cr(p0[0], p1[0], p2[0], p3[0]), cr(p0[1], p1[1], p2[1], p3[1])]);
+  }
+  const tan = pts.map((p, i) => {
+    const a = pts[Math.max(0, i - 1)], b = pts[Math.min(N, i + 1)];
+    const dx = b[0] - a[0], dy = b[1] - a[1], l = Math.hypot(dx, dy) || 1;
+    return [dx / l, dy / l];
+  });
+  const nor = tan.map(([x, y]) => [-y, x]); // +nor = Bauchseite, −nor = Rücken
+  const W = pts.map((_, i) => {
+    const s = i / N;
+    if (s < 0.05) return 15 + (s / 0.05) * 8;
+    if (s < 0.28) return 23 + ((s - 0.05) / 0.23) * 4;
+    return 25 * Math.pow(1 - (s - 0.28) / 0.72, 0.6) + 2.5;
+  });
+  // Punkt quer über den Körper: a = −0.5 (Rücken) … +0.5 (Bauch)
+  const at = (i, a, along = 0) => [pts[i][0] + nor[i][0] * a * W[i] + tan[i][0] * along, pts[i][1] + nor[i][1] * a * W[i] + tan[i][1] * along];
+  const poly = (arr) => "M" + arr.map(p => `${f1(p[0])} ${f1(p[1])}`).join(" L");
+  const thick = [], thin = [], fine = [];
+
+  // Körperumriss (Rücken- und Bauchlinie) + innere Bauchlinie
+  const range = (a, b) => Array.from({ length: b - a + 1 }, (_, k) => a + k);
+  const body = range(6, N);
+  thick.push(poly(body.map(i => at(i, -0.5))));
+  thick.push(poly(body.map(i => at(i, 0.5))));
+  thin.push(poly(body.map(i => at(i, 0.2))));
+  // Bauchplatten
+  for (let i = 10; i < N - 6; i += 5) fine.push(poly([at(i, 0.2), at(i, 0.5)]));
+  // Schuppen (versetzte Reihen, Bögen zeigen zum Schwanz)
+  const rows = [-0.34, -0.13, 0.08];
+  rows.forEach((a, r) => {
+    for (let i = 10 + (r % 2) * 3; i < N - 10; i += 6) {
+      const rr = W[i] * 0.11;
+      if (rr < 0.9) continue;
+      const c = at(i, a);
+      const p1 = [c[0] + nor[i][0] * rr, c[1] + nor[i][1] * rr];
+      const p2 = [c[0] - nor[i][0] * rr, c[1] - nor[i][1] * rr];
+      const q = [c[0] + tan[i][0] * rr * 1.9, c[1] + tan[i][1] * rr * 1.9];
+      fine.push(`M${f1(p1[0])} ${f1(p1[1])} Q${f1(q[0])} ${f1(q[1])} ${f1(p2[0])} ${f1(p2[1])}`);
+    }
+  });
+  // Rückenflossen (flammenartig, nach hinten geschwungen)
+  for (let i = 14; i < N - 22; i += 8) {
+    const len = W[i] * 0.75 + 3;
+    const b1 = at(i - 3, -0.5), b2 = at(i + 3, -0.5), mid = at(i, -0.5);
+    const tip = [mid[0] - nor[i][0] * len + tan[i][0] * len * 0.7, mid[1] - nor[i][1] * len + tan[i][1] * len * 0.7];
+    const c1 = [mid[0] - nor[i][0] * len * 0.9 - tan[i][0] * len * 0.2, mid[1] - nor[i][1] * len * 0.9 - tan[i][1] * len * 0.2];
+    thin.push(`M${f1(b1[0])} ${f1(b1[1])} Q${f1(c1[0])} ${f1(c1[1])} ${f1(tip[0])} ${f1(tip[1])} Q${f1(mid[0] - nor[i][0] * len * 0.3)} ${f1(mid[1] - nor[i][1] * len * 0.3)} ${f1(b2[0])} ${f1(b2[1])}`);
+    const tip2 = [mid[0] - nor[i][0] * len * 0.6 + tan[i][0] * len * 0.25, mid[1] - nor[i][1] * len * 0.6 + tan[i][1] * len * 0.25];
+    fine.push(poly([mid, tip2]));
+  }
+  // Beine mit Klauen und Fell-Büscheln
+  [0.16, 0.36, 0.58, 0.78].forEach((s, li) => {
+    const i = Math.round(s * N);
+    const b = at(i, 0.45), n = nor[i], t = tan[i];
+    const knee = [b[0] + n[0] * 15 - t[0] * 9, b[1] + n[1] * 15 - t[1] * 9];
+    const foot = [knee[0] + n[0] * 10 - t[0] * 15, knee[1] + n[1] * 10 - t[1] * 15];
+    const off = (p, d) => [p[0] + t[0] * d, p[1] + t[1] * d];
+    thick.push(`M${f1(off(b, -5)[0])} ${f1(off(b, -5)[1])} Q${f1(off(knee, -3)[0])} ${f1(off(knee, -3)[1])} ${f1(off(foot, -2)[0])} ${f1(off(foot, -2)[1])}`);
+    thick.push(`M${f1(off(b, 5)[0])} ${f1(off(b, 5)[1])} Q${f1(off(knee, 4)[0])} ${f1(off(knee, 4)[1])} ${f1(off(foot, 3)[0])} ${f1(off(foot, 3)[1])}`);
+    for (let k = -1.5; k <= 1.5; k += 1) {
+      const ang = Math.atan2(n[1] * 0.6 - t[1], n[0] * 0.6 - t[0]) + k * 0.42;
+      const d = [Math.cos(ang), Math.sin(ang)];
+      const tip = [foot[0] + d[0] * 9, foot[1] + d[1] * 9];
+      const cc = [foot[0] + d[0] * 6 + d[1] * 3, foot[1] + d[1] * 6 - d[0] * 3];
+      thin.push(`M${f1(foot[0])} ${f1(foot[1])} Q${f1(cc[0])} ${f1(cc[1])} ${f1(tip[0])} ${f1(tip[1])}`);
+    }
+    for (let k = 0; k < 3; k++) {
+      const e = [knee[0] + t[0] * (10 + k * 3) + n[0] * (2 + k * 3), knee[1] + t[1] * (10 + k * 3) + n[1] * (2 + k * 3)];
+      fine.push(`M${f1(knee[0])} ${f1(knee[1])} Q${f1(knee[0] + t[0] * 6)} ${f1(knee[1] + t[1] * 6)} ${f1(e[0])} ${f1(e[1])}`);
+    }
+    if (li < 2) fine.push(poly([at(i, 0.5), knee]));
+  });
+  // Schwanzquaste
+  const e = pts[N], te = tan[N], ne = nor[N];
+  for (let k = -4; k <= 4; k++) {
+    const spread = k * 4.5, len = 26 - Math.abs(k) * 1.5;
+    const end = [e[0] + te[0] * len + ne[0] * spread, e[1] + te[1] * len + ne[1] * spread];
+    const cc = [e[0] + te[0] * len * 0.5 + ne[0] * (spread * 0.3 + 6), e[1] + te[1] * len * 0.5 + ne[1] * (spread * 0.3 + 6)];
+    thin.push(`M${f1(e[0])} ${f1(e[1])} Q${f1(cc[0])} ${f1(cc[1])} ${f1(end[0])} ${f1(end[1])}`);
+  }
+  // Kopf in eigenem Koordinatensystem: x = nach vorn, y = nach oben
+  const H = pts[6], fw = [-tan[6][0], -tan[6][1]], up = [nor[6][0] * -1, nor[6][1] * -1];
+  const L = (x, y) => [H[0] + fw[0] * x + up[0] * y, H[1] + fw[1] * x + up[1] * y];
+  const pth = (cmds) => cmds.map(([c, ...xy]) => {
+    const out = [];
+    for (let k = 0; k < xy.length; k += 2) { const p = L(xy[k], xy[k + 1]); out.push(`${f1(p[0])} ${f1(p[1])}`); }
+    return c + out.join(" ");
+  }).join(" ");
+  thick.push(pth([["M", -2, 12], ["Q", 10, 18, 20, 15], ["Q", 30, 12, 40, 11], ["Q", 50, 10, 52, 4], ["Q", 52, -1, 45, 0], ["L", 18, -1]]));
+  thick.push(pth([["M", 16, -3], ["Q", 30, -9, 44, -14], ["Q", 47, -11, 42, -7], ["L", 22, -4]]));
+  thick.push(pth([["M", -2, -10], ["Q", 6, -6, 16, -3]]));
+  thin.push(pth([["M", 22, -1], ["L", 25, -4], ["L", 28, -1], ["L", 31, -4], ["L", 34, -1], ["L", 37, -4], ["L", 40, -1]]));
+  thin.push(pth([["M", 28, -8], ["Q", 44, -16, 58, -12], ["M", 58, -12], ["L", 62, -9], ["M", 58, -12], ["L", 61, -16]]));
+  thin.push(pth([["M", 14, 13], ["Q", 20, 17, 27, 14]]));
+  thick.push(pth([["M", 18, 8], ["Q", 21, 11, 24, 8], ["Q", 21, 6, 18, 8]]));
+  thin.push(pth([["M", 44, 7], ["Q", 48, 10, 46, 5]]));
+  thin.push(pth([["M", 10, 15], ["Q", 0, 30, -16, 36], ["M", 2, 26], ["Q", 0, 34, -4, 40], ["M", 6, 14], ["Q", -6, 24, -20, 26], ["M", -10, 23], ["Q", -14, 30, -12, 34]]));
+  thin.push(pth([["M", 48, 6], ["Q", 66, 18, 52, 30], ["Q", 40, 42, 58, 52], ["M", 42, -4], ["Q", 58, -26, 44, -36], ["Q", 32, -46, 46, -58]]));
+  for (let k = 0; k < 11; k++) {
+    const sx = 6 - k * 1.5, sy = 12 - k * 2.4;
+    const ex = -26 - k * 2.5, ey = 22 - k * 6;
+    fine.push(pth([["M", sx, sy], ["Q", (sx + ex) / 2 + 2, sy + 8 - k, ex, ey]]));
+  }
+  for (let k = 0; k < 5; k++) fine.push(pth([["M", 34 - k * 3, -12], ["Q", 30 - k * 4, -22, 24 - k * 5, -30 - k * 2]]));
+
+  const grp = (d, w) => `<path d="${d.join(" ")}" stroke-width="${w}"/>`;
+  svg.innerHTML = `<g fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round">${grp(thick, 2.4)}${grp(thin, 1.5)}${grp(fine, 0.9)}</g>`;
+})();
+
 (function injectGameUI() {
   const style = document.createElement("style");
   style.textContent = `
